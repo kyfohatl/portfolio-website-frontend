@@ -1,0 +1,14 @@
+.page-background {
+  background-color: seashell;
+  min-height: 100vh;
+  min-width: 100vw;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+}
+
+.content-block {
+  max-width: 1000px;
+}
