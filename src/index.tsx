@@ -9,6 +9,7 @@ import Techstack from "./pages/Techstack";
 import About from "./pages/About";
 import Skills from "./pages/Skills";
 import Examples from "./pages/Examples"
+import SignUp from './pages/SignUp';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -19,6 +20,7 @@ ReactDOM.render(
         <Route path="about" element={<About />} />
         <Route path="skills" element={<Skills />} />
         <Route path="examples" element={<Examples />} />
+        <Route path="signup" element={<SignUp />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,
