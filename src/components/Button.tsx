@@ -1,26 +1,41 @@
+import styles from "./Button.module.css"
+
 import React from "react"
 
 interface ButtonProps {
-  styles: React.CSSProperties,
   text: string,
-  callBack: (...args: any[]) => void,
-  callBackArgs: any[]
+  callBack: () => void,
+  backgroundColor?: string,
+  fontSize?: string,
+  color?: string,
+  width?: string,
+  height?: string,
+  marginTop?: string
 }
 
-export default function Button({ styles, text, callBack, callBackArgs }: ButtonProps) {
-  // Add common css properties
-  styles.display = "flex"
-  styles.justifyContent = "center"
-  styles.alignItems = "center"
-  styles.fontFamily = "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\""
-  styles.borderRadius = "10px"
-  styles.borderStyle = "none"
-
+export default function Button({
+  text,
+  callBack,
+  backgroundColor = "#8B0000",
+  fontSize = "14px",
+  color = "#FFFFFF",
+  width = "100px",
+  height = "100px",
+  marginTop = "10px"
+}: ButtonProps) {
   return (
     <button
+      className={styles.button}
       type="button"
-      style={styles}
-      onClick={() => { callBack(...callBackArgs) }}
+      style={{
+        backgroundColor: backgroundColor,
+        fontSize: fontSize,
+        color: color,
+        width: width,
+        height: height,
+        marginTop: marginTop
+      }}
+      onClick={callBack}
     >
       {text}
     </button>

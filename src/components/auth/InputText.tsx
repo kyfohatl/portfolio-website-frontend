@@ -2,11 +2,13 @@ import "./InputText.css"
 
 interface InputTextProps {
   label: string,
-  state: string,
-  setState: (newState: string) => void
+  text: string,
+  setText: (newState: string) => void,
+  error: boolean,
+  errorText: string
 }
 
-export default function InputText({ label, state, setState }: InputTextProps) {
+export default function InputText({ label, text, setText, error, errorText }: InputTextProps) {
   return (
     <>
       <label className="input-text-label">
@@ -14,10 +16,13 @@ export default function InputText({ label, state, setState }: InputTextProps) {
         <input
           type="text"
           name={label}
-          className="input-text-box"
-          value={state}
-          onChange={(e) => { setState(e.target.value) }}
+          className={error ? "input-text-box-error" : "input-text-box"}
+          value={text}
+          onChange={(e) => { setText(e.target.value) }}
         />
+        {error &&
+          <p className="label-error">{errorText}</p>
+        }
       </label>
     </>
   )

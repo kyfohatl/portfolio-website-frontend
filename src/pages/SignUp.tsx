@@ -1,60 +1,91 @@
 import "./SignUp.css"
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import AuthContainer from "../components/auth/AuthContainer";
 import InputText from "../components/auth/InputText";
 import Button from "../components/Button";
 import PageContainer from "../components/PageContainer";
 
 export default function SignUp() {
-  const signUpButtonStyles: React.CSSProperties = {
-    fontSize: "14px",
-    backgroundColor: "darkred",
-    color: "white",
-    width: "285px",
-    height: "36px",
-    marginTop: "10px"
-  }
-
   const [email, setEmail] = useState("")
   const [pass, setPass] = useState("")
   const [confPass, setConfPass] = useState("")
+  const [emailErr, setEmailErr] = useState(false)
+  const [passErr, setPassErr] = useState(false)
+  const [confPassErr, setConfPassErr] = useState(false)
 
-  async function onSubmit(email: string, pass: string, confPass: string) {
-    if (pass !== confPass) {
-      console.log("Passwords do not match!")
+  const onSubmit = useCallback(async () => {
+    // Check for input errors
+    if (!email) {
+      setEmailErr(true)
+      return
     } else {
-      try {
-        // Post new user
-        await fetch("http://localhost:3000/auth/users", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            username: email.toLowerCase(),
-            password: pass
-          })
-        })
-      } catch (err) {
-        console.error(err)
-      }
+      setEmailErr(false)
     }
-  }
+    if (!pass) {
+      setPassErr(true)
+      return
+    } else {
+      setPassErr(false)
+    }
+    if (pass !== confPass) {
+      setConfPassErr(true)
+      return
+    } else {
+      setConfPassErr(false)
+    }
+
+    // No input errors detected
+    try {
+      // Post new user
+      await fetch("http://localhost:8000/auth/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username: email.toLowerCase(),
+          password: pass
+        })
+      })
+    } catch (err) {
+      console.error(err)
+    }
+  }, [email, pass, confPass])
 
   return (
     <PageContainer contentStyle={{ display: "flex", flexGrow: 1, justifyContent: "center", alignItems: "center" }}>
       <AuthContainer title="Sign up">
-        <InputText label="Email" state={email} setState={setEmail} />
-        <InputText label="Password" state={pass} setState={setPass} />
-        <InputText label="Confirm Password" state={confPass} setState={setConfPass} />
+        <InputText
+          label="Email"
+          text={email}
+          setText={setEmail}
+          error={emailErr}
+          errorText="A valid email is required!"
+        />
+        <InputText
+          label="Password"
+          text={pass}
+          setText={setPass}
+          error={passErr}
+          errorText="A valid password is required!"
+        />
+        <InputText
+          label="Confirm Password"
+          text={confPass}
+          setText={setConfPass}
+          error={confPassErr}
+          errorText="Passwords must match!"
+        />
         <Button
-          styles={signUpButtonStyles}
+          width="285px"
+          height="36px"
           text="Sign up"
           callBack={onSubmit}
-          callBackArgs={[email, pass, confPass]}
         />
-        <p className="auth-help">Already have an account? <a className="auth-help-link" href="signin">Sign in</a></p>
+        <p className="auth-help" style={emailErr || passErr || confPassErr ? { marginTop: "8px" } : { marginTop: "12px" }}>
+          Already have an account? <a className="auth-help-link" href="signin">Sign in</a>
+        </p>
       </AuthContainer>
     </PageContainer>
   )
