@@ -10,6 +10,7 @@ import About from "./pages/About";
 import Skills from "./pages/Skills";
 import Examples from "./pages/Examples"
 import SignUp from './pages/SignUp';
+import SignIn from './pages/SignIn';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -21,6 +22,7 @@ ReactDOM.render(
         <Route path="skills" element={<Skills />} />
         <Route path="examples" element={<Examples />} />
         <Route path="signup" element={<SignUp />} />
+        <Route path="signin" element={<SignIn />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,
