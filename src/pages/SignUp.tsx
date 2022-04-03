@@ -20,11 +20,25 @@ export default function SignUp() {
   const [pass, setPass] = useState("")
   const [confPass, setConfPass] = useState("")
 
-  function onSubmit(email: string, pass: string, confPass: string) {
+  async function onSubmit(email: string, pass: string, confPass: string) {
     if (pass !== confPass) {
       console.log("Passwords do not match!")
     } else {
-      console.log(email, pass, confPass)
+      try {
+        // Post new user
+        await fetch("http://localhost:3000/auth/users", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            username: email.toLowerCase(),
+            password: pass
+          })
+        })
+      } catch (err) {
+        console.error(err)
+      }
     }
   }
 
