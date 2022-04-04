@@ -6,33 +6,39 @@ import InputText from "../components/auth/InputText";
 import Button from "../components/Button";
 import PageContainer from "../components/PageContainer";
 
+interface ErrorResponse {
+  error?: Record<string, string>
+}
+
 export default function SignUp() {
+  // User inputs
   const [email, setEmail] = useState("")
   const [pass, setPass] = useState("")
   const [confPass, setConfPass] = useState("")
-  const [emailErr, setEmailErr] = useState(false)
-  const [passErr, setPassErr] = useState(false)
-  const [confPassErr, setConfPassErr] = useState(false)
+  // Error messages
+  const [emailErrMssg, setEmailErrMssg] = useState("")
+  const [passErrMssg, setPassErrMssg] = useState("")
+  const [confPassErrMssg, setConfPassErrMssg] = useState("")
 
   const onSubmit = useCallback(async () => {
     // Check for input errors
     if (!email) {
-      setEmailErr(true)
+      setEmailErrMssg("A valid email is required!")
       return
     } else {
-      setEmailErr(false)
+      setEmailErrMssg("")
     }
     if (!pass) {
-      setPassErr(true)
+      setPassErrMssg("A valid password is required!")
       return
     } else {
-      setPassErr(false)
+      setPassErrMssg("")
     }
     if (pass !== confPass) {
-      setConfPassErr(true)
+      setConfPassErrMssg("Passwords must match!")
       return
     } else {
-      setConfPassErr(false)
+      setConfPassErrMssg("")
     }
 
     // No input errors detected
@@ -49,7 +55,13 @@ export default function SignUp() {
         })
       })
 
-      console.log("New user created: ", response.body)
+      const parsedResponse = await response.json() as ErrorResponse
+      if (parsedResponse.error?.email) {
+        // Set the new error message
+        setEmailErrMssg(parsedResponse.error.email)
+      } else {
+        console.log("New user created: ", parsedResponse)
+      }
     } catch (err) {
       console.error(err)
     }
@@ -62,22 +74,19 @@ export default function SignUp() {
           label="Email"
           text={email}
           setText={setEmail}
-          error={emailErr}
-          errorText="A valid email is required!"
+          errorText={emailErrMssg}
         />
         <InputText
           label="Password"
           text={pass}
           setText={setPass}
-          error={passErr}
-          errorText="A valid password is required!"
+          errorText={passErrMssg}
         />
         <InputText
           label="Confirm Password"
           text={confPass}
           setText={setConfPass}
-          error={confPassErr}
-          errorText="Passwords must match!"
+          errorText={confPassErrMssg}
         />
         <Button
           width="285px"
@@ -85,7 +94,10 @@ export default function SignUp() {
           text="Sign up"
           callBack={onSubmit}
         />
-        <p className="auth-help" style={emailErr || passErr || confPassErr ? { marginTop: "8px" } : { marginTop: "12px" }}>
+        <p
+          className="auth-help"
+          style={emailErrMssg || passErrMssg || confPassErrMssg ? { marginTop: "8px" } : { marginTop: "12px" }}
+        >
           Already have an account? <a className="auth-help-link" href="signin">Sign in</a>
         </p>
       </AuthContainer>

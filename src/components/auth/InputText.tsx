@@ -4,11 +4,10 @@ interface InputTextProps {
   label: string,
   text: string,
   setText: (newState: string) => void,
-  error: boolean,
   errorText: string
 }
 
-export default function InputText({ label, text, setText, error, errorText }: InputTextProps) {
+export default function InputText({ label, text, setText, errorText }: InputTextProps) {
   return (
     <>
       <label className="input-text-label">
@@ -16,11 +15,11 @@ export default function InputText({ label, text, setText, error, errorText }: In
         <input
           type="text"
           name={label}
-          className={error ? "input-text-box-error" : "input-text-box"}
+          className={errorText ? "input-text-box-error" : "input-text-box"}
           value={text}
           onChange={(e) => { setText(e.target.value) }}
         />
-        {error &&
+        {errorText &&
           <p className="label-error">{errorText}</p>
         }
       </label>
