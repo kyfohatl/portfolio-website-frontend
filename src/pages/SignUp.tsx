@@ -38,7 +38,7 @@ export default function SignUp() {
     // No input errors detected
     try {
       // Post new user
-      await fetch("http://localhost:8000/auth/users", {
+      const response = await fetch("http://localhost:8000/auth/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -48,6 +48,8 @@ export default function SignUp() {
           password: pass
         })
       })
+
+      console.log("New user created: ", response.body)
     } catch (err) {
       console.error(err)
     }
