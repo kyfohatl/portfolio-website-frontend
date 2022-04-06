@@ -3,17 +3,18 @@ import "./InputText.css"
 interface InputTextProps {
   label: string,
   text: string,
+  type?: "text" | "password",
   setText: (newState: string) => void,
   errorText: string
 }
 
-export default function InputText({ label, text, setText, errorText }: InputTextProps) {
+export default function InputText({ label, text, type = "text", setText, errorText }: InputTextProps) {
   return (
     <>
       <label className="input-text-label">
         <p className="label">{label}</p>
         <input
-          type="text"
+          type={type}
           name={label}
           className={errorText ? "input-text-box-error" : "input-text-box"}
           value={text}

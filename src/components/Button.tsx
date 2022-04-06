@@ -2,9 +2,22 @@ import styles from "./Button.module.css"
 
 import React from "react"
 
+// A callback button must come with a callback function
+interface CallBackButton {
+  type: "button",
+  callBack: () => void
+}
+
+// A submit type button does not need a callback function
+interface SubmitButton {
+  type: "submit"
+}
+
+type ButtonType = CallBackButton | SubmitButton
+
 interface ButtonProps {
   text: string,
-  callBack: () => void,
+  type: ButtonType,
   backgroundColor?: string,
   fontSize?: string,
   color?: string,
@@ -16,7 +29,7 @@ interface ButtonProps {
 
 export default function Button({
   text,
-  callBack,
+  type,
   backgroundColor = "#8B0000",
   fontSize = "14px",
   color = "#FFFFFF",
@@ -28,7 +41,7 @@ export default function Button({
   return (
     <button
       className={styles.button}
-      type="button"
+      type={type.type}
       style={{
         backgroundColor: backgroundColor,
         fontSize: fontSize,
@@ -37,7 +50,7 @@ export default function Button({
         height: height,
         marginTop: marginTop
       }}
-      onClick={callBack}
+      {...(type.type === "button" ? { onClick: type.callBack } : {})}
     >
       {icon}
       {text}

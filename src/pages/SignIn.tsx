@@ -1,6 +1,6 @@
 import "./SignIn.module.css"
 
-import { useCallback, useState } from "react"
+import React, { useCallback, useState } from "react"
 import AuthContainer from "../components/auth/AuthContainer"
 import InputText from "../components/auth/InputText"
 import Button from "../components/Button"
@@ -18,7 +18,10 @@ export default function SignIn() {
   const [emailErrMssg, setEmailErrMssg] = useState("")
   const [passErrMssg, setPassErrMssg] = useState("")
 
-  const onSignIn = useCallback(async () => {
+  const onSignIn = useCallback(async (event: React.FormEvent) => {
+    // Prevent default form behavior
+    event.preventDefault()
+
     // Check for input errors
     if (!email) {
       setEmailErrMssg("A valid email is required!")
@@ -71,7 +74,7 @@ export default function SignIn() {
 
   return (
     <PageContainer contentStyle={{ display: "flex", flexGrow: 1, justifyContent: "center", alignItems: "center" }}>
-      <AuthContainer title="Sign In">
+      <AuthContainer title="Sign In" onSubmit={onSignIn}>
         <InputText
           label="Email"
           text={email}
@@ -81,30 +84,31 @@ export default function SignIn() {
         <InputText
           label="Password"
           text={pass}
+          type="password"
           setText={setPass}
           errorText={passErrMssg}
         />
         <Button
+          type={{ type: "submit" }}
           width="285px"
           height="36px"
           text="Sign in"
-          callBack={onSignIn}
         />
         <Button
+          type={{ type: "button", callBack: onSignInGoogle }}
           width="285px"
           height="36px"
           text="Sign in with Google"
           backgroundColor="#FFFFFF"
           color="#000000"
-          callBack={onSignInGoogle}
           icon={<GoogleLogo width={28} height={28} />}
         />
         <Button
+          type={{ type: "button", callBack: onSignInFacebook }}
           width="285px"
           height="36px"
           text="Sign in with Facebook"
           backgroundColor="#4267B2"
-          callBack={onSignInFacebook}
           icon={<FacebookLogo width={28} height={28} />}
         />
         <p

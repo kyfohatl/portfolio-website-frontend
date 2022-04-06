@@ -1,6 +1,6 @@
 import "./SignUp.css"
 
-import { useCallback, useState } from "react"
+import React, { useCallback, useState } from "react"
 import AuthContainer from "../components/auth/AuthContainer"
 import InputText from "../components/auth/InputText"
 import Button from "../components/Button"
@@ -17,7 +17,10 @@ export default function SignUp() {
   const [passErrMssg, setPassErrMssg] = useState("")
   const [confPassErrMssg, setConfPassErrMssg] = useState("")
 
-  const onSubmit = useCallback(async () => {
+  const onSubmit = useCallback(async (event: React.FormEvent) => {
+    // Prevent default form behavior
+    event.preventDefault()
+
     // Check for input errors
     if (!email) {
       setEmailErrMssg("A valid email is required!")
@@ -66,7 +69,7 @@ export default function SignUp() {
 
   return (
     <PageContainer contentStyle={{ display: "flex", flexGrow: 1, justifyContent: "center", alignItems: "center" }}>
-      <AuthContainer title="Sign up">
+      <AuthContainer title="Sign up" onSubmit={onSubmit}>
         <InputText
           label="Email"
           text={email}
@@ -76,20 +79,22 @@ export default function SignUp() {
         <InputText
           label="Password"
           text={pass}
+          type="password"
           setText={setPass}
           errorText={passErrMssg}
         />
         <InputText
           label="Confirm Password"
           text={confPass}
+          type="password"
           setText={setConfPass}
           errorText={confPassErrMssg}
         />
         <Button
+          type={{ type: "submit" }}
           width="285px"
           height="36px"
           text="Sign up"
-          callBack={onSubmit}
         />
         <p
           className="auth-help"
