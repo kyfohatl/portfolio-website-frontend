@@ -1,14 +1,11 @@
 import "./SignUp.css"
 
-import { useCallback, useState } from "react";
-import AuthContainer from "../components/auth/AuthContainer";
-import InputText from "../components/auth/InputText";
-import Button from "../components/Button";
-import PageContainer from "../components/PageContainer";
-
-interface ErrorResponse {
-  error?: Record<string, string>
-}
+import { useCallback, useState } from "react"
+import AuthContainer from "../components/auth/AuthContainer"
+import InputText from "../components/auth/InputText"
+import Button from "../components/Button"
+import PageContainer from "../components/PageContainer"
+import { ErrorResponse } from "../lib/commonTypes"
 
 export default function SignUp() {
   // User inputs

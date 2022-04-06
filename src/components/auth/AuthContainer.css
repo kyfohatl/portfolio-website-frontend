@@ -1,6 +1,6 @@
 .auth-container {
   background-color: #E5E5E5;
-  border-radius: 40px;
+  border-radius: 45px;
   width: 430px;
   height: 467px;
   /* Below is needed for the auth-container-title margins to work properly. If overflow: auto is not added 

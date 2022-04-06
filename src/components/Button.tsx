@@ -10,7 +10,8 @@ interface ButtonProps {
   color?: string,
   width?: string,
   height?: string,
-  marginTop?: string
+  marginTop?: string,
+  icon?: React.ReactNode
 }
 
 export default function Button({
@@ -21,7 +22,8 @@ export default function Button({
   color = "#FFFFFF",
   width = "100px",
   height = "100px",
-  marginTop = "10px"
+  marginTop = "10px",
+  icon
 }: ButtonProps) {
   return (
     <button
@@ -37,6 +39,7 @@ export default function Button({
       }}
       onClick={callBack}
     >
+      {icon}
       {text}
     </button>
   )
