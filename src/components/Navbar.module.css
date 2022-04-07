@@ -63,6 +63,7 @@
 .auth {
   display: flex;
   flex-direction: row;
+  gap: 16px;
   margin-right: 36px;
 }
 

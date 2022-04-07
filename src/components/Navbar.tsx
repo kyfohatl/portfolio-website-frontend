@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import Api from "../lib/Api"
 import Button from "./Button"
 
 import styles from "./Navbar.module.css"
@@ -14,11 +15,26 @@ export default function Navbar() {
         <li key="examples" className={styles.buttonNav}><Link to="/examples" className={styles.navLink}>Examples of Work</Link></li>
       </div>
       <div className={styles.auth}>
-        <li className={styles.buttonAuth}>
-          <Link to="/signin" className={styles.authLink}>
-            <Button text="Sign in" type={{ type: "submit" }} height="36px" width="64px" marginTop="0px" />
-          </Link>
-        </li>
+        {Api.hasTokens()
+          ?
+          <li className={styles.buttonAuth}>
+            <Link to="/signin" className={styles.authLink}>
+              <Button text="Sign out" type={{ type: "submit" }} height="36px" width="80px" marginTop="0px" backgroundColor="#253C78" />
+            </Link>
+          </li>
+          : [
+            <li className={styles.buttonAuth}>
+              <Link to="/signin" className={styles.authLink}>
+                <Button text="Sign in" type={{ type: "submit" }} height="36px" width="80px" marginTop="0px" />
+              </Link>
+            </li>,
+            <li className={styles.buttonAuth}>
+              <Link to="/signup" className={styles.authLink}>
+                <Button text="Sign up" type={{ type: "submit" }} height="36px" width="80px" marginTop="0px" backgroundColor="#340068" />
+              </Link>
+            </li>
+          ]
+        }
       </div>
     </nav>
   )
