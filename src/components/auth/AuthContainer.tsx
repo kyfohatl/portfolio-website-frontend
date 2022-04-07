@@ -11,11 +11,9 @@ export default function AuthContainer({ title, onSubmit, children }: AuthContain
   return (
     <div className="auth-container">
       <h3 className="auth-container-title">{title}</h3>
-      <div className="content">
-        <form onSubmit={onSubmit}>
-          {children}
-        </form>
-      </div>
+      <form className="content" onSubmit={onSubmit}>
+        {children}
+      </form>
     </div>
   )
 }

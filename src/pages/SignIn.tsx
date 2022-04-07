@@ -1,5 +1,3 @@
-import "./SignIn.module.css"
-
 import React, { useCallback, useState } from "react"
 import AuthContainer from "../components/auth/AuthContainer"
 import InputText from "../components/auth/InputText"
