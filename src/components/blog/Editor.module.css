@@ -1,0 +1,24 @@
+.container {
+  display: flex;
+  background-color: #1D1D1D;
+  width: 46%;
+  height: 300px;
+  overflow: auto;
+}
+
+.inputField {
+  background-color: #1D1D1D;
+  color: white;
+  padding: 0px;
+  border-style: none;
+  outline: none;
+  resize: none;
+  margin-left: 16px;
+  line-height: 20px;
+  width: 80%;
+  overflow: hidden;
+}
+
+.myP {
+  color: red;
+}

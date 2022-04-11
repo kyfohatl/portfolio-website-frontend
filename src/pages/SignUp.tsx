@@ -68,7 +68,10 @@ export default function SignUp() {
   }, [email, pass, confPass])
 
   return (
-    <PageContainer contentStyle={{ display: "flex", flexGrow: 1, justifyContent: "center", alignItems: "center" }}>
+    <PageContainer
+      contentStyle={{ display: "flex", flexGrow: 1, justifyContent: "center", alignItems: "center" }}
+      contentBlockStyle={{ display: "flex", justifyContent: "center" }}
+    >
       <AuthContainer title="Sign up" onSubmit={onSubmit}>
         <InputText
           label="Email"

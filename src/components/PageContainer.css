@@ -9,8 +9,10 @@
 .content {
   display: flex;
   justify-content: center;
+  flex-grow: 1;
 }
 
 .content-block {
   max-width: 1000px;
+  flex-grow: 1;
 }

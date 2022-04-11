@@ -71,7 +71,10 @@ export default function SignIn() {
   const onSignInFacebook = useCallback(() => console.log("Facebook Sign in!"), [])
 
   return (
-    <PageContainer contentStyle={{ display: "flex", flexGrow: 1, justifyContent: "center", alignItems: "center" }}>
+    <PageContainer
+      contentStyle={{ display: "flex", flexGrow: 1, justifyContent: "center", alignItems: "center" }}
+      contentBlockStyle={{ display: "flex", justifyContent: "center" }}
+    >
       <AuthContainer title="Sign In" onSubmit={onSignIn}>
         <InputText
           label="Email"
