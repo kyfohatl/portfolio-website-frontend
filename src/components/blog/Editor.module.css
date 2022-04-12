@@ -3,11 +3,14 @@
   background-color: #1D1D1D;
   width: 46%;
   height: 300px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: visible;
+  /* align-items: flex-start; */
+  white-space: nowrap;
 }
 
 .inputField {
-  background-color: #1D1D1D;
+  background-color: blue;
   color: white;
   padding: 0px;
   border-style: none;

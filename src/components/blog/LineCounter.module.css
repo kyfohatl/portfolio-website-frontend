@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   background-color: rgb(29, 29, 29);
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .line {
