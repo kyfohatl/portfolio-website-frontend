@@ -82,24 +82,24 @@ export default function Editor() {
 
         setTextAreaDimensions(expansion)
       }
-
-      console.log(textAreaDimensions)
     }
   }, [inputRef, containerRef, textAreaDimensions])
 
   //console.log(countNumLines(text))
 
   return (
-    <div className={styles.container} ref={containerRef}>
-      <LineCounter count={numLines} />
-      <textarea
-        className={styles.inputField}
-        ref={inputRef}
-        value={text}
-        onChange={onTextChange}
-        style={textAreaDimensions}
-        wrap="off"
-      />
+    <div className={styles.outerContainer}>
+      <div className={styles.innerContainer} ref={containerRef}>
+        <LineCounter count={numLines} />
+        <textarea
+          className={styles.inputField}
+          ref={inputRef}
+          value={text}
+          onChange={onTextChange}
+          style={textAreaDimensions}
+          wrap="off"
+        />
+      </div>
     </div>
   )
 }

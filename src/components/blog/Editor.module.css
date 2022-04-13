@@ -1,16 +1,23 @@
-.container {
-  display: flex;
+.outerContainer {
   background-color: #1D1D1D;
   width: 46%;
   height: 300px;
+  display: flex;
+  padding: 10px 7px 7px 10px;
+  border-radius: 24px;
+}
+
+.innerContainer {
+  display: flex;
+  flex-grow: 1;
+  background-color: #1D1D1D;
   overflow-y: auto;
   overflow-x: visible;
-  /* align-items: flex-start; */
   white-space: nowrap;
 }
 
 .inputField {
-  background-color: blue;
+  background-color: #1D1D1D;
   color: white;
   padding: 0px;
   border-style: none;
@@ -18,10 +25,26 @@
   resize: none;
   margin-left: 16px;
   line-height: 20px;
-  width: 80%;
+  flex-grow: 1;
   overflow: hidden;
 }
 
-.myP {
-  color: red;
+.innerContainer::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  border-radius: 20px;
+  background-color: #1D1D1D;
+}
+
+.innerContainer::-webkit-scrollbar-track {
+  background-color: #1D1D1D;
+}
+
+.innerContainer::-webkit-scrollbar-corner {
+  background-color: #1D1D1D;
+}
+
+.innerContainer::-webkit-scrollbar-thumb {
+  background-color: #424242;
+  border-radius: 20px;
 }
