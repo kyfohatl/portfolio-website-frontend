@@ -85,7 +85,20 @@ export default function Editor() {
     }
   }, [inputRef, containerRef, textAreaDimensions])
 
-  //console.log(countNumLines(text))
+  const onTabDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Tab") {
+      // Prevent tab key from removing focus from the textarea element
+      e.preventDefault()
+      // Now add indentation to the location of the cursor
+      if (inputRef.current) {
+        const start = inputRef.current.selectionStart
+        const end = inputRef.current.selectionEnd
+
+        const newText = text.substring(0, start) + "\t" + text.substring(end)
+        setText(newText)
+      }
+    }
+  }, [inputRef, text])
 
   return (
     <div className={styles.outerContainer}>
@@ -96,6 +109,7 @@ export default function Editor() {
           ref={inputRef}
           value={text}
           onChange={onTextChange}
+          onKeyDown={onTabDown}
           style={textAreaDimensions}
           wrap="off"
         />
