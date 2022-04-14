@@ -2,7 +2,7 @@ import React, { CSSProperties, useCallback, useEffect, useRef, useState } from "
 import styles from "./Editor.module.css"
 import LineCounter from "./LineCounter"
 
-type TextChange = {changeType: "Tab", changePos: number} | {changeType: "Other"}
+type TextChange = { changeType: "Tab", changePos: number } | { changeType: "Other" }
 
 export interface TextInfo {
   text: string,
@@ -11,7 +11,8 @@ export interface TextInfo {
 
 interface EditorProps {
   textInfo: TextInfo,
-  setText: (textInfo: TextInfo) => void
+  setText: (textInfo: TextInfo) => void,
+  title: string
 }
 
 // Returns the number of lines present in the given text
@@ -56,7 +57,7 @@ function getHorizontalExpansion(textArea: HTMLTextAreaElement, textAreaStyles: C
   return 0
 }
 
-export default function Editor({ textInfo, setText }: EditorProps) {
+export default function Editor({ textInfo, setText, title }: EditorProps) {
   const [numLines, setNumLines] = useState(1)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -72,7 +73,7 @@ export default function Editor({ textInfo, setText }: EditorProps) {
 
   const onTextChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     // Update the text state
-    setText({text: e.target.value, change: {changeType: "Other"}})
+    setText({ text: e.target.value, change: { changeType: "Other" } })
     // Get the new line count
     const updatedNumLines = countNumLines(e.target.value)
     // Now update the line counter displayed
@@ -85,6 +86,8 @@ export default function Editor({ textInfo, setText }: EditorProps) {
       const verticalExpansion = getVerticalExpansion(inputRef.current, inputRefStyles, updatedNumLines, containerRef.current)
       // Get the required textArea horizontal expansion if any
       const horizontalExpansion = getHorizontalExpansion(inputRef.current, inputRefStyles)
+
+      console.log(verticalExpansion, horizontalExpansion)
 
       if (verticalExpansion || horizontalExpansion) {
         const expansion: { minHeight?: string | number, minWidth?: string | number } = {}
@@ -113,24 +116,27 @@ export default function Editor({ textInfo, setText }: EditorProps) {
         const end = inputRef.current.selectionEnd
 
         const newText = textInfo.text.substring(0, start) + "\t" + textInfo.text.substring(end)
-        setText({text: newText, change: {changeType: "Tab", changePos: end + 1}}) /* increment end by 1 to account for the addition of a tab character */
+        setText({ text: newText, change: { changeType: "Tab", changePos: end + 1 } }) /* increment end by 1 to account for the addition of a tab character */
       }
     }
   }, [inputRef, textInfo, setText])
 
   return (
     <div className={styles.outerContainer}>
-      <div className={styles.innerContainer} ref={containerRef}>
-        <LineCounter count={numLines} />
-        <textarea
-          className={styles.inputField}
-          ref={inputRef}
-          value={textInfo.text}
-          onChange={onTextChange}
-          onKeyDown={onTabDown}
-          style={textAreaDimensions}
-          wrap="off"
-        />
+      <div className={styles.title}><p>{title}</p></div>
+      <div className={styles.middleContainer}>
+        <div className={styles.innerContainer} ref={containerRef}>
+          <LineCounter count={numLines} />
+          <textarea
+            className={styles.inputField}
+            ref={inputRef}
+            value={textInfo.text}
+            onChange={onTextChange}
+            onKeyDown={onTabDown}
+            style={textAreaDimensions}
+            wrap="off"
+          />
+        </div>
       </div>
     </div>
   )

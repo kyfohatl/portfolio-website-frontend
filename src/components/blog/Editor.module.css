@@ -1,18 +1,40 @@
 .outerContainer {
-  background-color: #1D1D1D;
-  width: 48%;
-  min-height: 300px;
   display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  width: 0;
+}
+
+.title {
+  border-radius: 24px 24px 0px 0px;
+  background-color: black;
+  width: 26%;
+  margin-left: 4%;
+}
+
+.title>p {
+  color: white;
+  font-weight: 600;
+  margin-left: 10%;
+  margin-top: 6%;
+  margin-bottom: 6%;
+}
+
+.middleContainer {
+  background-color: #1D1D1D;
+  display: flex;
+  flex-grow: 1;
+  width: 96%;
   padding: 10px 7px 7px 10px;
   border-radius: 24px;
+  overflow: auto;
 }
 
 .innerContainer {
   display: flex;
   flex-grow: 1;
   background-color: #1D1D1D;
-  overflow-y: auto;
-  overflow-x: visible;
+  overflow: auto;
   white-space: nowrap;
 }
 

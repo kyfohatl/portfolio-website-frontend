@@ -5,8 +5,8 @@ import PageContainer from "../components/PageContainer";
 import styles from "./CreateBlog.module.css"
 
 export default function CreateBlog() {
-  const [html, setHtml] = useState<TextInfo>({text: "", change: {changeType: "Other"}})
-  const [css, setCss] = useState<TextInfo>({text: "", change: {changeType: "Other"}})
+  const [html, setHtml] = useState<TextInfo>({ text: "", change: { changeType: "Other" } })
+  const [css, setCss] = useState<TextInfo>({ text: "", change: { changeType: "Other" } })
 
   const srcDoc = `
     <!DOCTYPE html>
@@ -19,11 +19,11 @@ export default function CreateBlog() {
   return (
     <PageContainer
       contentStyle={{ marginTop: "56px" }}
-      contentBlockStyle={{ display: "flex", flexDirection: "column", maxWidth: "80vw", maxHeight: "90vh", gap: "20px" }}
+      contentBlockStyle={{ display: "flex", flexDirection: "column", maxWidth: "80vw", maxHeight: "95vh", gap: "20px" }}
     >
       <div className={styles.topPane}>
-        <Editor textInfo={html} setText={setHtml} />
-        <Editor textInfo={css} setText={setCss} />
+        <Editor textInfo={html} setText={setHtml} title="HTML" />
+        <Editor textInfo={css} setText={setCss} title="CSS" />
       </div>
       <div className={styles.botPane}>
         <iframe

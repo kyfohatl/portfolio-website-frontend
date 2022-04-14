@@ -1,6 +1,8 @@
 .topPane {
   display: flex;
   justify-content: space-between;
+  flex-basis: auto;
+  gap: 2%;
   height: 45%;
 }
 
