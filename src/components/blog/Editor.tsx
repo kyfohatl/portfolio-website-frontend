@@ -2,6 +2,11 @@ import React, { CSSProperties, useCallback, useRef, useState } from "react"
 import styles from "./Editor.module.css"
 import LineCounter from "./LineCounter"
 
+interface EditorProps {
+  text: string,
+  setText: (text: string) => void
+}
+
 // Returns the number of lines present in the given text
 function countNumLines(text: string): number {
   return (text.match(/\n/g)?.length || 0) + 1
@@ -44,8 +49,7 @@ function getHorizontalExpansion(textArea: HTMLTextAreaElement, textAreaStyles: C
   return 0
 }
 
-export default function Editor() {
-  const [text, setText] = useState("")
+export default function Editor({ text, setText }: EditorProps) {
   const [numLines, setNumLines] = useState(1)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -83,7 +87,7 @@ export default function Editor() {
         setTextAreaDimensions(expansion)
       }
     }
-  }, [inputRef, containerRef, textAreaDimensions])
+  }, [inputRef, containerRef, textAreaDimensions, setText])
 
   const onTabDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Tab") {
@@ -98,7 +102,7 @@ export default function Editor() {
         setText(newText)
       }
     }
-  }, [inputRef, text])
+  }, [inputRef, text, setText])
 
   return (
     <div className={styles.outerContainer}>

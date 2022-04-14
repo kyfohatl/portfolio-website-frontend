@@ -1,0 +1,19 @@
+.topPane {
+  display: flex;
+  justify-content: space-between;
+  min-height: 45%;
+  max-height: 45%;
+}
+
+.botPane {
+  min-height: 45%;
+  max-height: 45%;
+  padding: 10px;
+  background-color: gainsboro;
+  border-radius: 20px;
+}
+
+.output {
+  width: 100%;
+  height: 100%;
+}
