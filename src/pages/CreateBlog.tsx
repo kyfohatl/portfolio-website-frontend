@@ -1,23 +1,20 @@
-import { useEffect, useState } from "react";
-import Editor from "../components/blog/Editor";
+import { useState } from "react";
+import Editor, { TextInfo } from "../components/blog/Editor";
 import PageContainer from "../components/PageContainer";
 
 import styles from "./CreateBlog.module.css"
 
 export default function CreateBlog() {
-  const [html, setHtml] = useState("")
-  const [css, setCss] = useState("")
+  const [html, setHtml] = useState<TextInfo>({text: "", change: {changeType: "Other"}})
+  const [css, setCss] = useState<TextInfo>({text: "", change: {changeType: "Other"}})
 
   const srcDoc = `
     <!DOCTYPE html>
     <html>
-      <body>${html}</body>
-      <style>${css}</style>
+      <body>${html.text}</body>
+      <style>${css.text}</style>
     </html>
   `
-  // useEffect(() => {
-
-  // }, [html, css])
 
   return (
     <PageContainer
@@ -25,8 +22,8 @@ export default function CreateBlog() {
       contentBlockStyle={{ display: "flex", flexDirection: "column", maxWidth: "80vw", maxHeight: "90vh", gap: "20px" }}
     >
       <div className={styles.topPane}>
-        <Editor text={html} setText={setHtml} />
-        <Editor text={css} setText={setCss} />
+        <Editor textInfo={html} setText={setHtml} />
+        <Editor textInfo={css} setText={setCss} />
       </div>
       <div className={styles.botPane}>
         <iframe

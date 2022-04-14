@@ -1,10 +1,17 @@
-import React, { CSSProperties, useCallback, useRef, useState } from "react"
+import React, { CSSProperties, useCallback, useEffect, useRef, useState } from "react"
 import styles from "./Editor.module.css"
 import LineCounter from "./LineCounter"
 
-interface EditorProps {
+type TextChange = {changeType: "Tab", changePos: number} | {changeType: "Other"}
+
+export interface TextInfo {
   text: string,
-  setText: (text: string) => void
+  change: TextChange
+}
+
+interface EditorProps {
+  textInfo: TextInfo,
+  setText: (textInfo: TextInfo) => void
 }
 
 // Returns the number of lines present in the given text
@@ -49,16 +56,23 @@ function getHorizontalExpansion(textArea: HTMLTextAreaElement, textAreaStyles: C
   return 0
 }
 
-export default function Editor({ text, setText }: EditorProps) {
+export default function Editor({ textInfo, setText }: EditorProps) {
   const [numLines, setNumLines] = useState(1)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   const [textAreaDimensions, setTextAreaDimensions] = useState<CSSProperties>()
 
+  useEffect(() => {
+    if (textInfo.change.changeType === "Tab" && inputRef.current) {
+      inputRef.current.selectionStart = textInfo.change.changePos
+      inputRef.current.selectionEnd = textInfo.change.changePos
+    }
+  }, [textInfo, inputRef])
+
   const onTextChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     // Update the text state
-    setText(e.target.value)
+    setText({text: e.target.value, change: {changeType: "Other"}})
     // Get the new line count
     const updatedNumLines = countNumLines(e.target.value)
     // Now update the line counter displayed
@@ -98,11 +112,11 @@ export default function Editor({ text, setText }: EditorProps) {
         const start = inputRef.current.selectionStart
         const end = inputRef.current.selectionEnd
 
-        const newText = text.substring(0, start) + "\t" + text.substring(end)
-        setText(newText)
+        const newText = textInfo.text.substring(0, start) + "\t" + textInfo.text.substring(end)
+        setText({text: newText, change: {changeType: "Tab", changePos: end + 1}}) /* increment end by 1 to account for the addition of a tab character */
       }
     }
-  }, [inputRef, text, setText])
+  }, [inputRef, textInfo, setText])
 
   return (
     <div className={styles.outerContainer}>
@@ -111,7 +125,7 @@ export default function Editor({ text, setText }: EditorProps) {
         <textarea
           className={styles.inputField}
           ref={inputRef}
-          value={text}
+          value={textInfo.text}
           onChange={onTextChange}
           onKeyDown={onTabDown}
           style={textAreaDimensions}
