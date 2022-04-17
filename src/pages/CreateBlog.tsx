@@ -1,8 +1,11 @@
 import { useState } from "react";
 import Editor, { TextInfo } from "../components/blog/Editor";
+import Button from "../components/Button";
 import PageContainer from "../components/PageContainer";
 
 import styles from "./CreateBlog.module.css"
+import { ReactComponent as SaveIcon } from "../assets/images/saveIcon.svg"
+
 
 export default function CreateBlog() {
   const [html, setHtml] = useState<TextInfo>({ text: "", change: { changeType: "Other" } })
@@ -21,6 +24,9 @@ export default function CreateBlog() {
       contentStyle={{ marginTop: "56px" }}
       contentBlockStyle={{ display: "flex", flexDirection: "column", maxWidth: "80vw", maxHeight: "95vh", gap: "20px" }}
     >
+      <div>
+        <Button text="Save" type={{ type: "submit" }} height="28px" width="88" icon={SaveIcon} />
+      </div>
       <div className={styles.topPane}>
         <Editor textInfo={html} setText={setHtml} title="HTML" />
         <Editor textInfo={css} setText={setCss} title="CSS" />
