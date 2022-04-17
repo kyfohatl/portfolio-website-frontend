@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Editor, { TextInfo } from "../components/blog/Editor";
 import Button from "../components/Button";
 import PageContainer from "../components/PageContainer";
 
 import styles from "./CreateBlog.module.css"
 import { ReactComponent as SaveIcon } from "../assets/images/saveIcon.svg"
+import Api from "../lib/api/Api";
 
 
 export default function CreateBlog() {
@@ -19,13 +20,23 @@ export default function CreateBlog() {
     </html>
   `
 
+  const onClickSave = useCallback(() => {
+    Api.saveBlog(html.text, css.text)
+  }, [html, css])
+
   return (
     <PageContainer
       contentStyle={{ marginTop: "56px" }}
       contentBlockStyle={{ display: "flex", flexDirection: "column", maxWidth: "80vw", maxHeight: "95vh", gap: "20px" }}
     >
       <div>
-        <Button text="Save" type={{ type: "submit" }} height="28px" width="88" icon={SaveIcon} />
+        <Button
+          text="Save"
+          type={{ type: "button", callBack:  onClickSave}}
+          height="40px"
+          width="100px"
+          icon={<SaveIcon width={21} height={21} />}
+        />
       </div>
       <div className={styles.topPane}>
         <Editor textInfo={html} setText={setHtml} title="HTML" />

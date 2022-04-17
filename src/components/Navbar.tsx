@@ -1,6 +1,7 @@
 import { useCallback } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import Api from "../lib/Api"
+import Api from "../lib/api/Api"
+import { hasTokens } from "../lib/api/auth.api"
 import Button from "./Button"
 
 import styles from "./Navbar.module.css"
@@ -26,7 +27,7 @@ export default function Navbar() {
         <li key="examples" className={styles.buttonNav}><Link to="/examples" className={styles.navLink}>Examples of Work</Link></li>
       </div>
       <div className={styles.auth}>
-        {Api.hasTokens()
+        {hasTokens()
           ?
           <li className={styles.buttonAuth}>
             <Button
