@@ -26,9 +26,18 @@ export default class Api {
   }
 
   // Saves the given blog to the database
-  static async saveBlog(html: string, css: string) {
+  // If no blogId is supplied, a new blog will be created. Otherwise it will try to override the 
+  // existing blog with the given id
+  static async saveBlog(html: string, css: string, blogId?: string | null) {
     try {
-      await fetchWithAuth("http://localhost:8000/blog/create", "POST", { html: html, css: css }, 5)
+      const returningBlogId = await fetchWithAuth<{success?: {id: string}, error?: {generic: unknown}}>(
+        "http://localhost:8000/blog/create",
+        "POST",
+        { html: html, css: css, blogId: blogId },
+        5
+      )
+
+      return returningBlogId
     } catch (err) {
       // Could not save blog
       console.error(err)

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Editor, { TextInfo } from "../components/blog/Editor";
 import Button from "../components/Button";
 import PageContainer from "../components/PageContainer";
@@ -11,6 +11,12 @@ import Api from "../lib/api/Api";
 export default function CreateBlog() {
   const [html, setHtml] = useState<TextInfo>({ text: "", change: { changeType: "Other" } })
   const [css, setCss] = useState<TextInfo>({ text: "", change: { changeType: "Other" } })
+  const [saveButtonText, setSaveButtonText] = useState<"Create" | "Save">("Create")
+
+  // Remove any blog id in local storage if any exist
+  useEffect(() => {
+    localStorage.removeItem("blogId")
+  }, [])
 
   const srcDoc = `
     <!DOCTYPE html>
@@ -20,8 +26,13 @@ export default function CreateBlog() {
     </html>
   `
 
-  const onClickSave = useCallback(() => {
-    Api.saveBlog(html.text, css.text)
+  // Save the blog and store the blog id into local storage so that future saves will edit the blog
+  const onClickSave = useCallback(async () => {
+    const blogId = await Api.saveBlog(html.text, css.text, localStorage.getItem("blogId"))
+    if (blogId && blogId.success) {
+      localStorage.setItem("blogId", blogId.success.id)
+      setSaveButtonText("Save")
+    }
   }, [html, css])
 
   return (
@@ -29,9 +40,9 @@ export default function CreateBlog() {
       contentStyle={{ marginTop: "56px" }}
       contentBlockStyle={{ display: "flex", flexDirection: "column", maxWidth: "80vw", maxHeight: "95vh", gap: "20px" }}
     >
-      <div>
+      <div className={styles.savePane}>
         <Button
-          text="Save"
+          text={saveButtonText}
           type={{ type: "button", callBack:  onClickSave}}
           height="40px"
           width="100px"
