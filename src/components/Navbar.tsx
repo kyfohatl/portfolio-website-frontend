@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import { useCallback, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import Api from "../lib/api/Api"
 import { hasTokens } from "../lib/api/auth.api"
@@ -10,7 +10,30 @@ export default function Navbar() {
   // Used for navigating with the react router
   const navigate = useNavigate()
 
+  // Button disabled states
+  const [signInDisabled, setSignInDisabled] = useState(false)
+  const [signUpDisabled, setSignUpDisabled] = useState(false)
+  // Button loading states
+  const [signInLoading, setSignInLoading] = useState(false)
+  const [signUpLoading, setSignUpLoading] = useState(false)
+  const [signOutLoading, setSignOutLoading] = useState(false)
+
+  const onSigInClick = useCallback(() => {
+    // Disable other buttons and set loading
+    setSignUpDisabled(true)
+    setSignInLoading(true)
+  }, [])
+
+  const onSignUpClick = useCallback(() => {
+    // Disable other buttons and set loading
+    setSignInDisabled(true)
+    setSignUpLoading(true)
+  }, [])
+
   const onSignOutClick = useCallback(async () => {
+    // Set button loading state
+    setSignOutLoading(true)
+
     // Sing out the user
     await Api.signOut()
     // Now navigate to the sign in page
@@ -37,17 +60,35 @@ export default function Navbar() {
               width="80px"
               marginTop="0px"
               backgroundColor="#253C78"
+              isLoading={signOutLoading}
             />
           </li>
           : [
             <li className={styles.buttonAuth}>
               <Link to="/signin" className={styles.authLink}>
-                <Button text="Sign in" type={{ type: "submit" }} height="36px" width="100px" marginTop="0px" />
+                <Button
+                  text="Sign in"
+                  type={{ type: "submit", callBack: onSigInClick }}
+                  height="36px"
+                  width="100px"
+                  marginTop="0px"
+                  disabled={signInDisabled}
+                  isLoading={signInLoading}
+                />
               </Link>
             </li>,
             <li className={styles.buttonAuth}>
               <Link to="/signup" className={styles.authLink}>
-                <Button text="Sign up" type={{ type: "submit" }} height="36px" width="100px" marginTop="0px" backgroundColor="#340068" />
+                <Button
+                  text="Sign up"
+                  type={{ type: "submit", callBack: onSignUpClick }}
+                  height="36px"
+                  width="100px"
+                  marginTop="0px"
+                  backgroundColor="#340068"
+                  disabled={signUpDisabled}
+                  isLoading={signUpLoading}
+                />
               </Link>
             </li>
           ]

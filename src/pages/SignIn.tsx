@@ -15,6 +15,14 @@ export default function SignIn() {
   // Error messages
   const [emailErrMssg, setEmailErrMssg] = useState("")
   const [passErrMssg, setPassErrMssg] = useState("")
+  // Button disabled states
+  const [signInDisabled, setSignInDisabled] = useState(false)
+  const [signInGoogleDisabled, setSignInGoogleDisabled] = useState(false)
+  const [signInFacebookDisabled, setSignInFacebookDisabled] = useState(false)
+  // Button loading states
+  const [signInLoading, setSignInLoading] = useState(false)
+  const [signInGoogleLoading, setSignInGoogleLoading] = useState(false)
+  const [signInFacebookLoading, setSignInFacebookLoading] = useState(false)
 
   const onSignIn = useCallback(async (event: React.FormEvent) => {
     // Prevent default form behavior
@@ -35,6 +43,12 @@ export default function SignIn() {
     }
 
     // No input errors detected
+    // Disable other buttons and set loading
+    setSignInGoogleDisabled(true)
+    setSignInFacebookDisabled(true)
+    setSignInLoading(true)
+
+    // Attempt sign in
     try {
       // Post new user
       const response = await fetch("http://localhost:8000/auth/users/login", {
@@ -66,9 +80,23 @@ export default function SignIn() {
     }
   }, [email, pass])
 
-  const onSignInGoogle = useCallback(() => console.log("Google Sign in!"), [])
+  const onSignInGoogle = useCallback(() => {
+    console.log("Google Sign in!")
 
-  const onSignInFacebook = useCallback(() => console.log("Facebook Sign in!"), [])
+    // Disable other buttons and set loading
+    setSignInDisabled(true)
+    setSignInFacebookDisabled(true)
+    setSignInGoogleLoading(true)
+  }, [])
+
+  const onSignInFacebook = useCallback(() => {
+    console.log("Facebook Sign in!")
+
+    // Disable other buttons and set loading
+    setSignInDisabled(true)
+    setSignInGoogleDisabled(true)
+    setSignInFacebookLoading(true)
+  }, [])
 
   return (
     <PageContainer
@@ -94,6 +122,8 @@ export default function SignIn() {
           width="285px"
           height="36px"
           text="Sign in"
+          isLoading={signInLoading}
+          disabled={signInDisabled}
         />
         <Button
           type={{ type: "button", callBack: onSignInGoogle }}
@@ -103,6 +133,8 @@ export default function SignIn() {
           backgroundColor="#FFFFFF"
           color="#000000"
           icon={<GoogleLogo width={28} height={28} />}
+          isLoading={signInGoogleLoading}
+          disabled={signInGoogleDisabled}
         />
         <Button
           type={{ type: "button", callBack: onSignInFacebook }}
@@ -111,6 +143,8 @@ export default function SignIn() {
           text="Sign in with Facebook"
           backgroundColor="#4267B2"
           icon={<FacebookLogo width={28} height={28} />}
+          isLoading={signInFacebookLoading}
+          disabled={signInFacebookDisabled}
         />
         <p
           className="auth-help"

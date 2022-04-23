@@ -11,7 +11,8 @@ interface CallBackButton {
 
 // A submit type button does not need a callback function
 interface SubmitButton {
-  type: "submit"
+  type: "submit",
+  callBack?: () => void
 }
 
 type ButtonType = CallBackButton | SubmitButton
@@ -26,7 +27,8 @@ interface ButtonProps {
   height?: string,
   marginTop?: string,
   icon?: React.ReactNode,
-  isLoading?: boolean
+  isLoading?: boolean,
+  disabled?: boolean
 }
 
 export default function Button({
@@ -39,20 +41,29 @@ export default function Button({
   height = "100px",
   marginTop = "10px",
   icon,
-  isLoading = false
+  isLoading = false,
+  disabled = false
 }: ButtonProps) {
+  let buttonStyles: React.CSSProperties = {
+    fontSize: fontSize,
+    width: width,
+    height: height,
+    marginTop: marginTop
+  }
+
+  // Only add color and background color if not disabled as otherwise they override the disabled selector
+  // css styling
+  if (!disabled) {
+    buttonStyles.backgroundColor = backgroundColor
+    buttonStyles.color = color
+  }
+
   let button = <button
     className={styles.button}
     type={type.type}
-    style={{
-      backgroundColor: backgroundColor,
-      fontSize: fontSize,
-      color: color,
-      width: width,
-      height: height,
-      marginTop: marginTop
-    }}
-    {...(type.type === "button" ? { onClick: type.callBack } : {})}
+    style={buttonStyles}
+    disabled={disabled}
+    {...(type.callBack ? { onClick: type.callBack } : {})}
   >
     {icon}
     {text}

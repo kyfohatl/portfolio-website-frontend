@@ -12,6 +12,11 @@
   cursor: pointer;
 }
 
+.button:disabled {
+  background-color: #eeeeee;
+  color: #ababab;
+  cursor: default;
+}
 
 .button:hover {
   filter: brightness(80%);
