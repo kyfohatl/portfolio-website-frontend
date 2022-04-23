@@ -1,0 +1,35 @@
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-weight: 600;
+  height: 64px;
+  width: 150px;
+  border-radius: 10px;
+  border-width: 1px;
+}
+
+.button::before {
+  content: "";
+  display: block;
+  border-radius: 50%;
+  height: var(--indicatorSize, 50px);
+  width: var(--indicatorSize, 50px);
+  margin-right: 1%;
+  border-width: 3px;
+  border-style: solid;
+  border-color: #253C78 transparent #253C78 transparent;
+  animation: loading 1s linear infinite;
+}
+
+@keyframes loading {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

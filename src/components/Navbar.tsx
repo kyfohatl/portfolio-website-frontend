@@ -42,12 +42,12 @@ export default function Navbar() {
           : [
             <li className={styles.buttonAuth}>
               <Link to="/signin" className={styles.authLink}>
-                <Button text="Sign in" type={{ type: "submit" }} height="36px" width="80px" marginTop="0px" />
+                <Button text="Sign in" type={{ type: "submit" }} height="36px" width="100px" marginTop="0px" />
               </Link>
             </li>,
             <li className={styles.buttonAuth}>
               <Link to="/signup" className={styles.authLink}>
-                <Button text="Sign up" type={{ type: "submit" }} height="36px" width="80px" marginTop="0px" backgroundColor="#340068" />
+                <Button text="Sign up" type={{ type: "submit" }} height="36px" width="100px" marginTop="0px" backgroundColor="#340068" />
               </Link>
             </li>
           ]
