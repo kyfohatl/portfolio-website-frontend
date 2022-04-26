@@ -1,0 +1,24 @@
+.savePane {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.topPane {
+  display: flex;
+  justify-content: space-between;
+  flex-basis: auto;
+  gap: 2%;
+  height: 45%;
+}
+
+.botPane {
+  height: 45%;
+  padding: 10px;
+  background-color: gainsboro;
+  border-radius: 20px;
+}
+
+.output {
+  width: 100%;
+  height: 100%;
+}

@@ -1,0 +1,12 @@
+.linesCol {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(29, 29, 29);
+  margin-top: 1px;
+}
+
+.line {
+  padding: 0px;
+  min-height: 20px;
+  color: #6B7D78
+}

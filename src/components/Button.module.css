@@ -1,0 +1,47 @@
+.button {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-weight: 600;
+  border-radius: 10px;
+  border-style: none;
+  gap: 8px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.button:disabled {
+  background-color: #eeeeee;
+  color: #ababab;
+  cursor: default;
+}
+
+.button:hover {
+  filter: brightness(80%);
+}
+
+.button:after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  transform: scale(30);
+  opacity: 0;
+  transition: all 500ms;
+}
+
+.button:active:after {
+  opacity: 1;
+  transform: scale(0);
+  transition: 0s;
+}
+
+.span {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+}
