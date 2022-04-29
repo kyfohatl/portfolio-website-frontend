@@ -3,20 +3,41 @@ import Editor, { TextInfo } from "../components/blog/Editor";
 import Button from "../components/Button";
 import PageContainer from "../components/PageContainer";
 
-import styles from "./CreateBlog.module.css"
+import styles from "./EditBlog.module.css"
 import { ReactComponent as SaveIcon } from "../assets/images/saveIcon.svg"
-import Api from "../lib/api/Api";
+import Api, { BlogProps } from "../lib/api/Api";
+import { useParams } from "react-router-dom";
 
 
-export default function CreateBlog() {
+export default function EditBlog() {
   const [html, setHtml] = useState<TextInfo>({ text: "", change: { changeType: "Other" } })
   const [css, setCss] = useState<TextInfo>({ text: "", change: { changeType: "Other" } })
   const [saveButtonText, setSaveButtonText] = useState<"Create" | "Save">("Create")
 
-  // Remove any blog id in local storage if any exist
+  const { blogId } = useParams()
+
+  // Load blog content from database
+  let blog: BlogProps
   useEffect(() => {
-    localStorage.removeItem("blogId")
-  }, [])
+    async function getBlog() {
+      if (blogId) {
+        // We are editing an existing blog
+        try {
+          const response = await Api.getBlog(blogId)
+
+          // TODO
+          if (!response || !response.success) return console.error(response?.error)
+
+          blog = response.success.blog
+        } catch (err) {
+          // TODO
+          console.error(err)
+        }
+      }
+    }
+
+    getBlog()
+  }, [blogId])
 
   const srcDoc = `
     <!DOCTYPE html>
@@ -43,7 +64,7 @@ export default function CreateBlog() {
       <div className={styles.savePane}>
         <Button
           text={saveButtonText}
-          type={{ type: "button", callBack:  onClickSave}}
+          type={{ type: "button", callBack: onClickSave }}
           height="40px"
           width="100px"
           icon={<SaveIcon width={21} height={21} />}
