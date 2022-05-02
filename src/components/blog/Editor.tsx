@@ -87,8 +87,6 @@ export default function Editor({ textInfo, setText, title }: EditorProps) {
       // Get the required textArea horizontal expansion if any
       const horizontalExpansion = getHorizontalExpansion(inputRef.current, inputRefStyles)
 
-      console.log(verticalExpansion, horizontalExpansion)
-
       if (verticalExpansion || horizontalExpansion) {
         const expansion: { minHeight?: string | number, minWidth?: string | number } = {}
         // Set current height and width if they exist

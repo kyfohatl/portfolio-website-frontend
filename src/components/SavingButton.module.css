@@ -1,0 +1,41 @@
+.button {
+  background-color: antiquewhite;
+  height: 64px;
+  width: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tick {
+  display: flex;
+}
+
+.tick::before {
+  content: "";
+  display: inline-block;
+  /* background-color: greenyellow; */
+  border-style: solid;
+  border-width: 4px;
+  border-left-color: black;
+  border-bottom-color: black;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  height: 6px;
+  width: 40px;
+  animation: drawTick 1s ease infinite;
+}
+
+@keyframes drawTick {
+  0% {
+    transform: rotate(-45deg) scaleX(0.1) scaleY(0.1);
+  }
+
+  30% {
+    transform: rotate(-45deg) scaleX(0.1) scaleY(1);
+  }
+
+  100% {
+    transform: rotate(-45deg) scale(1) scaleY(1);
+  }
+}

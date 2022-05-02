@@ -43,7 +43,7 @@ export default class Api {
       return await response.json() as { success?: { blog: BlogProps }, error?: { generic: unknown } }
     } catch (err) {
       // Could not fetch blog
-      console.error(err)
+      throw err
     }
   }
 
@@ -62,7 +62,7 @@ export default class Api {
       return response
     } catch (err) {
       // Unable to authenticate
-      console.error(err)
+      throw err
     }
   }
 }

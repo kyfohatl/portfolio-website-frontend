@@ -24,7 +24,7 @@ ReactDOM.render(
         <Route path="examples" element={<Examples />} />
         <Route path="signup" element={<SignUp />} />
         <Route path="signin" element={<SignIn />} />
-        <Route path="createblog" element={<EditBlog />} />
+        <Route path="editblog" element={<EditBlog />} />
         <Route path="editblog/:blogId" element={<EditBlog />} />
       </Routes>
     </BrowserRouter>

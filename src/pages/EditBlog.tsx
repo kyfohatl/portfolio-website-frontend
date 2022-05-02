@@ -13,11 +13,12 @@ export default function EditBlog() {
   const [html, setHtml] = useState<TextInfo>({ text: "", change: { changeType: "Other" } })
   const [css, setCss] = useState<TextInfo>({ text: "", change: { changeType: "Other" } })
   const [saveButtonText, setSaveButtonText] = useState<"Create" | "Save">("Create")
+  const [blog, setBlog] = useState<BlogProps>()
+  const [saveButtonLoading, setSaveButtonLoading] = useState(false)
 
   const { blogId } = useParams()
 
   // Load blog content from database
-  let blog: BlogProps
   useEffect(() => {
     async function getBlog() {
       if (blogId) {
@@ -26,9 +27,12 @@ export default function EditBlog() {
           const response = await Api.getBlog(blogId)
 
           // TODO
-          if (!response || !response.success) return console.error(response?.error)
+          if (!response.success) return console.error(response?.error)
 
-          blog = response.success.blog
+          // Successful response. Store blog properties
+          setBlog(response.success.blog)
+          setHtml({ text: response.success.blog.html, change: { changeType: "Other" } })
+          setCss({ text: response.success.blog.css, change: { changeType: "Other" } })
         } catch (err) {
           // TODO
           console.error(err)
@@ -39,6 +43,15 @@ export default function EditBlog() {
     getBlog()
   }, [blogId])
 
+  // Change the "Create" button to "Save" if an exiting blog is being edited
+  useEffect(() => {
+    if (blogId || blog) {
+      setSaveButtonText("Save")
+    } else {
+      setSaveButtonText("Create")
+    }
+  }, [blogId, blog])
+
   const srcDoc = `
     <!DOCTYPE html>
     <html>
@@ -47,14 +60,23 @@ export default function EditBlog() {
     </html>
   `
 
-  // Save the blog and store the blog id into local storage so that future saves will edit the blog
+  // Save changes to the blog if editing an existing blog, or create a new blog
   const onClickSave = useCallback(async () => {
-    const blogId = await Api.saveBlog(html.text, css.text, localStorage.getItem("blogId"))
-    if (blogId && blogId.success) {
-      localStorage.setItem("blogId", blogId.success.id)
-      setSaveButtonText("Save")
+    // Set save button state to loading
+    setSaveButtonLoading(true)
+
+    // Now try to save changes
+    try {
+      const response = await Api.saveBlog(html.text, css.text, blogId)
+      // TODO
+      if (response.error) console.error(response.error)
+      // Revert save button state
+      setSaveButtonLoading(false)
+    } catch (err) {
+      // TODO
+      console.error(err)
     }
-  }, [html, css])
+  }, [html, css, blogId])
 
   return (
     <PageContainer
@@ -68,6 +90,7 @@ export default function EditBlog() {
           height="40px"
           width="100px"
           icon={<SaveIcon width={21} height={21} />}
+          isLoading={saveButtonLoading}
         />
       </div>
       <div className={styles.topPane}>
