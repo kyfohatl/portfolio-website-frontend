@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import Editor, { TextInfo } from "../components/blog/Editor";
-import Button from "../components/Button";
+import Button, { ButtonState } from "../components/Button";
 import PageContainer from "../components/PageContainer";
 
 import styles from "./EditBlog.module.css"
@@ -14,9 +14,8 @@ export default function EditBlog() {
   const [css, setCss] = useState<TextInfo>({ text: "", change: { changeType: "Other" } })
   const [saveButtonText, setSaveButtonText] = useState<"Create" | "Save">("Create")
   const [blog, setBlog] = useState<BlogProps>()
-  const [saveButtonLoading, setSaveButtonLoading] = useState(false)
-
-  const { blogId } = useParams()
+  const [blogId, setBlogId] = useState(useParams().blogId)
+  const [saveButtonState, setSaveButtonState] = useState<ButtonState>({ state: "normal" })
 
   // Load blog content from database
   useEffect(() => {
@@ -63,15 +62,17 @@ export default function EditBlog() {
   // Save changes to the blog if editing an existing blog, or create a new blog
   const onClickSave = useCallback(async () => {
     // Set save button state to loading
-    setSaveButtonLoading(true)
+    setSaveButtonState({ state: "loading" })
 
     // Now try to save changes
     try {
       const response = await Api.saveBlog(html.text, css.text, blogId)
       // TODO
-      if (response.error) console.error(response.error)
-      // Revert save button state
-      setSaveButtonLoading(false)
+      if (response.error || !response.success) return console.error(response.error)
+      // Set save button state to saving, and then back to normal
+      setSaveButtonState({ state: "saving", onAnimationEnd: () => { setSaveButtonState({ state: "normal" }) } })
+      // Save the returning blog id
+      setBlogId(response.success.id)
     } catch (err) {
       // TODO
       console.error(err)
@@ -90,7 +91,7 @@ export default function EditBlog() {
           height="40px"
           width="100px"
           icon={<SaveIcon width={21} height={21} />}
-          isLoading={saveButtonLoading}
+          buttonState={saveButtonState}
         />
       </div>
       <div className={styles.topPane}>

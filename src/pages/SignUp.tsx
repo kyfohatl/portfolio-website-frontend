@@ -3,7 +3,7 @@ import "./SignUp.css"
 import React, { useCallback, useState } from "react"
 import AuthContainer from "../components/auth/AuthContainer"
 import InputText from "../components/auth/InputText"
-import Button from "../components/Button"
+import Button, { ButtonState } from "../components/Button"
 import PageContainer from "../components/PageContainer"
 import { ErrorResponse } from "../lib/commonTypes"
 
@@ -16,6 +16,8 @@ export default function SignUp() {
   const [emailErrMssg, setEmailErrMssg] = useState("")
   const [passErrMssg, setPassErrMssg] = useState("")
   const [confPassErrMssg, setConfPassErrMssg] = useState("")
+  // Button state
+  const [signUpState, setSignUpState] = useState<ButtonState>({ state: "normal" })
 
   const onSubmit = useCallback(async (event: React.FormEvent) => {
     // Prevent default form behavior
@@ -42,6 +44,9 @@ export default function SignUp() {
     }
 
     // No input errors detected
+    // Set button to loading state
+    setSignUpState({ state: "loading" })
+
     try {
       // Post new user
       const response = await fetch("http://localhost:8000/auth/users", {
@@ -59,10 +64,13 @@ export default function SignUp() {
       if (parsedResponse.error?.email) {
         // Set the new error message
         setEmailErrMssg(parsedResponse.error.email)
+        // Set button back to normal state
+        setSignUpState({ state: "normal" })
       } else {
         console.log("New user created: ", parsedResponse)
       }
     } catch (err) {
+      // TODO
       console.error(err)
     }
   }, [email, pass, confPass])
@@ -98,6 +106,7 @@ export default function SignUp() {
           width="285px"
           height="36px"
           text="Sign up"
+          buttonState={signUpState}
         />
         <p
           className="auth-help"
