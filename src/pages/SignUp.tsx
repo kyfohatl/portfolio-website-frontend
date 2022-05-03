@@ -6,6 +6,7 @@ import InputText from "../components/auth/InputText"
 import Button, { ButtonState } from "../components/Button"
 import PageContainer from "../components/PageContainer"
 import { ErrorResponse } from "../lib/commonTypes"
+import { useNavigate } from "react-router-dom"
 
 export default function SignUp() {
   // User inputs
@@ -18,6 +19,8 @@ export default function SignUp() {
   const [confPassErrMssg, setConfPassErrMssg] = useState("")
   // Button state
   const [signUpState, setSignUpState] = useState<ButtonState>({ state: "normal" })
+
+  const navigate = useNavigate()
 
   const onSubmit = useCallback(async (event: React.FormEvent) => {
     // Prevent default form behavior
@@ -67,13 +70,17 @@ export default function SignUp() {
         // Set button back to normal state
         setSignUpState({ state: "normal" })
       } else {
+        // New user was created
         console.log("New user created: ", parsedResponse)
+        // TODO
+        // Navigate to home page
+        navigate("/")
       }
     } catch (err) {
       // TODO
       console.error(err)
     }
-  }, [email, pass, confPass])
+  }, [email, pass, confPass, navigate])
 
   return (
     <PageContainer
