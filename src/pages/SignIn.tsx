@@ -7,6 +7,7 @@ import { ApiResponse } from "../lib/commonTypes"
 
 import { ReactComponent as FacebookLogo } from "../assets/images/facebookIcon.svg"
 import { ReactComponent as GoogleLogo } from "../assets/images/googleIcon.svg"
+import { useNavigate } from "react-router-dom"
 
 export default function SignIn() {
   // User inputs
@@ -23,6 +24,8 @@ export default function SignIn() {
   const [signInState, setSignInState] = useState<ButtonState>({ state: "normal" })
   const [signInGoogleState, setSignInGoogleState] = useState<ButtonState>({ state: "normal" })
   const [signInFacebookState, setSignInFacebookState] = useState<ButtonState>({ state: "normal" })
+
+  const navigate = useNavigate()
 
   const onSignIn = useCallback(async (event: React.FormEvent) => {
     // Prevent default form behavior
@@ -69,16 +72,25 @@ export default function SignIn() {
         if (parsedResponse.error.email) setEmailErrMssg(parsedResponse.error.email)
         if (parsedResponse.error.password) setPassErrMssg(parsedResponse.error.password)
         if (parsedResponse.error.generic) console.error(parsedResponse.error)
+
+        // Reset button states
+        setSignInGoogleDisabled(false)
+        setSignInFacebookDisabled(false)
+        setSignInState({ state: "normal" })
       } else {
         // The request succeeded
         // Store the access and refresh tokens in localStorage
         localStorage.setItem("accessToken", parsedResponse.success.accessToken)
         localStorage.setItem("refreshToken", parsedResponse.success.refreshToken)
+
+        // TODO
+        // Redirect to home page
+        navigate("/")
       }
     } catch (err) {
       console.error(err)
     }
-  }, [email, pass])
+  }, [email, pass, navigate])
 
   const onSignInGoogle = useCallback(() => {
     console.log("Google Sign in!")
