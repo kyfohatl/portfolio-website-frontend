@@ -16,6 +16,7 @@ export default function EditBlog() {
   const [blog, setBlog] = useState<BlogProps>()
   const [blogId, setBlogId] = useState(useParams().blogId)
   const [saveButtonState, setSaveButtonState] = useState<ButtonState>({ state: "normal" })
+  const [loading, setLoading] = useState(false)
 
   // Load blog content from database
   useEffect(() => {
@@ -39,7 +40,9 @@ export default function EditBlog() {
       }
     }
 
+    setLoading(true)
     getBlog()
+    setLoading(false)
   }, [blogId])
 
   // Change the "Create" button to "Save" if an exiting blog is being edited
@@ -83,6 +86,7 @@ export default function EditBlog() {
     <PageContainer
       contentStyle={{ marginTop: "56px" }}
       contentBlockStyle={{ display: "flex", flexDirection: "column", maxWidth: "80vw", maxHeight: "95vh", gap: "20px" }}
+      loading={loading}
     >
       <div className={styles.savePane}>
         <Button
