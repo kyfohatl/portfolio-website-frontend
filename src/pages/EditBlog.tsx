@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Editor, { TextInfo } from "../components/blog/Editor";
 import Button, { ButtonState } from "../components/Button";
-import PageContainer from "../components/PageContainer";
+import PageContainer, { PageContainerState } from "../components/PageContainer";
 
 import styles from "./EditBlog.module.css"
 import { ReactComponent as SaveIcon } from "../assets/images/saveIcon.svg"
@@ -16,7 +16,7 @@ export default function EditBlog() {
   const [blog, setBlog] = useState<BlogProps>()
   const [blogId, setBlogId] = useState(useParams().blogId)
   const [saveButtonState, setSaveButtonState] = useState<ButtonState>({ state: "normal" })
-  const [loading, setLoading] = useState(false)
+  const [pageState, setPageState] = useState<PageContainerState>({ status: "normal" })
 
   // Load blog content from database
   useEffect(() => {
@@ -40,9 +40,9 @@ export default function EditBlog() {
       }
     }
 
-    setLoading(true)
+    setPageState({ status: "loading" })
     getBlog()
-    setLoading(false)
+    setPageState({ status: "normal" })
   }, [blogId])
 
   // Change the "Create" button to "Save" if an exiting blog is being edited
@@ -86,7 +86,7 @@ export default function EditBlog() {
     <PageContainer
       contentStyle={{ marginTop: "56px" }}
       contentBlockStyle={{ display: "flex", flexDirection: "column", maxWidth: "80vw", maxHeight: "95vh", gap: "20px" }}
-      loading={loading}
+      state={pageState}
     >
       <div className={styles.savePane}>
         <Button

@@ -2,12 +2,15 @@ import "./PageContainer.css"
 
 import Navbar from "./Navbar"
 import Loading from "./Loading"
+import Error from "./Error"
+
+export type PageContainerState = { status: "normal" | "loading" } | { status: "Error", errorCode: string }
 
 interface PageContainerProps {
   backgroundStyle?: React.CSSProperties,
   contentStyle?: React.CSSProperties,
   contentBlockStyle?: React.CSSProperties,
-  loading?: boolean,
+  state?: PageContainerState,
   children: React.ReactNode
 }
 
@@ -15,20 +18,27 @@ export default function PageContainer({
   backgroundStyle = {},
   contentStyle = {},
   contentBlockStyle = {},
-  loading = false,
+  state = { status: "normal" },
   children
 }: PageContainerProps) {
-  if (loading) {
+  if (state.status === "loading") {
     contentStyle = { alignItems: "center" }
     contentBlockStyle = { maxHeight: "15%", maxWidth: "15%" }
+  } else if (state.status === "Error") {
+    contentStyle = { alignItems: "center" }
+    contentBlockStyle = { maxHeight: "40%", maxWidth: "40%" }
   }
 
   return (
     <div className="page-background" style={backgroundStyle}>
-      {!loading && <Navbar />}
+      {state.status !== "loading" && <Navbar />}
       <div className="content" style={contentStyle}>
         <div className="content-block" style={contentBlockStyle}>
-          {loading ? <Loading /> : children}
+          {
+            state.status === "loading" ? <Loading />
+              : state.status === "Error" ? <Error code={state.errorCode} />
+                : children
+          }
         </div>
       </div>
     </div>

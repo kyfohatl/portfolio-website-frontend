@@ -3,7 +3,7 @@ import AuthContainer from "../components/auth/AuthContainer"
 import InputText from "../components/auth/InputText"
 import Button, { ButtonState } from "../components/Button"
 import PageContainer from "../components/PageContainer"
-import { ApiResponse } from "../lib/commonTypes"
+import { BackendResponse } from "../lib/commonTypes"
 
 import { ReactComponent as FacebookLogo } from "../assets/images/facebookIcon.svg"
 import { ReactComponent as GoogleLogo } from "../assets/images/googleIcon.svg"
@@ -65,7 +65,7 @@ export default function SignIn() {
         })
       })
 
-      const parsedResponse = await response.json() as ApiResponse
+      const parsedResponse = await response.json() as BackendResponse
 
       if ("error" in parsedResponse) {
         // An error has returned, respond accordingly
