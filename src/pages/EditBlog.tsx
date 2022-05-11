@@ -7,6 +7,7 @@ import styles from "./EditBlog.module.css"
 import { ReactComponent as SaveIcon } from "../assets/images/saveIcon.svg"
 import Api, { BlogProps } from "../lib/api/Api";
 import { useParams } from "react-router-dom";
+import { BackendResponse } from "../lib/commonTypes";
 
 
 export default function EditBlog() {
@@ -21,28 +22,38 @@ export default function EditBlog() {
   // Load blog content from database
   useEffect(() => {
     async function getBlog() {
+      setPageState({ status: "loading" })
+
       if (blogId) {
         // We are editing an existing blog
         try {
           const response = await Api.getBlog(blogId)
+          const data = await response.json() as BackendResponse
 
-          // TODO
-          if (!response.success) return console.error(response?.error)
+          // Check for error response
+          if (!("success" in data)) {
+            console.error(data)
+            setPageState({ status: "Error", errorCode: response.status + "" })
+            return
+          }
 
           // Successful response. Store blog properties
-          setBlog(response.success.blog)
-          setHtml({ text: response.success.blog.html, change: { changeType: "Other" } })
-          setCss({ text: response.success.blog.css, change: { changeType: "Other" } })
+          setBlog(data.success.blog)
+          setHtml({ text: data.success.blog.html, change: { changeType: "Other" } })
+          setCss({ text: data.success.blog.css, change: { changeType: "Other" } })
         } catch (err) {
-          // TODO
+          // Something went wrong
           console.error(err)
+          setPageState({ status: "Error", errorCode: "500" })
+          return
         }
       }
+
+      // Blog successfully retrieved without error. Reset page state back to normal
+      setPageState({ status: "normal" })
     }
 
-    setPageState({ status: "loading" })
     getBlog()
-    setPageState({ status: "normal" })
   }, [blogId])
 
   // Change the "Create" button to "Save" if an exiting blog is being edited

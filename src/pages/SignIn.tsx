@@ -67,16 +67,18 @@ export default function SignIn() {
 
       const parsedResponse = await response.json() as BackendResponse
 
-      if ("error" in parsedResponse) {
+      if (!("success" in parsedResponse)) {
         // An error has returned, respond accordingly
-        if (parsedResponse.error.email) setEmailErrMssg(parsedResponse.error.email)
-        if (parsedResponse.error.password) setPassErrMssg(parsedResponse.error.password)
-        if (parsedResponse.error.generic) console.error(parsedResponse.error)
+        if ("complexError" in parsedResponse) {
+          if (parsedResponse.complexError.email) setEmailErrMssg(parsedResponse.complexError.email)
+          if (parsedResponse.complexError.password) setPassErrMssg(parsedResponse.complexError.password)
+          if (parsedResponse.complexError.generic) console.error(parsedResponse.complexError)
 
-        // Reset button states
-        setSignInGoogleDisabled(false)
-        setSignInFacebookDisabled(false)
-        setSignInState({ state: "normal" })
+          // Reset button states
+          setSignInGoogleDisabled(false)
+          setSignInFacebookDisabled(false)
+          setSignInState({ state: "normal" })
+        }
       } else {
         // The request succeeded
         // Store the access and refresh tokens in localStorage

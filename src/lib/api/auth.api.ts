@@ -47,7 +47,6 @@ export async function refreshTokens() {
     localStorage.setItem("refreshToken", data.success.refreshToken)
     return true
   } catch (err) {
-    // TODO
     console.error("Error: Could not send refreshToken request", err)
     return false
   }

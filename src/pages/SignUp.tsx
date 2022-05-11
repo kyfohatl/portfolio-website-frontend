@@ -5,7 +5,7 @@ import AuthContainer from "../components/auth/AuthContainer"
 import InputText from "../components/auth/InputText"
 import Button, { ButtonState } from "../components/Button"
 import PageContainer from "../components/PageContainer"
-import { ErrorResponse } from "../lib/commonTypes"
+import { BackendResponse } from "../lib/commonTypes"
 import { useNavigate } from "react-router-dom"
 
 export default function SignUp() {
@@ -63,12 +63,14 @@ export default function SignUp() {
         })
       })
 
-      const parsedResponse = await response.json() as ErrorResponse
-      if (parsedResponse.error?.email) {
-        // Set the new error message
-        setEmailErrMssg(parsedResponse.error.email)
-        // Set button back to normal state
-        setSignUpState({ state: "normal" })
+      const parsedResponse = await response.json() as BackendResponse
+      if (!("success" in parsedResponse)) {
+        if ("complexError" in parsedResponse) {
+          // Set the new error message
+          setEmailErrMssg(parsedResponse.complexError.email)
+          // Set button back to normal state
+          setSignUpState({ state: "normal" })
+        }
       } else {
         // New user was created
         console.log("New user created: ", parsedResponse)

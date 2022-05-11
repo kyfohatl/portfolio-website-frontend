@@ -24,14 +24,18 @@ export default class Api {
         })
 
         if (response.ok) {
+          // Successfully deleted refresh token in database
           redirectToSignInAndClearData()
         } else {
-          // TODO
-          console.error("Error: Refresh token is invalid")
+          // Could not delete refresh token from database
+          const err = await response.json() as { unknown: unknown }
+          console.error("Error: Refresh token is invalid", err.unknown)
+          redirectToSignInAndClearData()
         }
       } catch (err) {
-        // TODO
+        // Could not perform fetch request
         console.error("Error: could not submit sign out request to API", err)
+        redirectToSignInAndClearData()
       }
     }
   }
@@ -40,7 +44,7 @@ export default class Api {
     try {
       const response = await fetch("http://localhost:8000/blog/" + blogId, { method: "GET" })
 
-      return await response.json() as { success?: { blog: BlogProps }, error?: { generic: unknown } }
+      return response
     } catch (err) {
       // Could not fetch blog
       throw err
