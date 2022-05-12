@@ -7,7 +7,6 @@ import styles from "./EditBlog.module.css"
 import { ReactComponent as SaveIcon } from "../assets/images/saveIcon.svg"
 import Api, { BlogProps } from "../lib/api/Api";
 import { useParams } from "react-router-dom";
-import { BackendResponse } from "../lib/commonTypes";
 
 
 export default function EditBlog() {
@@ -28,19 +27,18 @@ export default function EditBlog() {
         // We are editing an existing blog
         try {
           const response = await Api.getBlog(blogId)
-          const data = await response.json() as BackendResponse
 
           // Check for error response
-          if (!("success" in data)) {
-            console.error(data)
-            setPageState({ status: "Error", errorCode: response.status + "" })
+          if (!("success" in response)) {
+            console.error(response)
+            setPageState({ status: "Error", errorCode: response.code + "" })
             return
           }
 
           // Successful response. Store blog properties
-          setBlog(data.success.blog)
-          setHtml({ text: data.success.blog.html, change: { changeType: "Other" } })
-          setCss({ text: data.success.blog.css, change: { changeType: "Other" } })
+          setBlog(response.success.blog)
+          setHtml({ text: response.success.blog.html, change: { changeType: "Other" } })
+          setCss({ text: response.success.blog.css, change: { changeType: "Other" } })
         } catch (err) {
           // Something went wrong
           console.error(err)
@@ -81,15 +79,22 @@ export default function EditBlog() {
     // Now try to save changes
     try {
       const response = await Api.saveBlog(html.text, css.text, blogId)
-      // TODO
-      if (response.error || !response.success) return console.error(response.error)
+
+      // Ensure blog was successfully saved
+      if (!("success" in response)) {
+        console.error(response)
+        setPageState({ status: "Error", errorCode: response.code + "" })
+        return
+      }
+
       // Set save button state to saving, and then back to normal
       setSaveButtonState({ state: "saving", onAnimationEnd: () => { setSaveButtonState({ state: "normal" }) } })
       // Save the returning blog id
       setBlogId(response.success.id)
     } catch (err) {
-      // TODO
+      // Something went wrong
       console.error(err)
+      setPageState({ status: "Error", errorCode: "500" })
     }
   }, [html, css, blogId])
 

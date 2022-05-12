@@ -1,3 +1,5 @@
+import { BackendResponse } from "../commonTypes"
+
 // Returns true if access and refresh tokens are present in local storage, and false otherwise
 export function hasTokens() {
   if (localStorage.getItem("accessToken") && localStorage.getItem("refreshToken")) return true
@@ -62,7 +64,7 @@ export async function areTokensPresentInStorage() {
 
 // Fetches the given address with the given method and the given request body, either throwing an error if
 // unable to authenticate, or returning the data otherwise
-export async function fetchWithAuth<T>(
+export async function fetchWithAuth<T extends BackendResponse>(
   address: string,
   method: string,
   body: Record<string, any>,

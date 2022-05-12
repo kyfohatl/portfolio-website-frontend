@@ -1,3 +1,4 @@
+import { BackendError, BackendResponse } from "../commonTypes"
 import { fetchWithAuth, redirectToSignInAndClearData } from "./auth.api"
 
 export interface BlogProps {
@@ -44,7 +45,7 @@ export default class Api {
     try {
       const response = await fetch("http://localhost:8000/blog/" + blogId, { method: "GET" })
 
-      return response
+      return await response.json() as BackendResponse
     } catch (err) {
       // Could not fetch blog
       throw err
@@ -56,7 +57,7 @@ export default class Api {
   // existing blog with the given id
   static async saveBlog(html: string, css: string, blogId?: string | null) {
     try {
-      const response = await fetchWithAuth<{ success?: { id: string }, error?: { generic: unknown } }>(
+      const response = await fetchWithAuth<{ success: { id: string } } | BackendError>(
         "http://localhost:8000/blog/create",
         "POST",
         { html: html, css: css, blogId: blogId },
