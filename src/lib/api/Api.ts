@@ -70,4 +70,16 @@ export default class Api {
       throw err
     }
   }
+
+  static async getRecentBlogs(pageNum: number, limit: number) {
+    try {
+      const response = await fetch(`http://localhost:8000/blog/?page=${pageNum}&limit=${limit}`, {
+        method: "GET"
+      })
+
+      return await response.json() as BackendResponse
+    } catch (err) {
+      throw err
+    }
+  }
 }
