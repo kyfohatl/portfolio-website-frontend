@@ -15,7 +15,6 @@ export default function ViewBlogs() {
 
       try {
         const response = await Api.getRecentBlogs(0, 8)
-        console.log(response)
 
         // Check for error response
         if (!("success" in response)) {
@@ -28,7 +27,12 @@ export default function ViewBlogs() {
         const blogs: BlogProps[] = response.success.blogs
         setCards(blogs.map((blog) => {
           return (
-            <BlogCard title={blog.summaryTitle} description={blog.summaryDescription} image={blog.summaryImg} />
+            <BlogCard
+              title={blog.summaryTitle}
+              description={blog.summaryDescription}
+              image={blog.summaryImg}
+              tags={blog.tags}
+            />
           )
         }))
       } catch (err) {

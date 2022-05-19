@@ -9,7 +9,8 @@ export interface BlogProps {
   creationDate: string,
   summaryTitle: string,
   summaryDescription: string,
-  summaryImg: string
+  summaryImg: string,
+  tags: string[]
 }
 
 export default class Api {
