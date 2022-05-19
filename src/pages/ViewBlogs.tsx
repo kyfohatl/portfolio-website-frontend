@@ -15,6 +15,7 @@ export default function ViewBlogs() {
 
       try {
         const response = await Api.getRecentBlogs(0, 8)
+        console.log(response)
 
         // Check for error response
         if (!("success" in response)) {

@@ -66,7 +66,7 @@ export default function EditBlog() {
   const srcDoc = `
     <!DOCTYPE html>
     <html>
-      <body>${html.text}</body>
+      ${html.text}
       <style>${css.text}</style>
     </html>
   `
