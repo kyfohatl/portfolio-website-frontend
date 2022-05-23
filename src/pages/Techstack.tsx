@@ -6,7 +6,8 @@ import SavingButton from "../components/SavingButton"
 
 export default function Techstack() {
   return (
-    <PageContainer state={{ status: "Error", errorCode: "500" }}>
+    <PageContainer state={{ status: "normal" }}>
+      <Loading />
     </PageContainer>
   )
 }
