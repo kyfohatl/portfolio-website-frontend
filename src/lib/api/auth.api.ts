@@ -1,3 +1,5 @@
+import { BackendResponse } from "../commonTypes"
+
 // Returns true if access and refresh tokens are present in local storage, and false otherwise
 export function hasTokens() {
   if (localStorage.getItem("accessToken") && localStorage.getItem("refreshToken")) return true
@@ -47,7 +49,6 @@ export async function refreshTokens() {
     localStorage.setItem("refreshToken", data.success.refreshToken)
     return true
   } catch (err) {
-    // TODO
     console.error("Error: Could not send refreshToken request", err)
     return false
   }
@@ -62,8 +63,8 @@ export async function areTokensPresentInStorage() {
 }
 
 // Fetches the given address with the given method and the given request body, either throwing an error if
-// unsuccessful or returning the data if successful
-export async function fetchWithAuth<T>(
+// unable to authenticate, or returning the data otherwise
+export async function fetchWithAuth<T extends BackendResponse>(
   address: string,
   method: string,
   body: Record<string, any>,
@@ -87,28 +88,23 @@ export async function fetchWithAuth<T>(
 
     let data: T
 
-    if (!response.ok) {
-      // Request was unsuccessful
-      if (response.status === 401) {
-        // Tokens are invalid. Try getting new tokens
-        if (await refreshTokens()) {
-          // Got a new token pair. Try again
-          try {
-            data = await fetchWithAuth(address, method, body, recursionLimit - 1)
-          } catch (err) {
-            throw err
-          }
-        } else {
-          // Failed to get new tokens
-          throw new Error("Error: Unable to get new tokens")
+    // If authentication is unsuccessful, throw an error
+    if (response.status === 401) {
+      // Tokens are invalid. Try getting new tokens
+      if (await refreshTokens()) {
+        // Got a new token pair. Try again
+        try {
+          data = await fetchWithAuth(address, method, body, recursionLimit - 1)
+        } catch (err) {
+          throw err
         }
       } else {
-        // Some other problem
-        throw new Error(`Error: Unable to save blog ${response.status} ${response.statusText}`)
+        // Failed to get new tokens
+        throw new Error("Error: Unable to get new tokens")
       }
     }
 
-    // Got a successful response
+    // Return response, whether successful or not
     data = await response.json() as T
     return data
   } catch (err) {

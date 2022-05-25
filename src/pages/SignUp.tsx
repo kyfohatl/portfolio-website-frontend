@@ -3,9 +3,10 @@ import "./SignUp.css"
 import React, { useCallback, useState } from "react"
 import AuthContainer from "../components/auth/AuthContainer"
 import InputText from "../components/auth/InputText"
-import Button from "../components/Button"
+import Button, { ButtonState } from "../components/Button"
 import PageContainer from "../components/PageContainer"
-import { ErrorResponse } from "../lib/commonTypes"
+import { BackendResponse } from "../lib/commonTypes"
+import { useNavigate } from "react-router-dom"
 
 export default function SignUp() {
   // User inputs
@@ -16,6 +17,10 @@ export default function SignUp() {
   const [emailErrMssg, setEmailErrMssg] = useState("")
   const [passErrMssg, setPassErrMssg] = useState("")
   const [confPassErrMssg, setConfPassErrMssg] = useState("")
+  // Button state
+  const [signUpState, setSignUpState] = useState<ButtonState>({ state: "normal" })
+
+  const navigate = useNavigate()
 
   const onSubmit = useCallback(async (event: React.FormEvent) => {
     // Prevent default form behavior
@@ -42,6 +47,9 @@ export default function SignUp() {
     }
 
     // No input errors detected
+    // Set button to loading state
+    setSignUpState({ state: "loading" })
+
     try {
       // Post new user
       const response = await fetch("http://localhost:8000/auth/users", {
@@ -55,17 +63,26 @@ export default function SignUp() {
         })
       })
 
-      const parsedResponse = await response.json() as ErrorResponse
-      if (parsedResponse.error?.email) {
-        // Set the new error message
-        setEmailErrMssg(parsedResponse.error.email)
+      const parsedResponse = await response.json() as BackendResponse
+      if (!("success" in parsedResponse)) {
+        if ("complexError" in parsedResponse) {
+          // Set the new error message
+          setEmailErrMssg(parsedResponse.complexError.email)
+          // Set button back to normal state
+          setSignUpState({ state: "normal" })
+        }
       } else {
+        // New user was created
         console.log("New user created: ", parsedResponse)
+        // TODO
+        // Navigate to home page
+        navigate("/")
       }
     } catch (err) {
+      // TODO
       console.error(err)
     }
-  }, [email, pass, confPass])
+  }, [email, pass, confPass, navigate])
 
   return (
     <PageContainer
@@ -98,6 +115,7 @@ export default function SignUp() {
           width="285px"
           height="36px"
           text="Sign up"
+          buttonState={signUpState}
         />
         <p
           className="auth-help"

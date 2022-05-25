@@ -2,7 +2,7 @@ import { useCallback, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import Api from "../lib/api/Api"
 import { hasTokens } from "../lib/api/auth.api"
-import Button from "./Button"
+import Button, { ButtonState } from "./Button"
 
 import styles from "./Navbar.module.css"
 
@@ -14,25 +14,25 @@ export default function Navbar() {
   const [signInDisabled, setSignInDisabled] = useState(false)
   const [signUpDisabled, setSignUpDisabled] = useState(false)
   // Button loading states
-  const [signInLoading, setSignInLoading] = useState(false)
-  const [signUpLoading, setSignUpLoading] = useState(false)
-  const [signOutLoading, setSignOutLoading] = useState(false)
+  const [signInState, setSignInState] = useState<ButtonState>({ state: "normal" })
+  const [signUpState, setSignUpState] = useState<ButtonState>({ state: "normal" })
+  const [signOutState, setSignOutState] = useState<ButtonState>({ state: "normal" })
 
   const onSigInClick = useCallback(() => {
     // Disable other buttons and set loading
     setSignUpDisabled(true)
-    setSignInLoading(true)
+    setSignInState({ state: "loading" })
   }, [])
 
   const onSignUpClick = useCallback(() => {
     // Disable other buttons and set loading
     setSignInDisabled(true)
-    setSignUpLoading(true)
+    setSignUpState({ state: "loading" })
   }, [])
 
   const onSignOutClick = useCallback(async () => {
     // Set button loading state
-    setSignOutLoading(true)
+    setSignOutState({ state: "loading" })
 
     // Sing out the user
     await Api.signOut()
@@ -60,7 +60,7 @@ export default function Navbar() {
               width="80px"
               marginTop="0px"
               backgroundColor="#253C78"
-              isLoading={signOutLoading}
+              buttonState={signOutState}
             />
           </li>
           : [
@@ -73,7 +73,7 @@ export default function Navbar() {
                   width="100px"
                   marginTop="0px"
                   disabled={signInDisabled}
-                  isLoading={signInLoading}
+                  buttonState={signInState}
                 />
               </Link>
             </li>,
@@ -87,7 +87,7 @@ export default function Navbar() {
                   marginTop="0px"
                   backgroundColor="#340068"
                   disabled={signUpDisabled}
-                  isLoading={signUpLoading}
+                  buttonState={signUpState}
                 />
               </Link>
             </li>

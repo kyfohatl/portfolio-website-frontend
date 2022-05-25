@@ -1,4 +1,17 @@
+import { BackendError, BackendResponse } from "../commonTypes"
 import { fetchWithAuth, redirectToSignInAndClearData } from "./auth.api"
+
+export interface BlogProps {
+  id: string,
+  userId: string,
+  html: string,
+  css: string,
+  creationDate: string,
+  summaryTitle: string,
+  summaryDescription: string,
+  summaryImg: string,
+  tags: string[]
+}
 
 export default class Api {
   static async signOut() {
@@ -13,15 +26,30 @@ export default class Api {
         })
 
         if (response.ok) {
+          // Successfully deleted refresh token in database
           redirectToSignInAndClearData()
         } else {
-          // TODO
-          console.error("Error: Refresh token is invalid")
+          // Could not delete refresh token from database
+          const err = await response.json() as { unknown: unknown }
+          console.error("Error: Refresh token is invalid", err.unknown)
+          redirectToSignInAndClearData()
         }
       } catch (err) {
-        // TODO
+        // Could not perform fetch request
         console.error("Error: could not submit sign out request to API", err)
+        redirectToSignInAndClearData()
       }
+    }
+  }
+
+  static async getBlog(blogId: string) {
+    try {
+      const response = await fetch("http://localhost:8000/blog/" + blogId, { method: "GET" })
+
+      return await response.json() as BackendResponse
+    } catch (err) {
+      // Could not fetch blog
+      throw err
     }
   }
 
@@ -30,17 +58,29 @@ export default class Api {
   // existing blog with the given id
   static async saveBlog(html: string, css: string, blogId?: string | null) {
     try {
-      const returningBlogId = await fetchWithAuth<{success?: {id: string}, error?: {generic: unknown}}>(
+      const response = await fetchWithAuth<{ success: { id: string } } | BackendError>(
         "http://localhost:8000/blog/create",
         "POST",
         { html: html, css: css, blogId: blogId },
         5
       )
 
-      return returningBlogId
+      return response
     } catch (err) {
-      // Could not save blog
-      console.error(err)
+      // Unable to authenticate
+      throw err
+    }
+  }
+
+  static async getRecentBlogs(pageNum: number, limit: number) {
+    try {
+      const response = await fetch(`http://localhost:8000/blog/?page=${pageNum}&limit=${limit}`, {
+        method: "GET"
+      })
+
+      return await response.json() as BackendResponse
+    } catch (err) {
+      throw err
     }
   }
 }

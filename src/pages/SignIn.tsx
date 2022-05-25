@@ -1,12 +1,13 @@
 import React, { useCallback, useState } from "react"
 import AuthContainer from "../components/auth/AuthContainer"
 import InputText from "../components/auth/InputText"
-import Button from "../components/Button"
+import Button, { ButtonState } from "../components/Button"
 import PageContainer from "../components/PageContainer"
-import { ApiResponse } from "../lib/commonTypes"
+import { BackendResponse } from "../lib/commonTypes"
 
 import { ReactComponent as FacebookLogo } from "../assets/images/facebookIcon.svg"
 import { ReactComponent as GoogleLogo } from "../assets/images/googleIcon.svg"
+import { useNavigate } from "react-router-dom"
 
 export default function SignIn() {
   // User inputs
@@ -20,9 +21,11 @@ export default function SignIn() {
   const [signInGoogleDisabled, setSignInGoogleDisabled] = useState(false)
   const [signInFacebookDisabled, setSignInFacebookDisabled] = useState(false)
   // Button loading states
-  const [signInLoading, setSignInLoading] = useState(false)
-  const [signInGoogleLoading, setSignInGoogleLoading] = useState(false)
-  const [signInFacebookLoading, setSignInFacebookLoading] = useState(false)
+  const [signInState, setSignInState] = useState<ButtonState>({ state: "normal" })
+  const [signInGoogleState, setSignInGoogleState] = useState<ButtonState>({ state: "normal" })
+  const [signInFacebookState, setSignInFacebookState] = useState<ButtonState>({ state: "normal" })
+
+  const navigate = useNavigate()
 
   const onSignIn = useCallback(async (event: React.FormEvent) => {
     // Prevent default form behavior
@@ -46,7 +49,7 @@ export default function SignIn() {
     // Disable other buttons and set loading
     setSignInGoogleDisabled(true)
     setSignInFacebookDisabled(true)
-    setSignInLoading(true)
+    setSignInState({ state: "loading" })
 
     // Attempt sign in
     try {
@@ -62,23 +65,34 @@ export default function SignIn() {
         })
       })
 
-      const parsedResponse = await response.json() as ApiResponse
+      const parsedResponse = await response.json() as BackendResponse
 
-      if ("error" in parsedResponse) {
+      if (!("success" in parsedResponse)) {
         // An error has returned, respond accordingly
-        if (parsedResponse.error.email) setEmailErrMssg(parsedResponse.error.email)
-        if (parsedResponse.error.password) setPassErrMssg(parsedResponse.error.password)
-        if (parsedResponse.error.generic) console.error(parsedResponse.error)
+        if ("complexError" in parsedResponse) {
+          if (parsedResponse.complexError.email) setEmailErrMssg(parsedResponse.complexError.email)
+          if (parsedResponse.complexError.password) setPassErrMssg(parsedResponse.complexError.password)
+          if (parsedResponse.complexError.generic) console.error(parsedResponse.complexError)
+
+          // Reset button states
+          setSignInGoogleDisabled(false)
+          setSignInFacebookDisabled(false)
+          setSignInState({ state: "normal" })
+        }
       } else {
         // The request succeeded
         // Store the access and refresh tokens in localStorage
         localStorage.setItem("accessToken", parsedResponse.success.accessToken)
         localStorage.setItem("refreshToken", parsedResponse.success.refreshToken)
+
+        // TODO
+        // Redirect to home page
+        navigate("/")
       }
     } catch (err) {
       console.error(err)
     }
-  }, [email, pass])
+  }, [email, pass, navigate])
 
   const onSignInGoogle = useCallback(() => {
     console.log("Google Sign in!")
@@ -86,7 +100,7 @@ export default function SignIn() {
     // Disable other buttons and set loading
     setSignInDisabled(true)
     setSignInFacebookDisabled(true)
-    setSignInGoogleLoading(true)
+    setSignInGoogleState({ state: "loading" })
   }, [])
 
   const onSignInFacebook = useCallback(() => {
@@ -95,7 +109,7 @@ export default function SignIn() {
     // Disable other buttons and set loading
     setSignInDisabled(true)
     setSignInGoogleDisabled(true)
-    setSignInFacebookLoading(true)
+    setSignInFacebookState({ state: "loading" })
   }, [])
 
   return (
@@ -122,7 +136,7 @@ export default function SignIn() {
           width="285px"
           height="36px"
           text="Sign in"
-          isLoading={signInLoading}
+          buttonState={signInState}
           disabled={signInDisabled}
         />
         <Button
@@ -133,7 +147,7 @@ export default function SignIn() {
           backgroundColor="#FFFFFF"
           color="#000000"
           icon={<GoogleLogo width={28} height={28} />}
-          isLoading={signInGoogleLoading}
+          buttonState={signInGoogleState}
           disabled={signInGoogleDisabled}
         />
         <Button
@@ -143,7 +157,7 @@ export default function SignIn() {
           text="Sign in with Facebook"
           backgroundColor="#4267B2"
           icon={<FacebookLogo width={28} height={28} />}
-          isLoading={signInFacebookLoading}
+          buttonState={signInFacebookState}
           disabled={signInFacebookDisabled}
         />
         <p

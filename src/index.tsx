@@ -11,7 +11,8 @@ import Skills from "./pages/Skills";
 import Examples from "./pages/Examples"
 import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
-import CreateBlog from "./pages/CreateBlog"
+import EditBlog from "./pages/EditBlog"
+import ViewBlogs from './pages/ViewBlogs';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -24,7 +25,9 @@ ReactDOM.render(
         <Route path="examples" element={<Examples />} />
         <Route path="signup" element={<SignUp />} />
         <Route path="signin" element={<SignIn />} />
-        <Route path="createblog" element={<CreateBlog />} />
+        <Route path="editblog" element={<EditBlog />} />
+        <Route path="editblog/:blogId" element={<EditBlog />} />
+        <Route path="viewblogs" element={<ViewBlogs />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,

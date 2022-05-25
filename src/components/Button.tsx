@@ -2,6 +2,9 @@ import styles from "./Button.module.css"
 
 import React from "react"
 import LoadingButton from "./LoadingButton"
+import SavingButton from "./SavingButton"
+
+export type ButtonState = { state: "normal" } | { state: "loading" } | { state: "saving", onAnimationEnd: () => void }
 
 // A callback button must come with a callback function
 interface CallBackButton {
@@ -27,7 +30,7 @@ interface ButtonProps {
   height?: string,
   marginTop?: string,
   icon?: React.ReactNode,
-  isLoading?: boolean,
+  buttonState?: ButtonState,
   disabled?: boolean
 }
 
@@ -41,7 +44,7 @@ export default function Button({
   height = "100px",
   marginTop = "10px",
   icon,
-  isLoading = false,
+  buttonState = { state: "normal" },
   disabled = false
 }: ButtonProps) {
   let buttonStyles: React.CSSProperties = {
@@ -69,12 +72,22 @@ export default function Button({
     {text}
   </button>
 
-  if (isLoading) button = <LoadingButton
-    fontSize={fontSize}
-    width={width}
-    height={height}
-    marginTop={marginTop}
-  />
+  if (buttonState.state === "loading") {
+    button = <LoadingButton
+      fontSize={fontSize}
+      width={width}
+      height={height}
+      marginTop={marginTop}
+    />
+  } else if (buttonState.state === "saving") {
+    button = <SavingButton
+      fontSize={fontSize}
+      width={width}
+      height={height}
+      marginTop={marginTop}
+      onAnimationEnd={buttonState.onAnimationEnd}
+    />
+  }
 
   return (
     button

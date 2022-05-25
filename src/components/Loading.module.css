@@ -1,0 +1,79 @@
+.indicator>circle:nth-child(1) {
+  stroke-dasharray: 74.5;
+  stroke-dashoffset: 0;
+  animation: spin1 2s cubic-bezier(0.68, 0, 0.41, 1.05) 0.1s infinite reverse;
+}
+
+.indicator>circle:nth-child(2) {
+  stroke-dasharray: 59;
+  stroke-dashoffset: 0;
+  animation: spin2 2s cubic-bezier(0.68, 0, 0.41, 1.05) 0.1s infinite;
+}
+
+.indicator>circle:nth-child(3) {
+  stroke-dasharray: 43.25;
+  stroke-dashoffset: 0;
+  animation: spin3 2s cubic-bezier(0.68, 0, 0.41, 1.05) 0.1s infinite reverse;
+}
+
+.indicator>circle:nth-child(4) {
+  stroke-dasharray: 27.5;
+  stroke-dashoffset: 0;
+  animation: spin4 2s cubic-bezier(0.68, 0, 0.41, 1.05) 0.1s infinite;
+}
+
+.indicator>circle:nth-child(5) {
+  stroke-dasharray: 11.75;
+  stroke-dashoffset: 11.75;
+  animation: spin5 2s cubic-bezier(0.68, 0, 0.41, 1.05) 0.1s infinite reverse;
+}
+
+@keyframes spin1 {
+  50% {
+    stroke-dashoffset: 74.5;
+  }
+
+  100% {
+    stroke-dashoffset: 149;
+  }
+}
+
+@keyframes spin2 {
+  50% {
+    stroke-dashoffset: 59;
+  }
+
+  100% {
+    stroke-dashoffset: 118;
+  }
+}
+
+@keyframes spin3 {
+  50% {
+    stroke-dashoffset: 43.25;
+  }
+
+  100% {
+    stroke-dashoffset: 86.5;
+  }
+}
+
+@keyframes spin4 {
+  50% {
+    stroke-dashoffset: 27.5;
+  }
+
+  100% {
+    stroke-dashoffset: 55;
+  }
+}
+
+@keyframes spin5 {
+  50% {
+    stroke-dashoffset: 23.5;
+  }
+
+  100% {
+    stroke-dashoffset: 35.25;
+  }
+}

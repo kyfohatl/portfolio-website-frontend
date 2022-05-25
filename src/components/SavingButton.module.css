@@ -1,0 +1,36 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 10px;
+  border-width: 1px;
+}
+
+.checkbox {
+  max-width: 45%;
+  max-height: 80%;
+}
+
+.check {
+  stroke-dasharray: 93.0677261352539;
+  stroke-dashoffset: 93.0677261352539;
+  animation: drawTick 0.8s ease-in-out 0.5s forwards;
+}
+
+.circle {
+  stroke-dasharray: 302;
+  stroke-dashoffset: 302;
+  animation: drawTick 0.8s ease-in-out forwards;
+}
+
+.text {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-weight: 800;
+}
+
+@keyframes drawTick {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
