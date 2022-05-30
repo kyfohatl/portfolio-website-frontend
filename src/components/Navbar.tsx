@@ -57,7 +57,7 @@ export default function Navbar() {
               text="Sign out"
               type={{ type: "button", callBack: onSignOutClick }}
               height="36px"
-              width="80px"
+              width="100px"
               marginTop="0px"
               backgroundColor="#253C78"
               buttonState={signOutState}

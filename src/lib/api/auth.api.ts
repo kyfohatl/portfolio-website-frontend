@@ -6,10 +6,11 @@ export function hasTokens() {
   return false
 }
 
-// Removes all locally stored tokens
+// Removes all locally stored tokens and user data
 export function deleteLocalTokens() {
   localStorage.removeItem("accessToken")
   localStorage.removeItem("refreshToken")
+  localStorage.removeItem("userId")
 }
 
 // Deletes local tokens and redirects to the sign in page
