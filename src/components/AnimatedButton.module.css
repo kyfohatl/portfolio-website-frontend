@@ -5,6 +5,7 @@
   gap: 8px;
   border-radius: 10px;
   border-width: 1px;
+  box-shadow: 0px 1px 3px 1px #c4bcb7;
 }
 
 .text {

@@ -14,7 +14,12 @@ export default function ViewBlog() {
   const [blog, setBlog] = useState<BlogProps>()
   const [pageState, setPageState] = useState<PageContainerState>({ status: "normal" })
   const [userCanEdit, setUserCanEdit] = useState(false)
+  // Button states
+  const [editButtonState, setEditButtonState] = useState<ButtonState>({ state: "normal" })
   const [deleteButtonState, setDeleteButtonState] = useState<ButtonState>({ state: "normal" })
+  // Button enabled/disabled states
+  const [editButtonDisabled, setEditButtonDisabled] = useState(false)
+  const [deleteButtonDisabled, setDeleteButtonDisabled] = useState(false)
 
   const { blogId } = useParams()
 
@@ -59,7 +64,11 @@ export default function ViewBlog() {
   const navigate = useNavigate()
 
   const onClickEdit = useCallback(() => {
-    if (!blog) return
+    if (!blog) return setPageState({ status: "Error", errorCode: 400 + "" })
+
+    setEditButtonState({ state: "loading" })
+    setDeleteButtonDisabled(true)
+
     navigate("/editblog/" + blog.id)
   }, [blog, navigate])
 
@@ -68,7 +77,10 @@ export default function ViewBlog() {
   }, [navigate])
 
   const onClickDelete = useCallback(async () => {
-    if (!blogId) return console.error("No blog to delete!")
+    if (!blogId) return setPageState({ status: "Error", errorCode: 400 + "" })
+
+    setDeleteButtonState({ state: "loading" })
+    setEditButtonDisabled(true)
 
     try {
       await Api.deleteBlog(blogId)
@@ -108,6 +120,8 @@ export default function ViewBlog() {
             height="36px"
             width="100px"
             icon={<EditIcon width={21} height={21} />}
+            buttonState={editButtonState}
+            disabled={editButtonDisabled}
           />
           <Button
             text="Delete"
@@ -117,6 +131,7 @@ export default function ViewBlog() {
             width="100px"
             icon={<DeleteIcon width={21} height={21} />}
             buttonState={deleteButtonState}
+            disabled={deleteButtonDisabled}
           />
         </div>
         :
