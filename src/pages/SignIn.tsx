@@ -82,8 +82,10 @@ export default function SignIn() {
       } else {
         // The request succeeded
         // Store the access and refresh tokens in localStorage
-        localStorage.setItem("accessToken", parsedResponse.success.accessToken)
-        localStorage.setItem("refreshToken", parsedResponse.success.refreshToken)
+        localStorage.setItem("accessToken", parsedResponse.success.tokens.accessToken)
+        localStorage.setItem("refreshToken", parsedResponse.success.tokens.refreshToken)
+        // Also store the user id
+        localStorage.setItem("userId", parsedResponse.success.userId)
 
         // TODO
         // Redirect to home page

@@ -49,6 +49,7 @@ export default function ViewBlogs() {
       setCards(prevCards => prevCards.concat(blogs.map((blog) => {
         return (
           <BlogCard
+            link={`/blog/${blog.id}`}
             title={blog.summaryTitle}
             description={blog.summaryDescription}
             image={blog.summaryImg}
@@ -102,7 +103,7 @@ export default function ViewBlogs() {
     <PageContainer
       state={pageState}
       contentStyle={{ marginTop: "42px", marginBottom: "42px" }}
-      contentBlockStyle={{ display: "flex", flexDirection: "column", gap: "30px" }}
+      contentBlockStyle={{ display: "flex", flexDirection: "column", gap: "40px" }}
     >
       {allBlogsShownState && numBlogsRef.current === 0
         ? <p>No blogs to show</p>

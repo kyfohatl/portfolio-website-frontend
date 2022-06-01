@@ -13,6 +13,7 @@ import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
 import EditBlog from "./pages/EditBlog"
 import ViewBlogs from './pages/ViewBlogs';
+import ViewBlog from './pages/ViewBlog';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -28,6 +29,7 @@ ReactDOM.render(
         <Route path="editblog" element={<EditBlog />} />
         <Route path="editblog/:blogId" element={<EditBlog />} />
         <Route path="viewblogs" element={<ViewBlogs />} />
+        <Route path="blog/:blogId" element={<ViewBlog />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,

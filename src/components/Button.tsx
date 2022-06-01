@@ -1,10 +1,14 @@
 import styles from "./Button.module.css"
 
-import React from "react"
+import React, { ReactElement } from "react"
 import LoadingButton from "./LoadingButton"
-import SavingButton from "./SavingButton"
+import AnimatedButton from "./AnimatedButton"
+import AnimationProps from "./animation/AnimationProps"
 
-export type ButtonState = { state: "normal" } | { state: "loading" } | { state: "saving", onAnimationEnd: () => void }
+export type ButtonState =
+  { state: "normal" } |
+  { state: "loading" } |
+  { state: "animated", animation: ReactElement<AnimationProps> }
 
 // A callback button must come with a callback function
 interface CallBackButton {
@@ -42,7 +46,7 @@ export default function Button({
   color = "#FFFFFF",
   width = "100px",
   height = "100px",
-  marginTop = "10px",
+  marginTop = "0px",
   icon,
   buttonState = { state: "normal" },
   disabled = false
@@ -79,13 +83,14 @@ export default function Button({
       height={height}
       marginTop={marginTop}
     />
-  } else if (buttonState.state === "saving") {
-    button = <SavingButton
+  } else if (buttonState.state === "animated") {
+    button = <AnimatedButton
+      animation={buttonState.animation}
+      text={text}
       fontSize={fontSize}
       width={width}
       height={height}
       marginTop={marginTop}
-      onAnimationEnd={buttonState.onAnimationEnd}
     />
   }
 
