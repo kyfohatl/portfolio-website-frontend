@@ -7,6 +7,7 @@ import styles from "./EditBlog.module.css"
 import { ReactComponent as SaveIcon } from "../assets/images/saveIcon.svg"
 import Api, { BlogProps } from "../lib/api/Api";
 import { useParams } from "react-router-dom";
+import Saving from "../components/animation/Saving";
 
 
 export default function EditBlog() {
@@ -88,7 +89,10 @@ export default function EditBlog() {
       }
 
       // Set save button state to saving, and then back to normal
-      setSaveButtonState({ state: "saving", onAnimationEnd: () => { setSaveButtonState({ state: "normal" }) } })
+      setSaveButtonState({
+        state: "animated",
+        animation: <Saving onAnimationEnd={() => { setSaveButtonState({ state: "normal" }) }} />
+      })
       // Save the returning blog id
       setBlogId(response.success.id)
     } catch (err) {

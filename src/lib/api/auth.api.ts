@@ -68,8 +68,8 @@ export async function areTokensPresentInStorage() {
 export async function fetchWithAuth<T extends BackendResponse>(
   address: string,
   method: string,
-  body: Record<string, any>,
-  recursionLimit: number
+  recursionLimit: number,
+  body: Record<string, any> = {}
 ) {
   // Prevent infinite recursion
   if (recursionLimit <= 0) throw new Error("Error: fetchWithAuth recursion limit reached")
@@ -95,7 +95,7 @@ export async function fetchWithAuth<T extends BackendResponse>(
       if (await refreshTokens()) {
         // Got a new token pair. Try again
         try {
-          data = await fetchWithAuth(address, method, body, recursionLimit - 1)
+          data = await fetchWithAuth(address, method, recursionLimit - 1, body)
         } catch (err) {
           throw err
         }

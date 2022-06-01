@@ -1,17 +1,20 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Button from "../components/Button";
+import Button, { ButtonState } from "../components/Button";
 import PageContainer, { PageContainerState } from "../components/PageContainer";
 import Api, { BlogProps } from "../lib/api/Api";
 import styles from "./ViewBlog.module.css"
 
 import { ReactComponent as EditIcon } from "../assets/images/editIcon.svg"
 import { ReactComponent as DeleteIcon } from "../assets/images/deleteIcon.svg"
+import { BackendError } from "../lib/commonTypes";
+import Deleting from "../components/animation/Deleting";
 
 export default function ViewBlog() {
   const [blog, setBlog] = useState<BlogProps>()
   const [pageState, setPageState] = useState<PageContainerState>({ status: "normal" })
   const [userCanEdit, setUserCanEdit] = useState(false)
+  const [deleteButtonState, setDeleteButtonState] = useState<ButtonState>({ state: "normal" })
 
   const { blogId } = useParams()
 
@@ -60,9 +63,26 @@ export default function ViewBlog() {
     navigate("/editblog/" + blog.id)
   }, [blog, navigate])
 
-  const onClickDelete = useCallback(() => {
-    // TODO
-  }, [])
+  const onDeleteAnimationEnd = useCallback(() => {
+    navigate("/viewblogs")
+  }, [navigate])
+
+  const onClickDelete = useCallback(async () => {
+    if (!blogId) return console.error("No blog to delete!")
+
+    try {
+      await Api.deleteBlog(blogId)
+      // Show deletion animation, then redirect to the blogs page
+      setDeleteButtonState({
+        state: "animated",
+        animation: <Deleting onAnimationEnd={onDeleteAnimationEnd} />
+      })
+    } catch (err) {
+      const castError = err as BackendError
+      setPageState({ status: "Error", errorCode: castError.code + "" })
+      console.error(err)
+    }
+  }, [blogId, onDeleteAnimationEnd])
 
   const srcDoc = `
     <!DOCTYPE html>
@@ -96,6 +116,7 @@ export default function ViewBlog() {
             height="36px"
             width="100px"
             icon={<DeleteIcon width={21} height={21} />}
+            buttonState={deleteButtonState}
           />
         </div>
         :

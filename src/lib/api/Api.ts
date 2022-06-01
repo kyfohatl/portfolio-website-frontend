@@ -61,8 +61,8 @@ export default class Api {
       const response = await fetchWithAuth<{ success: { id: string } } | BackendError>(
         "http://localhost:8000/blog/create",
         "POST",
-        { html: html, css: css, blogId: blogId },
-        5
+        5,
+        { html: html, css: css, blogId: blogId }
       )
 
       return response
@@ -79,6 +79,20 @@ export default class Api {
       })
 
       return await response.json() as BackendResponse
+    } catch (err) {
+      throw err
+    }
+  }
+
+  static async deleteBlog(blogId: string) {
+    try {
+      const response = fetchWithAuth<{ success: { id: string } } | BackendError>(
+        "http://localhost:8000/blog/" + blogId,
+        "DELETE",
+        5
+      )
+
+      return response
     } catch (err) {
       throw err
     }

@@ -1,12 +1,3 @@
-.button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border-radius: 10px;
-  border-width: 1px;
-}
-
 .checkbox {
   max-width: 45%;
   max-height: 80%;
@@ -22,11 +13,6 @@
   stroke-dasharray: 302;
   stroke-dashoffset: 302;
   animation: drawTick 0.8s ease-in-out forwards;
-}
-
-.text {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  font-weight: 800;
 }
 
 @keyframes drawTick {
