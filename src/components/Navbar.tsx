@@ -48,6 +48,7 @@ export default function Navbar() {
         <li key="about" className={styles.buttonNav}><Link to="/about" className={styles.navLink}>About</Link></li>
         <li key="skills" className={styles.buttonNav}><Link to="/skills" className={styles.navLink}>Skills &amp; Qualifications</Link></li>
         <li key="examples" className={styles.buttonNav}><Link to="/examples" className={styles.navLink}>Examples of Work</Link></li>
+        <li key="blogs" className={styles.buttonNav}><Link to="/viewblogs" className={styles.navLink}>Blogs</Link></li>
       </div>
       <div className={styles.auth}>
         {hasTokens()
