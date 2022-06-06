@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react"
 import AuthContainer from "../components/auth/AuthContainer"
 import InputText from "../components/auth/InputText"
 import Button, { ButtonState } from "../components/Button"
-import PageContainer from "../components/PageContainer"
+import PageContainer, { PageContainerState } from "../components/PageContainer"
 import { BackendResponse } from "../lib/commonTypes"
 
 import { ReactComponent as FacebookLogo } from "../assets/images/facebookIcon.svg"
@@ -24,6 +24,8 @@ export default function SignIn() {
   const [signInState, setSignInState] = useState<ButtonState>({ state: "normal" })
   const [signInGoogleState, setSignInGoogleState] = useState<ButtonState>({ state: "normal" })
   const [signInFacebookState, setSignInFacebookState] = useState<ButtonState>({ state: "normal" })
+  // Page state
+  const [pageState, setPageState] = useState<PageContainerState>({ status: "normal" })
 
   const navigate = useNavigate()
 
@@ -59,6 +61,7 @@ export default function SignIn() {
         headers: {
           "Content-Type": "application/json"
         },
+        credentials: "include", // To allow cookies to be set by the server
         body: JSON.stringify({
           username: email.toLowerCase(),
           password: pass
@@ -78,13 +81,14 @@ export default function SignIn() {
           setSignInGoogleDisabled(false)
           setSignInFacebookDisabled(false)
           setSignInState({ state: "normal" })
+        } else {
+          // Something went wrong
+          console.error(parsedResponse)
+          setPageState({ status: "Error", errorCode: "500" })
         }
       } else {
         // The request succeeded
-        // Store the access and refresh tokens in localStorage
-        localStorage.setItem("accessToken", parsedResponse.success.tokens.accessToken)
-        localStorage.setItem("refreshToken", parsedResponse.success.tokens.refreshToken)
-        // Also store the user id
+        // Store the user id
         localStorage.setItem("userId", parsedResponse.success.userId)
 
         // TODO
@@ -92,6 +96,8 @@ export default function SignIn() {
         navigate("/")
       }
     } catch (err) {
+      // Could not send request
+      setPageState({ status: "Error", errorCode: "500" })
       console.error(err)
     }
   }, [email, pass, navigate])
@@ -118,6 +124,7 @@ export default function SignIn() {
     <PageContainer
       contentStyle={{ display: "flex", flexGrow: 1, justifyContent: "center", alignItems: "center" }}
       contentBlockStyle={{ display: "flex", justifyContent: "center" }}
+      state={pageState}
     >
       <AuthContainer title="Sign In" onSubmit={onSignIn}>
         <InputText

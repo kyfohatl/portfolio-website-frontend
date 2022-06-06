@@ -4,7 +4,7 @@ import React, { useCallback, useState } from "react"
 import AuthContainer from "../components/auth/AuthContainer"
 import InputText from "../components/auth/InputText"
 import Button, { ButtonState } from "../components/Button"
-import PageContainer from "../components/PageContainer"
+import PageContainer, { PageContainerState } from "../components/PageContainer"
 import { BackendResponse } from "../lib/commonTypes"
 import { useNavigate } from "react-router-dom"
 
@@ -19,6 +19,8 @@ export default function SignUp() {
   const [confPassErrMssg, setConfPassErrMssg] = useState("")
   // Button state
   const [signUpState, setSignUpState] = useState<ButtonState>({ state: "normal" })
+  // Page state
+  const [pageState, setPageState] = useState<PageContainerState>({ status: "normal" })
 
   const navigate = useNavigate()
 
@@ -57,6 +59,7 @@ export default function SignUp() {
         headers: {
           "Content-Type": "application/json"
         },
+        credentials: "include",
         body: JSON.stringify({
           username: email.toLowerCase(),
           password: pass
@@ -70,6 +73,10 @@ export default function SignUp() {
           setEmailErrMssg(parsedResponse.complexError.email)
           // Set button back to normal state
           setSignUpState({ state: "normal" })
+        } else {
+          // Something went wrong
+          console.error(parsedResponse)
+          setPageState({ status: "Error", errorCode: "500" })
         }
       } else {
         // New user was created
@@ -79,8 +86,9 @@ export default function SignUp() {
         navigate("/")
       }
     } catch (err) {
-      // TODO
+      // Could not fetch
       console.error(err)
+      setPageState({ status: "Error", errorCode: "500" })
     }
   }, [email, pass, confPass, navigate])
 
@@ -88,6 +96,7 @@ export default function SignUp() {
     <PageContainer
       contentStyle={{ display: "flex", flexGrow: 1, justifyContent: "center", alignItems: "center" }}
       contentBlockStyle={{ display: "flex", justifyContent: "center" }}
+      state={pageState}
     >
       <AuthContainer title="Sign up" onSubmit={onSubmit}>
         <InputText

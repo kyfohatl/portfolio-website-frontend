@@ -1,41 +1,32 @@
 import { BackendResponse } from "../commonTypes"
 
-// Returns true if access and refresh tokens are present in local storage, and false otherwise
-export function hasTokens() {
-  if (localStorage.getItem("accessToken") && localStorage.getItem("refreshToken")) return true
+// Returns true if user data is present in local storage, and false otherwise
+export function hasData() {
+  if (localStorage.getItem("userId")) return true
   return false
 }
 
-// Removes all locally stored tokens and user data
-export function deleteLocalTokens() {
-  localStorage.removeItem("accessToken")
-  localStorage.removeItem("refreshToken")
+// Removes all locally stored (local storage) user data
+export function deleteLocalData() {
   localStorage.removeItem("userId")
 }
 
 // Deletes local tokens and redirects to the sign in page
 export function redirectToSignInAndClearData() {
-  deleteLocalTokens()
+  deleteLocalData()
   window.location.href = "http://localhost:3000/signin"
 }
 
-// Places a new jwt token pair in local storage if the current refresh token is valid and returns true, or 
-// redirects to the sign in page and returns false otherwise
+// Sends request for a new pair of jwt acc and ref tokens. If the request fails, 
+// redirects to the sign in page and returns false, otherwise will return true
 export async function refreshTokens() {
-  // Make sure we actually have a refresh token
-  const refreshToken = localStorage.getItem("refreshToken")
-  if (!refreshToken) {
-    redirectToSignInAndClearData()
-    return false
-  }
-
   try {
     const response = await fetch("http://localhost:8000/auth/token", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ token: refreshToken })
+      credentials: "include"
     })
 
     if (!response.ok) {
@@ -45,9 +36,8 @@ export async function refreshTokens() {
       return false
     }
 
-    const data = await response.json() as { success: { accessToken: string, refreshToken: string } }
-    localStorage.setItem("accessToken", data.success.accessToken)
-    localStorage.setItem("refreshToken", data.success.refreshToken)
+    const data = await response.json() as { success: { userId: string } }
+    localStorage.setItem("userId", data.success.userId)
     return true
   } catch (err) {
     console.error("Error: Could not send refreshToken request", err)
@@ -59,7 +49,7 @@ export async function refreshTokens() {
 // are present at the end of the process, and false otherwise
 // Note that this function - if it returns true - does not guarantee that the tokens present are valid
 export async function areTokensPresentInStorage() {
-  if (!hasTokens()) return await refreshTokens()
+  if (!hasData()) return await refreshTokens()
   return true
 }
 
@@ -84,6 +74,7 @@ export async function fetchWithAuth<T extends BackendResponse>(
         "Content-Type": "application/json",
         "authorization": "Bearer " + localStorage.getItem("accessToken")
       },
+      credentials: "include", // To allow cookies to be sent to the server
       body: JSON.stringify(body)
     })
 

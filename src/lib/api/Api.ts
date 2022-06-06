@@ -22,6 +22,7 @@ export default class Api {
           headers: {
             "Content-Type": "application/json"
           },
+          credentials: "include", // To allow cookies to be deleted by the server
           body: JSON.stringify({ token: localStorage.refreshToken })
         })
 
