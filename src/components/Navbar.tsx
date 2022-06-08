@@ -49,6 +49,10 @@ export default function Navbar() {
         <li key="skills" className={styles.buttonNav}><Link to="/skills" className={styles.navLink}>Skills &amp; Qualifications</Link></li>
         <li key="examples" className={styles.buttonNav}><Link to="/examples" className={styles.navLink}>Examples of Work</Link></li>
         <li key="blogs" className={styles.buttonNav}><Link to="/viewblogs" className={styles.navLink}>Blogs</Link></li>
+        {hasData()
+          ? <li key="createBlog" className={styles.buttonNav}><Link to="/editblog" className={styles.navLink}>Create A New Blog</Link></li>
+          : null
+        }
       </div>
       <div className={styles.auth}>
         {hasData()
