@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import Api from "../lib/api/Api"
-import { hasTokens } from "../lib/api/auth.api"
+import { hasData } from "../lib/api/auth.api"
 import Button, { ButtonState } from "./Button"
 
 import styles from "./Navbar.module.css"
@@ -49,9 +49,13 @@ export default function Navbar() {
         <li key="skills" className={styles.buttonNav}><Link to="/skills" className={styles.navLink}>Skills &amp; Qualifications</Link></li>
         <li key="examples" className={styles.buttonNav}><Link to="/examples" className={styles.navLink}>Examples of Work</Link></li>
         <li key="blogs" className={styles.buttonNav}><Link to="/viewblogs" className={styles.navLink}>Blogs</Link></li>
+        {hasData()
+          ? <li key="createBlog" className={styles.buttonNav}><Link to="/editblog" className={styles.navLink}>Create A New Blog</Link></li>
+          : null
+        }
       </div>
       <div className={styles.auth}>
-        {hasTokens()
+        {hasData()
           ?
           <li className={styles.buttonAuth}>
             <Button
