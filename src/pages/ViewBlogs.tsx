@@ -1,10 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import BlogCard from "../components/blog/BlogCard"
+import Button, { ButtonState } from "../components/Button"
 import Loading from "../components/Loading"
 import PageContainer, { PageContainerState } from "../components/PageContainer"
 import useRefState from "../hooks/useRefState"
 import Api, { BlogProps } from "../lib/api/Api"
 import styles from "./ViewBlogs.module.css"
+
+import { ReactComponent as CreateIcon } from "../assets/images/createIcon.svg"
+import { useNavigate } from "react-router-dom"
+import { hasData } from "../lib/api/auth.api"
 
 function getScrollPercentage() {
   const de = document.documentElement
@@ -17,10 +22,16 @@ export default function ViewBlogs() {
   const [loadingBlogsState, loadingBlogsRef, setLoadingBlogs] = useRefState(false)
   // True if there are no more blogs to show
   const [allBlogsShownState, allBlogsShownRef, setAllBlogsShown] = useRefState(false)
+  // Create new blog button state
+  const [createButtonState, setCreateButtonState] = useState<ButtonState>({ state: "normal" })
+
+  // Navigation
+  const navigate = useNavigate()
 
   // Number of blogs loaded
   const numBlogsRef = useRef(0)
 
+  // Function to load the given number of blogs
   const getBlogs = useCallback(async (limit: number) => {
     if (numBlogsRef.current === 0) {
       // Initial loading of blogs, set whole page to loading
@@ -71,13 +82,12 @@ export default function ViewBlogs() {
     setPageState({ status: "normal" })
   }, [setAllBlogsShown])
 
-
-
-  // Load blogs
+  // Load initial blogs
   useEffect(() => {
     getBlogs(8)
   }, [getBlogs])
 
+  // Load more blogs upon scrolling to the bottom of the page, if more blogs are available
   useEffect(() => {
     async function onScroll() {
       if (!allBlogsShownRef.current && !loadingBlogsRef.current && getScrollPercentage() > 0.95) {
@@ -99,14 +109,35 @@ export default function ViewBlogs() {
     }
   }, [allBlogsShownRef, getBlogs, loadingBlogsRef, setLoadingBlogs])
 
+  // Redirects to the create blog page
+  const onClickCreate = useCallback(() => {
+    setCreateButtonState({ state: "loading" })
+    navigate("/editblog")
+  }, [navigate])
+
   return (
     <PageContainer
       state={pageState}
       contentStyle={{ marginTop: "42px", marginBottom: "42px" }}
       contentBlockStyle={{ display: "flex", flexDirection: "column", gap: "40px" }}
     >
+      {hasData()
+        ?
+        <Button
+          text="Create a new blog"
+          type={{ type: "button", callBack: onClickCreate }}
+          backgroundColor="#8B0000"
+          color="#FFFFFF"
+          icon={<CreateIcon width={21} height={21} />}
+          width="158px"
+          height="40px"
+          buttonState={createButtonState}
+        />
+        :
+        null
+      }
       {allBlogsShownState && numBlogsRef.current === 0
-        ? <p>No blogs to show</p>
+        ? <p>No blogs to show!</p>
         : cards
       }
       {loadingBlogsState
