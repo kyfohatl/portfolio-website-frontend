@@ -15,31 +15,25 @@ export interface BlogProps {
 
 export default class Api {
   static async signOut() {
-    if (localStorage.getItem("refreshToken")) {
-      try {
-        const response = await fetch("http://localhost:8000/auth/users/logout", {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          credentials: "include", // To allow cookies to be deleted by the server
-          body: JSON.stringify({ token: localStorage.refreshToken })
-        })
+    try {
+      const response = await fetch("http://localhost:8000/auth/users/logout", {
+        method: "DELETE",
+        credentials: "include" // To allow cookies to be deleted by the server
+      })
 
-        if (response.ok) {
-          // Successfully deleted refresh token in database
-          redirectToSignInAndClearData()
-        } else {
-          // Could not delete refresh token from database
-          const err = await response.json() as { unknown: unknown }
-          console.error("Error: Refresh token is invalid", err.unknown)
-          redirectToSignInAndClearData()
-        }
-      } catch (err) {
-        // Could not perform fetch request
-        console.error("Error: could not submit sign out request to API", err)
+      if (response.ok) {
+        // Successfully deleted refresh token in database
+        return redirectToSignInAndClearData()
+      } else {
+        // Could not delete refresh token from database
+        const err = await response.json() as { unknown: unknown }
+        console.error("Error: Refresh token is invalid", err.unknown)
         redirectToSignInAndClearData()
       }
+    } catch (err) {
+      // Could not perform fetch request
+      console.error("Error: could not submit sign out request to API", err)
+      redirectToSignInAndClearData()
     }
   }
 
