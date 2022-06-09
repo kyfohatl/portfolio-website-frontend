@@ -119,7 +119,7 @@ export default function ViewBlogs() {
     <PageContainer
       state={pageState}
       contentStyle={{ marginTop: "42px", marginBottom: "42px" }}
-      contentBlockStyle={{ display: "flex", flexDirection: "column", gap: "40px" }}
+      contentBlockStyle={{ display: "flex", flexDirection: "column", gap: "26px", alignItems: "flex-end" }}
     >
       {hasData()
         ?
@@ -136,16 +136,18 @@ export default function ViewBlogs() {
         :
         null
       }
-      {allBlogsShownState && numBlogsRef.current === 0
-        ? <p>No blogs to show!</p>
-        : cards
-      }
-      {loadingBlogsState
-        ? <div className={styles.loadingCard}>
-          <Loading overrideStyles={{ height: "200px", width: "200px" }} />
-        </div>
-        : null
-      }
+      <div className={styles.blogsContainer}>
+        {allBlogsShownState && numBlogsRef.current === 0
+          ? <p>No blogs to show!</p>
+          : cards
+        }
+        {loadingBlogsState
+          ? <div className={styles.loadingCard}>
+            <Loading overrideStyles={{ height: "200px", width: "200px" }} />
+          </div>
+          : null
+        }
+      </div>
     </PageContainer>
   )
 }
