@@ -54,7 +54,7 @@ export default function SignUp() {
 
     try {
       // Post new user
-      const response = await fetch("http://localhost:8000/auth/users", {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

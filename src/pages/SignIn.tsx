@@ -56,7 +56,7 @@ export default function SignIn() {
     // Attempt sign in
     try {
       // Post new user
-      const response = await fetch("http://localhost:8000/auth/users/login", {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

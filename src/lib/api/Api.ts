@@ -16,7 +16,7 @@ export interface BlogProps {
 export default class Api {
   static async signOut() {
     try {
-      const response = await fetch("http://localhost:8000/auth/users/logout", {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/users/logout`, {
         method: "DELETE",
         credentials: "include" // To allow cookies to be deleted by the server
       })
@@ -39,7 +39,9 @@ export default class Api {
 
   static async getBlog(blogId: string) {
     try {
-      const response = await fetch("http://localhost:8000/blog/" + blogId, { method: "GET" })
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_SERVER_ADDR}blog/` + blogId, {
+        method: "GET"
+      })
 
       return await response.json() as BackendResponse
     } catch (err) {
@@ -54,7 +56,7 @@ export default class Api {
   static async saveBlog(html: string, css: string, blogId?: string | null) {
     try {
       const response = await fetchWithAuth<{ success: { id: string } } | BackendError>(
-        "http://localhost:8000/blog/create",
+        `${process.env.REACT_APP_BACKEND_SERVER_ADDR}blog/create`,
         "POST",
         5,
         { html: html, css: css, blogId: blogId }
@@ -69,7 +71,8 @@ export default class Api {
 
   static async getRecentBlogs(pageNum: number, limit: number) {
     try {
-      const response = await fetch(`http://localhost:8000/blog/?page=${pageNum}&limit=${limit}`, {
+      const addr = `${process.env.REACT_APP_BACKEND_SERVER_ADDR}blog/?page=${pageNum}&limit=${limit}`
+      const response = await fetch(addr, {
         method: "GET"
       })
 
@@ -82,7 +85,7 @@ export default class Api {
   static async deleteBlog(blogId: string) {
     try {
       const response = fetchWithAuth<{ success: { id: string } } | BackendError>(
-        "http://localhost:8000/blog/" + blogId,
+        `${process.env.REACT_APP_BACKEND_SERVER_ADDR}blog/` + blogId,
         "DELETE",
         5
       )

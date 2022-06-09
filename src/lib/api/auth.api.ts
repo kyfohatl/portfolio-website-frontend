@@ -14,14 +14,14 @@ export function deleteLocalData() {
 // Deletes local tokens and redirects to the sign in page
 export function redirectToSignInAndClearData() {
   deleteLocalData()
-  window.location.href = "http://localhost:3000/signin"
+  window.location.href = process.env.REACT_APP_FRONTEND_SERVER_ADDR + "signin"
 }
 
 // Sends request for a new pair of jwt acc and ref tokens. If the request fails, 
 // redirects to the sign in page and returns false, otherwise will return true
 export async function refreshTokens() {
   try {
-    const response = await fetch("http://localhost:8000/auth/token", {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/token`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
