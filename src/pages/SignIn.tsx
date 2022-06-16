@@ -109,6 +109,8 @@ export default function SignIn() {
     setSignInDisabled(true)
     setSignInFacebookDisabled(true)
     setSignInGoogleState({ state: "loading" })
+
+    window.location.href = "http://localhost:8000/auth/login/google"
   }, [])
 
   const onSignInFacebook = useCallback(() => {
@@ -118,6 +120,8 @@ export default function SignIn() {
     setSignInDisabled(true)
     setSignInGoogleDisabled(true)
     setSignInFacebookState({ state: "loading" })
+
+    window.location.href = "http://localhost:8000/auth/login/facebook"
   }, [])
 
   return (
