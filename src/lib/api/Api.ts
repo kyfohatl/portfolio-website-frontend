@@ -1,4 +1,4 @@
-import { BackendError, BackendResponse } from "../commonTypes"
+import { BackendError, BackendResponse, FrontendError } from "../commonTypes"
 import { fetchWithAuth, redirectToSignInAndClearData } from "./auth.api"
 
 export interface BlogProps {
@@ -34,6 +34,29 @@ export default class Api {
       // Could not perform fetch request
       console.error("Error: could not submit sign out request to API", err)
       redirectToSignInAndClearData()
+    }
+  }
+
+  static async postFacebookOpenIdCallback(idToken: string | null) {
+    // Make sure an openid client id token is present
+    if (!idToken) throw new FrontendError("No id token given!", 400)
+
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/login/facebook/callback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ id_token: idToken })
+      })
+
+      const data = await response.json() as BackendResponse
+
+      // Ensure callback response was successful
+      if (!("success" in data)) {
+        throw FrontendError.backendErrorToFrontendError(data)
+      }
+    } catch (err) {
+      throw new FrontendError("Failed to fetch", 500, err)
     }
   }
 
