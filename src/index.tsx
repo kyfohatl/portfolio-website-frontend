@@ -15,6 +15,7 @@ import EditBlog from "./pages/EditBlog"
 import ViewBlogs from './pages/ViewBlogs';
 import ViewBlog from './pages/ViewBlog';
 import FacebookRedirect from './pages/auth_redirects/FacebookRedirect';
+import GoogleRedirect from './pages/auth_redirects/GoogleRedirect';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -32,6 +33,7 @@ ReactDOM.render(
         <Route path="viewblogs" element={<ViewBlogs />} />
         <Route path="blog/:blogId" element={<ViewBlog />} />
         <Route path="signin/facebook" element={<FacebookRedirect />} />
+        <Route path="signin/google" element={<GoogleRedirect />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,

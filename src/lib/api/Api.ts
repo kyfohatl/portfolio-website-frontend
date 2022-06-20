@@ -54,7 +54,11 @@ export default class Api {
       // Ensure callback response was successful
       if (!("success" in data)) {
         throw FrontendError.backendErrorToFrontendError(data)
+      } else if (!("userId" in data.success)) {
+        throw new FrontendError("No user id present in response!", 500)
       }
+
+      return data
     } catch (err) {
       throw new FrontendError("Failed to fetch", 500, err)
     }

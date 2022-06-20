@@ -18,8 +18,11 @@ export default function FacebookRedirect() {
   useEffect(() => {
     async function postCallback() {
       try {
-        await Api.postFacebookOpenIdCallback(idToken)
-        // Successful callback response. Tokens have been set. Redirect to home page
+        const response = await Api.postFacebookOpenIdCallback(idToken)
+        // Successful callback response. Tokens have been set
+        // Now set user id
+        localStorage.setItem("userId", response.success.userId)
+        // Finally redirect to the home page
         // Replace top of route stack to prevent coming back to this page
         navigate("/", { replace: true })
       } catch (err) {
