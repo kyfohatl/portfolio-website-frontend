@@ -133,6 +133,7 @@ export default function Editor({ textInfo, setText, title }: EditorProps) {
             onKeyDown={onTabDown}
             style={textAreaDimensions}
             wrap="off"
+            spellCheck={false}
           />
         </div>
       </div>
