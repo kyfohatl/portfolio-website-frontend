@@ -1,4 +1,4 @@
-import { CSSProperties } from "react"
+import React, { CSSProperties } from "react"
 import styles from "./FeatureDisplayCard.module.css"
 
 interface imgProps {
@@ -10,11 +10,18 @@ interface imgProps {
 interface FeatureDisplayCardProps {
   title: string,
   notes: string[],
-  images: imgProps[]
-  theme?: "dark" | "light"
+  images: imgProps[],
+  theme?: "dark" | "light",
 }
 
-export default function FeatureDisplayCard({ title, notes, images, theme = "light" }: FeatureDisplayCardProps) {
+// Uses Ref Forwarding to provide a ref access to the outer container div of this component to the parent
+// that contains it
+const FeatureDisplayCard = React.forwardRef<HTMLDivElement, FeatureDisplayCardProps>(({
+  title,
+  notes,
+  images,
+  theme = "light"
+}, ref) => {
   let outerContainerStyles: CSSProperties = {}
   let titleStyles: CSSProperties = {}
   let noteStyles: CSSProperties = {}
@@ -31,7 +38,7 @@ export default function FeatureDisplayCard({ title, notes, images, theme = "ligh
   )
 
   return (
-    <div className={styles.outerContainer} style={outerContainerStyles}>
+    <div ref={ref} className={styles.outerContainer} style={outerContainerStyles}>
       <article className={styles.textContainer}>
         <h1 style={titleStyles}>{title}</h1>
         <ul>
@@ -43,4 +50,6 @@ export default function FeatureDisplayCard({ title, notes, images, theme = "ligh
       </div>
     </div>
   )
-}
+})
+
+export default FeatureDisplayCard

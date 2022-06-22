@@ -10,22 +10,31 @@ import ViewBlogsImg from "../assets/images/homePageDemos/view_blogs_removedBg.pn
 import SignUpImg from "../assets/images/homePageDemos/sign_up.png"
 import ThirdPartyLoginImg from "../assets/images/homePageDemos/google_facebook_removedBg.png"
 import Hero from "../components/Hero"
+import { useCallback, useRef } from "react"
 
 export default function Home() {
+  // For scrolling to the first feature display card upon clicking the "Explore" button
+  const firstFeatureRef = useRef<HTMLDivElement>(null)
+  const onExploreClick = useCallback(() => {
+    if (!firstFeatureRef.current) return
+    firstFeatureRef.current.scrollIntoView({ behavior: "smooth" })
+  }, [])
+
   return (
     <PageContainer
       contentBlockStyle={{ maxWidth: "100vw", display: "flex", flexDirection: "column" }}
     >
-      <Hero />
+      <Hero onExploreClick={onExploreClick} />
       <FeatureDisplayCard
         title="Create Your Own Blogs"
         notes={[
-          "Write static blogs using the editors, and customize them to your heart’s content using the power of HTML and CSS",
+          "Write static blogs using the editors, and customize them to your heart's content using the power of HTML and CSS",
           "Live rendering of blog content using an iframe, so you can check your work",
           "VSCode-style editor with line numbering, custom built from scratch without the use of any frameworks. Basic syntax highlighting is planned for a future version",
           "Sign in required to create and edit blogs"
         ]}
         images={[{ imgLink: CreateBlogImg, width: "594px", height: "526px" }]}
+        ref={firstFeatureRef}
       />
       <FeatureDisplayCard
         title="Summarize Your Blogs"
@@ -45,7 +54,7 @@ export default function Home() {
         title="Edit and Delete Blogs"
         notes={[
           "Edit or delete any of the blogs that you created at any time by clicking on the “Edit” and “Delete” buttons",
-          "Clicking “Edit” will open the blog’s HTML and CSS in the website’s blog editor tool"
+          "Clicking “Edit” will open the blog's HTML and CSS in the website's blog editor tool"
         ]}
         images={[{ imgLink: EditBlogImg, width: "593px", height: "691px" }]}
       />

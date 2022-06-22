@@ -37,3 +37,29 @@
   align-items: center;
   gap: 20px;
 }
+
+.arrow {
+  animation: upAndDown 2s ease-in-out 0.1s infinite;
+}
+
+@keyframes upAndDown {
+  18% {
+    transform: translateY(30px);
+  }
+
+  36% {
+    transform: translateY(0px);
+  }
+
+  54% {
+    transform: translateY(30px);
+  }
+
+  72% {
+    transform: translateY(0px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
