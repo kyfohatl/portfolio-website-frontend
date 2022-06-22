@@ -1,0 +1,39 @@
+.outerContainer {
+  background-image: linear-gradient(90deg, rgba(246, 6, 180, 1) 24%, rgba(238, 244, 1, 1) 73%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 240px;
+  width: 100%;
+  height: 100vh;
+}
+
+.textContainer {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  max-width: 400px;
+}
+
+.textContainer>h1 {
+  font-family: inherit;
+  color: inherit;
+  font-weight: 800;
+  font-size: 36px;
+}
+
+.textContainer>p {
+  font-family: inherit;
+  color: inherit;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
