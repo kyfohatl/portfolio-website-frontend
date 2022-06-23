@@ -10,7 +10,7 @@ interface imgProps {
 interface FeatureDisplayCardProps {
   title: string,
   notes: string[],
-  images: imgProps[],
+  visuals: {images: imgProps[]} | {custom: JSX.Element},
   theme?: "dark" | "light",
 }
 
@@ -19,7 +19,7 @@ interface FeatureDisplayCardProps {
 const FeatureDisplayCard = React.forwardRef<HTMLDivElement, FeatureDisplayCardProps>(({
   title,
   notes,
-  images,
+  visuals,
   theme = "light"
 }, ref) => {
   let outerContainerStyles: CSSProperties = {}
@@ -32,10 +32,15 @@ const FeatureDisplayCard = React.forwardRef<HTMLDivElement, FeatureDisplayCardPr
     noteStyles = { color: "white" }
   }
 
+  // Create list of notes
   const notesList = notes.map((note) => <li style={noteStyles}>{note}</li>)
-  const imgList = images.map(
-    (image) => <img alt="None" src={image.imgLink} width={image.width} height={image.height} />
-  )
+  // Create a list of images if images are given
+  let imgList: JSX.Element[] = []
+  if ("images" in visuals) {
+    imgList = visuals.images.map(
+      (image) => <img alt="None" src={image.imgLink} width={image.width} height={image.height} />
+    )  
+  }
 
   return (
     <div ref={ref} className={styles.outerContainer} style={outerContainerStyles}>
@@ -46,7 +51,10 @@ const FeatureDisplayCard = React.forwardRef<HTMLDivElement, FeatureDisplayCardPr
         </ul>
       </article>
       <div className={styles.imageContainer}>
-        {imgList}
+        {"images" in visuals
+          ? imgList
+          : visuals.custom
+        }
       </div>
     </div>
   )

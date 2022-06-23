@@ -10,7 +10,11 @@ import ViewBlogsImg from "../assets/images/homePageDemos/view_blogs_removedBg.pn
 import SignUpImg from "../assets/images/homePageDemos/sign_up.png"
 import ThirdPartyLoginImg from "../assets/images/homePageDemos/google_facebook_removedBg.png"
 import Hero from "../components/Hero"
-import { useCallback, useRef } from "react"
+import { useCallback, useRef, useState } from "react"
+import Deleting, { DeletingStyleOverrides } from "../components/animation/Deleting"
+import Saving, { SavingStyleOverrides } from "../components/animation/Saving"
+import Button from "../components/Button"
+import Loading from "../components/Loading"
 
 export default function Home() {
   // For scrolling to the first feature display card upon clicking the "Explore" button
@@ -18,6 +22,24 @@ export default function Home() {
   const onExploreClick = useCallback(() => {
     if (!firstFeatureRef.current) return
     firstFeatureRef.current.scrollIntoView({ behavior: "smooth" })
+  }, [])
+
+  // Restarts the bin animation 1 second after its completion
+  const [deletingAnimState, setDeletingAnimState] = useState<DeletingStyleOverrides>()
+  const onDeletingEnd = useCallback(() => {
+    setDeletingAnimState({rubbishStyles: {animationName: "none"}, lidStyles: {animationName: "none"}})
+    setTimeout(() => {
+      setDeletingAnimState({rubbishStyles: {animationName: ""}, lidStyles: {animationName: ""}})
+    }, 1000)
+  }, [])
+
+  // Restarts the checkmark animation 1 second after its completion
+  const [savingAnimState, setSavingAnimState] = useState<SavingStyleOverrides>()
+  const onSavingEnd = useCallback(() => {
+    setSavingAnimState({tickStyles: {animationName: "none"}, circleStyles: {animationName: "none"}})
+    setTimeout(() => {
+      setSavingAnimState({tickStyles: {animationName: ""}, circleStyles: {animationName: ""}})
+    }, 1000)
   }, [])
 
   return (
@@ -33,7 +55,7 @@ export default function Home() {
           "VSCode-style editor with line numbering, custom built from scratch without the use of any frameworks. Basic syntax highlighting is planned for a future version",
           "Sign in required to create and edit blogs"
         ]}
-        images={[{ imgLink: CreateBlogImg, width: "594px", height: "526px" }]}
+        visuals={{images: [{ imgLink: CreateBlogImg, width: "594px", height: "526px" }]}}
         ref={firstFeatureRef}
       />
       <FeatureDisplayCard
@@ -44,10 +66,10 @@ export default function Home() {
           "The OG protocol implementation has the added benefit of being automatically compatible with many social media platforms. When sharing your blog on sites such as Facebook and LinkedIn, your summary will be displayed.",
           "Use the “keywords” meta tag to add tags to your blog, which will be displayed on the summary card"
         ]}
-        images={[
+        visuals={{images: [
           { imgLink: SummaryImg, width: "593px", height: "492px" },
           { imgLink: SummaryCardImg, width: "593px", height: "119px" }
-        ]}
+        ]}}
         theme="dark"
       />
       <FeatureDisplayCard
@@ -56,7 +78,7 @@ export default function Home() {
           "Edit or delete any of the blogs that you created at any time by clicking on the “Edit” and “Delete” buttons",
           "Clicking “Edit” will open the blog's HTML and CSS in the website's blog editor tool"
         ]}
-        images={[{ imgLink: EditBlogImg, width: "593px", height: "691px" }]}
+        visuals={{images: [{ imgLink: EditBlogImg, width: "593px", height: "691px" }]}}
       />
       <FeatureDisplayCard
         title="Read Blogs"
@@ -67,7 +89,7 @@ export default function Home() {
           "Addition blogs are loaded automatically as you scroll towards the bottom of the page",
           "Upcoming features: Search and sort"
         ]}
-        images={[{ imgLink: ViewBlogsImg, width: "593px", height: "690px" }]}
+        visuals={{images: [{ imgLink: ViewBlogsImg, width: "593px", height: "690px" }]}}
         theme="dark"
       />
       <FeatureDisplayCard
@@ -78,7 +100,7 @@ export default function Home() {
           "Uses HTTP-only cookies to store tokens safely (instead of browser local storage), preventing an XSS attacker from stealing them",
           "Automatic extension of sessions using refresh tokens"
         ]}
-        images={[{ imgLink: SignUpImg, width: "480px", height: "491px" }]}
+        visuals={{images: [{ imgLink: SignUpImg, width: "480px", height: "491px" }]}}
       />
       <FeatureDisplayCard
         title="Google and Facebook Login"
@@ -87,8 +109,47 @@ export default function Home() {
           "After the first third party sign in, an account is created for the user on the backend automatically. Subsequent third party logins will invoke the user account",
           "Only requests an id_token, and not an OAuth2.0 access code. This ensures that only the bare minimum required information is given to this website's system (mainly email and user id)"
         ]}
-        images={[{ imgLink: ThirdPartyLoginImg, width: "480px", height: "504px" }]}
+        visuals={{images: [{ imgLink: ThirdPartyLoginImg, width: "480px", height: "504px" }]}}
         theme="dark"
+      />
+      <FeatureDisplayCard
+        title="Animations & Feedback"
+        notes={[
+          "A variety of CSS and SVG animations all custom built from scratch, to enhance the experience of this site and give visual feedback to users",
+          "Even more animations are in development"
+        ]}
+        visuals={{custom:
+          <div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: "20px"}}>
+            <Button
+              text="Deleting"
+              type={{type: "submit"}}
+              buttonState={{
+                state: "animated",
+                animation: <Deleting onAnimationEnd={onDeletingEnd} overrides={deletingAnimState} />
+              }}
+              width="120px"
+              height="46px"
+            />
+            <Button
+              text="Saving"
+              type={{type: "submit"}}
+              buttonState={{
+                state: "animated",
+                animation: <Saving onAnimationEnd={onSavingEnd} overrides={savingAnimState} />
+              }}
+              width="120px"
+              height="46px"
+            />
+            <Button
+              text="none"
+              type={{type: "submit"}}
+              buttonState={{state: "loading"}}
+              width="120px"
+              height="46px"
+            />
+            <Loading overrideStyles={{width: "120px", height: "120px"}} />
+          </div>
+        }}
       />
     </PageContainer>
   )
