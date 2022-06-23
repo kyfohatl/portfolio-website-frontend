@@ -1,0 +1,65 @@
+.outerContainer {
+  background-image: linear-gradient(90deg, rgba(246, 6, 180, 1) 24%, rgba(238, 244, 1, 1) 73%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 240px;
+  width: 100%;
+  height: 100vh;
+}
+
+.textContainer {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  max-width: 400px;
+}
+
+.textContainer>h1 {
+  font-family: inherit;
+  color: inherit;
+  font-weight: 800;
+  font-size: 36px;
+}
+
+.textContainer>p {
+  font-family: inherit;
+  color: inherit;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.arrow {
+  animation: upAndDown 2s ease-in-out 0.1s infinite;
+}
+
+@keyframes upAndDown {
+  18% {
+    transform: translateY(30px);
+  }
+
+  36% {
+    transform: translateY(0px);
+  }
+
+  54% {
+    transform: translateY(30px);
+  }
+
+  72% {
+    transform: translateY(0px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
