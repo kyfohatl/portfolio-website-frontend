@@ -103,25 +103,23 @@ export default function SignIn() {
   }, [email, pass, navigate])
 
   const onSignInGoogle = useCallback(() => {
-    console.log("Google Sign in!")
+
 
     // Disable other buttons and set loading
     setSignInDisabled(true)
     setSignInFacebookDisabled(true)
     setSignInGoogleState({ state: "loading" })
 
-    window.location.href = "http://localhost:8000/auth/login/google"
+    window.location.href = `${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/login/google`
   }, [])
 
   const onSignInFacebook = useCallback(() => {
-    console.log("Facebook Sign in!")
-
     // Disable other buttons and set loading
     setSignInDisabled(true)
     setSignInGoogleDisabled(true)
     setSignInFacebookState({ state: "loading" })
 
-    window.location.href = "http://localhost:8000/auth/login/facebook"
+    window.location.href = `${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/login/facebook`
   }, [])
 
   return (
