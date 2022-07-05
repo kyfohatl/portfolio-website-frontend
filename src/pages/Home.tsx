@@ -106,7 +106,7 @@ export default function Home() {
           "View the summaries of your own blogs, as well as the works of other creators on the main blogs page",
           "Summaries are neatly contained and separated by animated blog cards",
           "Click on any of them to view the full blog",
-          "Addition blogs are loaded automatically as you scroll towards the bottom of the page",
+          "Additional blogs are loaded automatically as you scroll towards the bottom of the page",
           "Upcoming features: Search and sort"
         ]}
         visuals={{ images: [{ imgLink: ViewBlogsImg, width: "593px", height: "690px" }] }}
