@@ -5,6 +5,7 @@ import PageContainer, { PageContainerState } from "../components/PageContainer";
 
 import styles from "./EditBlog.module.css"
 import { ReactComponent as SaveIcon } from "../assets/images/saveIcon.svg"
+import { ReactComponent as HelpIcon } from "../assets/images/questionMarkIcon.svg"
 import Api, { BlogProps } from "../lib/api/Api";
 import { useParams } from "react-router-dom";
 import Saving from "../components/animation/Saving";
@@ -102,6 +103,8 @@ export default function EditBlog() {
     }
   }, [html, css, blogId])
 
+  const HELP_BUTTON_SIZE = "38px"
+
   return (
     <PageContainer
       contentStyle={{ marginTop: "56px" }}
@@ -109,6 +112,16 @@ export default function EditBlog() {
       state={pageState}
     >
       <div className={styles.savePane}>
+        <Button
+          type={{ type: "button", callBack: () => { console.log("Help!") } }}
+          icon={<HelpIcon width={HELP_BUTTON_SIZE} height={HELP_BUTTON_SIZE} />}
+          height={HELP_BUTTON_SIZE}
+          width={HELP_BUTTON_SIZE}
+          padding="0px"
+          borderRadius="50px"
+          backgroundColor="transparent"
+        />
+
         <Button
           text={saveButtonText}
           type={{ type: "button", callBack: onClickSave }}

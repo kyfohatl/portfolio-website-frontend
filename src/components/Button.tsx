@@ -25,7 +25,7 @@ interface SubmitButton {
 type ButtonType = CallBackButton | SubmitButton
 
 interface ButtonProps {
-  text: string,
+  text?: string,
   type: ButtonType,
   backgroundColor?: string,
   fontSize?: string,
@@ -33,9 +33,11 @@ interface ButtonProps {
   width?: string,
   height?: string,
   marginTop?: string,
+  padding?: string,
   icon?: React.ReactNode,
   buttonState?: ButtonState,
-  disabled?: boolean
+  disabled?: boolean,
+  borderRadius?: string
 }
 
 export default function Button({
@@ -47,15 +49,19 @@ export default function Button({
   width = "100px",
   height = "100px",
   marginTop = "0px",
+  padding,
   icon,
   buttonState = { state: "normal" },
-  disabled = false
+  disabled = false,
+  borderRadius
 }: ButtonProps) {
   let buttonStyles: React.CSSProperties = {
     fontSize: fontSize,
     width: width,
     height: height,
-    marginTop: marginTop
+    marginTop: marginTop,
+    ...(padding && { padding: padding }),
+    ...(borderRadius && { borderRadius: borderRadius })
   }
 
   // Only add color and background color if not disabled as otherwise they override the disabled selector

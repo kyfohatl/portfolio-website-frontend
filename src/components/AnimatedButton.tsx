@@ -4,7 +4,7 @@ import AnimationProps from "./animation/AnimationProps"
 
 export interface AnimatedButtonProps {
   animation: ReactElement<AnimationProps>,
-  text: string,
+  text?: string,
   fontSize?: string,
   width?: string,
   height?: string,

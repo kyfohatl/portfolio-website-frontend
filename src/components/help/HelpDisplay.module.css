@@ -1,0 +1,33 @@
+.background {
+  opacity: 60%;
+  background-color: #3F3F3F;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+}
+
+.displayContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.div1 {
+  width: 100px;
+  height: 100px;
+  background-color: green;
+}
+
+.div2 {
+  width: 100px;
+  height: 100px;
+  background-color: red;
+}
+
+.div3 {
+  width: 100px;
+  height: 100px;
+  background-color: blue;
+}
