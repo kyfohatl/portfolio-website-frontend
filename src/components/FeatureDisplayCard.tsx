@@ -7,11 +7,13 @@ interface imgProps {
   width: string
 }
 
-interface FeatureDisplayCardProps {
+export interface FeatureDisplayCardProps {
   title: string,
   notes: string[],
-  visuals: {images: imgProps[]} | {custom: JSX.Element},
+  visuals: { images: imgProps[] } | { custom: JSX.Element },
   theme?: "dark" | "light",
+  dimensions?: { width: string, height: string }
+  borderRadius?: string
 }
 
 // Uses Ref Forwarding to provide a ref access to the outer container div of this component to the parent
@@ -20,14 +22,19 @@ const FeatureDisplayCard = React.forwardRef<HTMLDivElement, FeatureDisplayCardPr
   title,
   notes,
   visuals,
-  theme = "light"
+  theme = "light",
+  dimensions,
+  borderRadius
 }, ref) => {
-  let outerContainerStyles: CSSProperties = {}
+  let outerContainerStyles: CSSProperties = {
+    ...(dimensions),
+    ...(borderRadius && { borderRadius: borderRadius })
+  }
   let titleStyles: CSSProperties = {}
   let noteStyles: CSSProperties = {}
 
   if (theme === "dark") {
-    outerContainerStyles = { backgroundColor: "darkred" }
+    outerContainerStyles.backgroundColor = "darkred"
     titleStyles = { color: "white" }
     noteStyles = { color: "white" }
   }
@@ -39,7 +46,7 @@ const FeatureDisplayCard = React.forwardRef<HTMLDivElement, FeatureDisplayCardPr
   if ("images" in visuals) {
     imgList = visuals.images.map(
       (image) => <img alt="None" src={image.imgLink} width={image.width} height={image.height} />
-    )  
+    )
   }
 
   return (

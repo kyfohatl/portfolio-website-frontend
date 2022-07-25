@@ -8,26 +8,18 @@
   width: 100vw;
 }
 
+.outerContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .displayContainer {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.div1 {
-  width: 100px;
-  height: 100px;
-  background-color: green;
-}
-
-.div2 {
-  width: 100px;
-  height: 100px;
-  background-color: red;
-}
-
-.div3 {
-  width: 100px;
-  height: 100px;
-  background-color: blue;
 }

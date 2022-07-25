@@ -1,0 +1,45 @@
+.inComingCard {
+  /* We want to have an incoming card slide in and replace the outgoing card. Both the incoming card and the place 
+  it aims for (destination) are at the center of the screen. However, the destination is slightly off center because 
+  the place where the card goes is part of a larger div which contains arrow buttons and dials. This larger div is 
+  centered at the middle of the screen, but the card within it is not. So we need to figure out the offset of the 
+  center of the card slot from the center of the screen, so that our incoming card is not actually at the center of 
+  the screen, but instead at a center +/- offset position. To find the offset, we need to add the gap between the 
+  card slot and the dials, plus the height of the dials, and divide that by 2. */
+  --displayContainerOffset: calc(calc(var(--outerContainerGap) + var(--dialSize)) / 2);
+
+  position: fixed;
+  top: 50%;
+}
+
+.inComingCardL {
+  left: 0%;
+  transform: translate(-100%, calc(-50% - var(--displayContainerOffset)));
+}
+
+.inComingCardR {
+  right: 0%;
+  transform: translate(100%, calc(-50% - var(--displayContainerOffset)));
+}
+
+.slideR {
+  animation: slideRight var(--animationDuration, 0.5s) ease-in-out 0.1s;
+}
+
+.slideL {
+  animation: slideLeft var(--animationDuration, 0.5s) ease-in-out 0.1s;
+}
+
+@keyframes slideRight {
+  100% {
+    left: 50%;
+    transform: translate(-50%, calc(-50% - var(--displayContainerOffset)));
+  }
+}
+
+@keyframes slideLeft {
+  100% {
+    right: 50%;
+    transform: translate(50%, calc(-50% - var(--displayContainerOffset)));
+  }
+}

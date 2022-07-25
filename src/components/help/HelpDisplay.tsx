@@ -1,33 +1,78 @@
-import React, { useCallback, useMemo, useState } from "react"
+import { useCallback, useState } from "react"
+import FeatureDisplayCard, { FeatureDisplayCardProps } from "../FeatureDisplayCard"
 import styles from "./HelpDisplay.module.css"
-import HelpDisplaySideButton from "./HelpDisplaySideButton"
+import HelpDisplayDial, { DIAL_SIZE } from "./HelpDisplayDial"
+import HelpDisplaySideButton, { Direction } from "./HelpDisplaySideButton"
 
 interface HelpDisplayProps {
-  cards?: JSX.Element
+  cardProps: FeatureDisplayCardProps[]
 }
 
-const OVERRIDE_STYLES: React.CSSProperties = {
-  display: "none"
+interface AnimationRunningState {
+  running: true,
+  direction: Direction,
+  nextCardInx: number
 }
 
-export default function HelpDisplay({ cards }: HelpDisplayProps) {
-  const [div1Override, setDiv1Override] = useState<React.CSSProperties>({})
+type AnimationState = { running: false } | AnimationRunningState
 
-  const func = useCallback(() => {
-    console.log("NAHAHA")
-    setDiv1Override({ display: "none" })
-  }, [])
+const ANIMATION_DURATION = "5s"
+
+export const OUTER_CONTAINER_GAP = "26px"
+
+function getNextCardIndex(curIndex: number, direction: Direction) {
+  if (direction === "left") return curIndex - 1
+  return curIndex + 1
+}
+
+export default function HelpDisplay({ cardProps }: HelpDisplayProps) {
+  const [cardIndex, setCardIndex] = useState(0)
+  const [animState, setAnimState] = useState<AnimationState>({ running: false })
+  // const [displayCardContainerClasses, setDisplayCardContainerClasses] = useState<string[]>([])
+
+  const onAnimationEnd = useCallback((direction: Direction) => {
+    setAnimState({ running: false })
+    setCardIndex(getNextCardIndex(cardIndex, direction))
+  }, [cardIndex])
+
+  const onLeftClick = useCallback(() => {
+    if (cardIndex > 0) {
+      setAnimState({ running: true, direction: "left", nextCardInx: getNextCardIndex(cardIndex, "left") })
+    }
+  }, [cardIndex])
+
+  const onRightClick = useCallback(() => {
+    if (cardIndex < cardProps.length - 1) {
+      setAnimState({ running: true, direction: "right", nextCardInx: getNextCardIndex(cardIndex, "right") })
+    }
+  }, [cardIndex, cardProps.length])
+
+  const curCard = cardProps[cardIndex]
 
   return (
-    <>
+    <div>
       <div className={styles.background}></div>
-      <div className={styles.displayContainer}>
-        <HelpDisplaySideButton direction="left" callBack={func} />
-        <div className={styles.div1} style={div1Override}></div>
-        <div className={styles.div2}></div>
-        <div className={styles.div3}></div>
-        <HelpDisplaySideButton direction="right" callBack={() => { }} />
+      {animState.running
+        ?
+        : null
+      }
+      <div className={styles.outerContainer} style={{ gap: OUTER_CONTAINER_GAP }}>
+        <div className={styles.displayContainer}>
+          <HelpDisplaySideButton direction="left" callBack={onLeftClick} />
+          <div>
+            <FeatureDisplayCard
+              title={curCard.title}
+              notes={curCard.notes}
+              visuals={curCard.visuals}
+              theme={curCard.theme}
+              dimensions={curCard.dimensions}
+              borderRadius={curCard.borderRadius}
+            />
+          </div>
+          <HelpDisplaySideButton direction="right" callBack={onRightClick} />
+        </div>
+        <HelpDisplayDial index={cardIndex} size={cardProps.length} />
       </div>
-    </>
+    </div>
   )
 }

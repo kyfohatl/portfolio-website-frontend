@@ -3,8 +3,10 @@ import Button from "../Button";
 import { ReactComponent as ChevronLeft } from "../../assets/images/helpDisplay/chevronLeft.svg"
 import { ReactComponent as ChevronRight } from "../../assets/images/helpDisplay/chevronRight.svg"
 
+export type Direction = "left" | "right"
+
 interface HelpDisplaySideButtonProps {
-  direction: "left" | "right",
+  direction: Direction,
   callBack: () => void
 }
 

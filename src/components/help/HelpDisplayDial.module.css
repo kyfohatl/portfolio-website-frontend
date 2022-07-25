@@ -1,0 +1,9 @@
+.container {
+  display: flex;
+  gap: 18px;
+}
+
+.dial {
+  border-radius: 50%;
+  background-color: seashell;
+}
