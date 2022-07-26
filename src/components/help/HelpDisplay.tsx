@@ -1,7 +1,10 @@
 import { useCallback, useState } from "react"
 import FeatureDisplayCard, { FeatureDisplayCardProps } from "../FeatureDisplayCard"
+import AnimatedCard from "./AnimatedCard"
+import AnimatedDial from "./AnimatedDial"
 import styles from "./HelpDisplay.module.css"
-import HelpDisplayDial, { DIAL_SIZE } from "./HelpDisplayDial"
+import HelpDisplayDial from "./HelpDisplayDial"
+import HelpDisplayPlaceholderButton from "./HelpDisplayPlaceholderButton"
 import HelpDisplaySideButton, { Direction } from "./HelpDisplaySideButton"
 
 interface HelpDisplayProps {
@@ -16,7 +19,7 @@ interface AnimationRunningState {
 
 type AnimationState = { running: false } | AnimationRunningState
 
-const ANIMATION_DURATION = "5s"
+const ANIMATION_DURATION = "0.3s"
 
 export const OUTER_CONTAINER_GAP = "26px"
 
@@ -50,29 +53,75 @@ export default function HelpDisplay({ cardProps }: HelpDisplayProps) {
   const curCard = cardProps[cardIndex]
 
   return (
-    <div>
+    <>
       <div className={styles.background}></div>
-      {animState.running
-        ?
-        : null
-      }
+
       <div className={styles.outerContainer} style={{ gap: OUTER_CONTAINER_GAP }}>
         <div className={styles.displayContainer}>
-          <HelpDisplaySideButton direction="left" callBack={onLeftClick} />
-          <div>
-            <FeatureDisplayCard
-              title={curCard.title}
-              notes={curCard.notes}
-              visuals={curCard.visuals}
-              theme={curCard.theme}
-              dimensions={curCard.dimensions}
-              borderRadius={curCard.borderRadius}
-            />
-          </div>
-          <HelpDisplaySideButton direction="right" callBack={onRightClick} />
+          {/* Only show the left button if there are more cards to show in that direction */}
+          {cardIndex > 0
+            ? <HelpDisplaySideButton direction="left" callBack={onLeftClick} disabled={animState.running} />
+            : <HelpDisplayPlaceholderButton />
+          }
+
+          {/* If animation is running, do not show the current card */}
+          {animState.running
+            ?
+            // Display a placeholder of the same size as a card, to prevent collapse of the display container
+            // when animation is running
+            <div style={{ ...curCard.dimensions }}></div>
+            :
+            // If animation is not running, display the current card
+            <div>
+              <FeatureDisplayCard
+                title={curCard.title}
+                notes={curCard.notes}
+                visuals={curCard.visuals}
+                theme={curCard.theme}
+                dimensions={curCard.dimensions}
+                borderRadius={curCard.borderRadius}
+              />
+            </div>
+          }
+
+          {/* Only show the right button if there are more cards to show in that direction */}
+          {cardIndex < cardProps.length - 1
+            ? <HelpDisplaySideButton direction="right" callBack={onRightClick} disabled={animState.running} />
+            : <HelpDisplayPlaceholderButton />
+          }
+
         </div>
-        <HelpDisplayDial index={cardIndex} size={cardProps.length} />
+
+        <HelpDisplayDial index={cardIndex} size={cardProps.length} showActiveDial={!animState.running} />
       </div>
-    </div>
+      {/* While animation is running, show the current card leaving, and the next card incoming */}
+      {animState.running
+        ?
+        <>
+          <AnimatedCard
+            cardProps={cardProps[animState.nextCardInx]}
+            direction={animState.direction}
+            type={"incoming"}
+            duration={ANIMATION_DURATION}
+            onAnimationEnd={onAnimationEnd}
+          />
+          <AnimatedCard
+            cardProps={curCard}
+            direction={animState.direction}
+            type={"outgoing"}
+            duration={ANIMATION_DURATION}
+          />
+          <AnimatedDial
+            curIndex={cardIndex}
+            nextIndex={animState.nextCardInx}
+            numDials={cardProps.length}
+            duration={ANIMATION_DURATION}
+            helpDisplayCardHeight={curCard.dimensions?.height || "100px"}
+            helpDisplayOuterContainerGap={OUTER_CONTAINER_GAP}
+          />
+        </>
+        : null
+      }
+    </>
   )
 }

@@ -7,13 +7,14 @@ export type Direction = "left" | "right"
 
 interface HelpDisplaySideButtonProps {
   direction: Direction,
-  callBack: () => void
+  callBack: () => void,
+  disabled: boolean
 }
 
-const BUTTON_SIZE = "40px"
+export const BUTTON_SIZE = "40px"
 const CHEVRON_SIZE = "26px"
 
-export default function HelpDisplaySideButton({ direction, callBack }: HelpDisplaySideButtonProps) {
+export default function HelpDisplaySideButton({ direction, callBack, disabled }: HelpDisplaySideButtonProps) {
   return (
     <Button
       type={{ type: "button", callBack: callBack }}
@@ -25,6 +26,7 @@ export default function HelpDisplaySideButton({ direction, callBack }: HelpDispl
           : <ChevronRight height={CHEVRON_SIZE} width={CHEVRON_SIZE} />
       }
       backgroundColor="#FFF5EE"
+      disabled={disabled}
     />
   )
 }

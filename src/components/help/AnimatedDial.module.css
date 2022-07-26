@@ -1,0 +1,16 @@
+.dial {
+  position: fixed;
+  height: var(--dialSize);
+  width: var(--dialSize);
+  border-radius: 50%;
+  top: calc(50% + var(--verticalOffset));
+  left: calc(50% - var(--startHorizontalOffset));
+  transform: translateY(-50%);
+  animation: slide var(--animationDuration, 0.5s) ease-in-out;
+}
+
+@keyframes slide {
+  100% {
+    left: calc(50% - var(--endHorizontalOffset));
+  }
+}

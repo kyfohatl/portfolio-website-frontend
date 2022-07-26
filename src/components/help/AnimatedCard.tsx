@@ -5,25 +5,42 @@ import { OUTER_CONTAINER_GAP } from "./HelpDisplay";
 import { DIAL_SIZE } from "./HelpDisplayDial";
 import React from "react";
 
+type AnimatedCardType = "incoming" | "outgoing"
+
 interface AnimatedCardProps {
   cardProps: FeatureDisplayCardProps,
   direction: Direction,
+  type: AnimatedCardType,
   duration: string,
-  onAnimationEnd: (direction: Direction) => void
+  onAnimationEnd?: (direction: Direction) => void
 }
 
-function getIncomingCardClasses(direction: Direction) {
-  if (direction === "left") {
-    return `${styles.inComingCard} ${styles.inComingCardL} ${styles.slideR}`
+function getCardClasses(type: AnimatedCardType, direction: Direction) {
+  if (type === "incoming") {
+    if (direction === "left") {
+      // Incoming card coming from the left side
+      return `${styles.base} ${styles.inComingCardL} ${styles.incomingSlideR}`
+    }
+    // Incoming card coming from the right side
+    return `${styles.base} ${styles.inComingCardR} ${styles.incomingSlideL}`
   }
-  return `${styles.inComingCard} ${styles.inComingCardR} ${styles.slideL}`
+
+  // Note that outgoing cards travel in the opposite direction to incoming cards
+  // So if an incoming card is coming from the left direction, then the outgoing card
+  // must go right
+  if (direction === "left") {
+    // Outgoing card going to the right side
+    return `${styles.base} ${styles.outgoingCard} ${styles.outgoingSlideR}`
+  }
+  // Outgoing card going to the left side
+  return `${styles.base} ${styles.outgoingCard} ${styles.outgoingSlideL}`
 }
 
-export default function AnimatedCard({ cardProps, direction, duration, onAnimationEnd }: AnimatedCardProps) {
+export default function AnimatedCard({ cardProps, direction, type, duration, onAnimationEnd }: AnimatedCardProps) {
   return (
     <div
-      className={getIncomingCardClasses(direction)}
-      onAnimationEnd={() => onAnimationEnd(direction)}
+      className={getCardClasses(type, direction)}
+      {...(onAnimationEnd ? { onAnimationEnd: () => onAnimationEnd(direction) } : {})}
       style={{
         "--outerContainerGap": OUTER_CONTAINER_GAP,
         "--dialSize": DIAL_SIZE,

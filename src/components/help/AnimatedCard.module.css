@@ -1,4 +1,4 @@
-.inComingCard {
+.base {
   /* We want to have an incoming card slide in and replace the outgoing card. Both the incoming card and the place 
   it aims for (destination) are at the center of the screen. However, the destination is slightly off center because 
   the place where the card goes is part of a larger div which contains arrow buttons and dials. This larger div is 
@@ -22,24 +22,51 @@
   transform: translate(100%, calc(-50% - var(--displayContainerOffset)));
 }
 
-.slideR {
-  animation: slideRight var(--animationDuration, 0.5s) ease-in-out 0.1s;
+.outgoingCard {
+  left: 50%;
+  transform: translate(-50%, calc(-50% - var(--displayContainerOffset)));
 }
 
-.slideL {
-  animation: slideLeft var(--animationDuration, 0.5s) ease-in-out 0.1s;
+.incomingSlideR {
+  animation: incomingSlideRight var(--animationDuration, 0.5s) ease-in-out;
 }
 
-@keyframes slideRight {
+.incomingSlideL {
+  animation: incomingSlideLeft var(--animationDuration, 0.5s) ease-in-out;
+}
+
+.outgoingSlideR {
+  animation: outgoingSlideRight var(--animationDuration, 0.5s) ease-in-out;
+}
+
+.outgoingSlideL {
+  animation: outgoingSlideLeft var(--animationDuration, 0.5s) ease-in-out;
+}
+
+@keyframes incomingSlideRight {
   100% {
     left: 50%;
     transform: translate(-50%, calc(-50% - var(--displayContainerOffset)));
   }
 }
 
-@keyframes slideLeft {
+@keyframes incomingSlideLeft {
   100% {
     right: 50%;
     transform: translate(50%, calc(-50% - var(--displayContainerOffset)));
+  }
+}
+
+@keyframes outgoingSlideRight {
+  100% {
+    left: 100%;
+    transform: translate(100%, calc(-50% - var(--displayContainerOffset)));
+  }
+}
+
+@keyframes outgoingSlideLeft {
+  100% {
+    left: 0%;
+    transform: translate(-100%, calc(-50% - var(--displayContainerOffset)));
   }
 }
