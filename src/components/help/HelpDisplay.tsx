@@ -1,14 +1,16 @@
-import { useCallback, useState } from "react"
+import React, { useCallback, useState } from "react"
 import FeatureDisplayCard, { FeatureDisplayCardProps } from "../FeatureDisplayCard"
 import AnimatedCard from "./AnimatedCard"
 import AnimatedDial from "./AnimatedDial"
 import styles from "./HelpDisplay.module.css"
-import HelpDisplayDial from "./HelpDisplayDial"
+import DialContainer from "./DialContainer"
 import HelpDisplayPlaceholderButton from "./HelpDisplayPlaceholderButton"
 import HelpDisplaySideButton, { Direction } from "./HelpDisplaySideButton"
+import HelpDisplayCloseButton from "./HelpDisplayCloseButton"
 
 interface HelpDisplayProps {
-  cardProps: FeatureDisplayCardProps[]
+  cardProps: FeatureDisplayCardProps[],
+  onClose: () => void
 }
 
 interface AnimationRunningState {
@@ -17,50 +19,72 @@ interface AnimationRunningState {
   nextCardInx: number
 }
 
-type AnimationState = { running: false } | AnimationRunningState
+export type AnimationState = { running: false } | AnimationRunningState
 
 const ANIMATION_DURATION = "0.3s"
 
 export const OUTER_CONTAINER_GAP = "26px"
 
-function getNextCardIndex(curIndex: number, direction: Direction) {
-  if (direction === "left") return curIndex - 1
-  return curIndex + 1
-}
-
-export default function HelpDisplay({ cardProps }: HelpDisplayProps) {
+export default function HelpDisplay({ cardProps, onClose }: HelpDisplayProps) {
   const [cardIndex, setCardIndex] = useState(0)
   const [animState, setAnimState] = useState<AnimationState>({ running: false })
   // const [displayCardContainerClasses, setDisplayCardContainerClasses] = useState<string[]>([])
 
-  const onAnimationEnd = useCallback((direction: Direction) => {
+  const onAnimationEnd = useCallback(() => {
+    if (!animState.running) {
+      throw new Error("Help display onAnimationEnd ran whilst animation state is set to not running")
+    }
+
+    setCardIndex(animState.nextCardInx)
     setAnimState({ running: false })
-    setCardIndex(getNextCardIndex(cardIndex, direction))
-  }, [cardIndex])
+  }, [animState])
 
-  const onLeftClick = useCallback(() => {
-    if (cardIndex > 0) {
-      setAnimState({ running: true, direction: "left", nextCardInx: getNextCardIndex(cardIndex, "left") })
+  const onClick = useCallback((nextIndex: number) => {
+    // Ensure given index is in bounds
+    if (nextIndex < 0 || nextIndex >= cardProps.length) {
+      throw new Error(`Help display index of ${nextIndex} is out of bounds!`)
     }
-  }, [cardIndex])
 
-  const onRightClick = useCallback(() => {
-    if (cardIndex < cardProps.length - 1) {
-      setAnimState({ running: true, direction: "right", nextCardInx: getNextCardIndex(cardIndex, "right") })
+    // nextIndex should never be the same as the current index
+    if (nextIndex === cardIndex) throw new Error("Help display next and current index are the same!")
+
+    if (nextIndex > cardIndex) {
+      // Movement to the right
+      setAnimState({ running: true, direction: "right", nextCardInx: nextIndex })
+    } else {
+      // Movement to the left
+      setAnimState({ running: true, direction: "left", nextCardInx: nextIndex })
     }
-  }, [cardIndex, cardProps.length])
+  }, [cardProps.length, cardIndex])
+
+  const onButtonClick = useCallback((direction: Direction) => {
+    if (direction === "left") {
+      // Left button was clicked
+      if (cardIndex > 0) onClick(cardIndex - 1)
+    } else {
+      // Right button was clicked
+      if (cardIndex < cardProps.length - 1) onClick(cardIndex + 1)
+    }
+  }, [cardIndex, cardProps.length, onClick])
 
   const curCard = cardProps[cardIndex]
 
   return (
     <>
-      <div className={styles.background}></div>
+      <div className={styles.background} onClick={onClose}></div>
 
       <div className={styles.outerContainer} style={{ gap: OUTER_CONTAINER_GAP }}>
+        <div
+          className={styles.closeButtonContainer}
+          style={{ "--cardWidth": curCard.dimensions?.width } as React.CSSProperties}
+        >
+          <HelpDisplayCloseButton onClose={onClose} />
+        </div>
+
         <div className={styles.displayContainer}>
           {/* Only show the left button if there are more cards to show in that direction */}
           {cardIndex > 0
-            ? <HelpDisplaySideButton direction="left" callBack={onLeftClick} disabled={animState.running} />
+            ? <HelpDisplaySideButton direction="left" callBack={onButtonClick} disabled={animState.running} />
             : <HelpDisplayPlaceholderButton />
           }
 
@@ -80,19 +104,20 @@ export default function HelpDisplay({ cardProps }: HelpDisplayProps) {
                 theme={curCard.theme}
                 dimensions={curCard.dimensions}
                 borderRadius={curCard.borderRadius}
+                boxShadow="0px 0px 8px 10px #C1C1C1"
               />
             </div>
           }
 
           {/* Only show the right button if there are more cards to show in that direction */}
           {cardIndex < cardProps.length - 1
-            ? <HelpDisplaySideButton direction="right" callBack={onRightClick} disabled={animState.running} />
+            ? <HelpDisplaySideButton direction="right" callBack={onButtonClick} disabled={animState.running} />
             : <HelpDisplayPlaceholderButton />
           }
 
         </div>
 
-        <HelpDisplayDial index={cardIndex} size={cardProps.length} showActiveDial={!animState.running} />
+        <DialContainer curIndex={cardIndex} numDials={cardProps.length} animState={animState} onClick={onClick} />
       </div>
       {/* While animation is running, show the current card leaving, and the next card incoming */}
       {animState.running

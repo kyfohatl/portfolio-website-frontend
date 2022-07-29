@@ -7,6 +7,7 @@
   left: calc(50% - var(--startHorizontalOffset));
   transform: translateY(-50%);
   animation: slide var(--animationDuration, 0.5s) ease-in-out;
+  z-index: 2;
 }
 
 @keyframes slide {

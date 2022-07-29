@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./AnimatedDial.module.css"
-import { ACTIVE_DIAL_COLOR, DIAL_GAP, DIAL_SIZE } from "./HelpDisplayDial";
+import { ACTIVE_DIAL_COLOR, DIAL_GAP, DIAL_SIZE } from "./DialContainer";
+import { CLOSE_BUTTON_SIZE } from "./HelpDisplayCloseButton";
 
 interface AnimatedDialProps {
   curIndex: number,
@@ -22,9 +23,12 @@ export default function AnimatedDial({
   // Convert pixel measurements into numbers
   const dialSizeNum = parseInt(DIAL_SIZE)
   const dialGapNum = parseInt(DIAL_GAP)
+  const outerContainerGapNum = parseInt(helpDisplayOuterContainerGap)
+  const cardHeightNum = parseInt(helpDisplayCardHeight)
+  const closeButtonHeightNum = parseInt(CLOSE_BUTTON_SIZE)
 
   // The vertical offset of the center of the dial from the center of the outer container of the help display
-  const verticalOffset = `${(parseInt(helpDisplayCardHeight) + parseInt(helpDisplayOuterContainerGap)) / 2}px`
+  const verticalOffset = `${outerContainerGapNum + (cardHeightNum + closeButtonHeightNum) / 2}px`
 
   const totalDialWidth = numDials * dialSizeNum
   const totalGapWidth = (numDials - 1) * dialGapNum

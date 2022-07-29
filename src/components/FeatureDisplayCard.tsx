@@ -13,7 +13,8 @@ export interface FeatureDisplayCardProps {
   visuals: { images: imgProps[] } | { custom: JSX.Element },
   theme?: "dark" | "light",
   dimensions?: { width: string, height: string }
-  borderRadius?: string
+  borderRadius?: string,
+  boxShadow?: string
 }
 
 // Uses Ref Forwarding to provide a ref access to the outer container div of this component to the parent
@@ -24,11 +25,13 @@ const FeatureDisplayCard = React.forwardRef<HTMLDivElement, FeatureDisplayCardPr
   visuals,
   theme = "light",
   dimensions,
-  borderRadius
+  borderRadius,
+  boxShadow
 }, ref) => {
   let outerContainerStyles: CSSProperties = {
     ...(dimensions),
-    ...(borderRadius && { borderRadius: borderRadius })
+    ...(borderRadius && { borderRadius: borderRadius }),
+    ...(boxShadow && { boxShadow: boxShadow })
   }
   let titleStyles: CSSProperties = {}
   let noteStyles: CSSProperties = {}

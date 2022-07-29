@@ -1,9 +1,9 @@
 import styles from "./AnimatedCard.module.css"
 import FeatureDisplayCard, { FeatureDisplayCardProps } from "../FeatureDisplayCard";
 import { Direction } from "./HelpDisplaySideButton";
-import { OUTER_CONTAINER_GAP } from "./HelpDisplay";
-import { DIAL_SIZE } from "./HelpDisplayDial";
+import { DIAL_SIZE } from "./DialContainer";
 import React from "react";
+import { CLOSE_BUTTON_SIZE } from "./HelpDisplayCloseButton";
 
 type AnimatedCardType = "incoming" | "outgoing"
 
@@ -12,7 +12,7 @@ interface AnimatedCardProps {
   direction: Direction,
   type: AnimatedCardType,
   duration: string,
-  onAnimationEnd?: (direction: Direction) => void
+  onAnimationEnd?: () => void
 }
 
 function getCardClasses(type: AnimatedCardType, direction: Direction) {
@@ -37,13 +37,20 @@ function getCardClasses(type: AnimatedCardType, direction: Direction) {
 }
 
 export default function AnimatedCard({ cardProps, direction, type, duration, onAnimationEnd }: AnimatedCardProps) {
+  /* We want to have an incoming card slide in and replace the outgoing card. Both the incoming card and the place 
+  it aims for (destination) are at the center of the screen. However, the destination is slightly off center because 
+  the place where the card goes is part of a larger div which contains arrow buttons and dials. This larger div is 
+  centered at the middle of the screen, but the card within it is not. So we need to figure out the offset of the 
+  center of the card slot from the center of the screen, so that our incoming card is not actually at the center of 
+  the screen, but instead at a center +/- offset position. To find the offset, we use the formula below. */
+  const displayContainerVerticalOffset = `${(parseInt(CLOSE_BUTTON_SIZE) - parseInt(DIAL_SIZE)) / 2}px`
+
   return (
     <div
       className={getCardClasses(type, direction)}
-      {...(onAnimationEnd ? { onAnimationEnd: () => onAnimationEnd(direction) } : {})}
+      {...(onAnimationEnd ? { onAnimationEnd: onAnimationEnd } : {})}
       style={{
-        "--outerContainerGap": OUTER_CONTAINER_GAP,
-        "--dialSize": DIAL_SIZE,
+        "--displayContainerVerticalOffset": displayContainerVerticalOffset,
         "--animationDuration": duration
       } as React.CSSProperties}
     >

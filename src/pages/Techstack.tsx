@@ -38,6 +38,20 @@ const props: FeatureDisplayCardProps[] = [
     visuals: { images: [{ imgLink: TypeScriptLogo, height: "100px", width: "100px" }] },
     dimensions: DIMENSIONS,
     borderRadius: borderRadius
+  },
+  {
+    title: "Title 4",
+    notes: ["Some pointer 1", "Some Pointer 2"],
+    visuals: { images: [{ imgLink: TypeScriptLogo, height: "100px", width: "100px" }] },
+    dimensions: DIMENSIONS,
+    borderRadius: borderRadius
+  },
+  {
+    title: "Title 5",
+    notes: ["Some pointer 1", "Some Pointer 2"],
+    visuals: { images: [{ imgLink: TypeScriptLogo, height: "100px", width: "100px" }] },
+    dimensions: DIMENSIONS,
+    borderRadius: borderRadius
   }
 ]
 
@@ -51,7 +65,7 @@ export default function Techstack() {
 
   return (
     <PageContainer state={{ status: "normal" }}>
-      <HelpDisplay cardProps={props} />
+      <HelpDisplay cardProps={props} onClose={() => console.log("Closing!")} />
     </PageContainer>
   )
 }

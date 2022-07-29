@@ -7,7 +7,7 @@ export type Direction = "left" | "right"
 
 interface HelpDisplaySideButtonProps {
   direction: Direction,
-  callBack: () => void,
+  callBack: (direction: Direction) => void,
   disabled: boolean
 }
 
@@ -17,7 +17,7 @@ const CHEVRON_SIZE = "26px"
 export default function HelpDisplaySideButton({ direction, callBack, disabled }: HelpDisplaySideButtonProps) {
   return (
     <Button
-      type={{ type: "button", callBack: callBack }}
+      type={{ type: "button", callBack: () => callBack(direction) }}
       height={BUTTON_SIZE}
       width={BUTTON_SIZE}
       icon={
@@ -27,6 +27,7 @@ export default function HelpDisplaySideButton({ direction, callBack, disabled }:
       }
       backgroundColor="#FFF5EE"
       disabled={disabled}
+      boxShadow="0px 0px 4px 4px #C1C1C1"
     />
   )
 }

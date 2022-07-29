@@ -37,7 +37,8 @@ interface ButtonProps {
   icon?: React.ReactNode,
   buttonState?: ButtonState,
   disabled?: boolean,
-  borderRadius?: string
+  borderRadius?: string,
+  boxShadow?: string
 }
 
 export default function Button({
@@ -53,7 +54,8 @@ export default function Button({
   icon,
   buttonState = { state: "normal" },
   disabled = false,
-  borderRadius
+  borderRadius,
+  boxShadow
 }: ButtonProps) {
   let buttonStyles: React.CSSProperties = {
     fontSize: fontSize,
@@ -61,7 +63,8 @@ export default function Button({
     height: height,
     marginTop: marginTop,
     ...(padding && { padding: padding }),
-    ...(borderRadius && { borderRadius: borderRadius })
+    ...(borderRadius && { borderRadius: borderRadius }),
+    ...(boxShadow && { boxShadow: boxShadow })
   }
 
   // Only add color and background color if not disabled as otherwise they override the disabled selector
