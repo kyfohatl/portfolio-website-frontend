@@ -6,8 +6,8 @@ interface HelpDisplayCloseButtonProps {
   onClose: () => void
 }
 
-const CLOSE_ICON_SIZE = "24px"
-export const CLOSE_BUTTON_SIZE = "38px"
+const CLOSE_ICON_SIZE = "16px"
+export const CLOSE_BUTTON_SIZE = "28px"
 
 export default function HelpDisplayCloseButton({ onClose }: HelpDisplayCloseButtonProps) {
   return (

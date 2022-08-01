@@ -9,6 +9,8 @@ import { ReactComponent as HelpIcon } from "../assets/images/questionMarkIcon.sv
 import Api, { BlogProps } from "../lib/api/Api";
 import { useParams } from "react-router-dom";
 import Saving from "../components/animation/Saving";
+import HelpDisplay from "../components/help/HelpDisplay";
+import { cardProps } from "../resources/editBlogHelpCards";
 
 
 export default function EditBlog() {
@@ -18,6 +20,7 @@ export default function EditBlog() {
   const [blog, setBlog] = useState<BlogProps>()
   const [blogId, setBlogId] = useState(useParams().blogId)
   const [saveButtonState, setSaveButtonState] = useState<ButtonState>({ state: "normal" })
+  const [showHelpDisplay, setShowHelpDisplay] = useState(false)
   const [pageState, setPageState] = useState<PageContainerState>({ status: "normal" })
 
   // Load blog content from database
@@ -113,7 +116,7 @@ export default function EditBlog() {
     >
       <div className={styles.savePane}>
         <Button
-          type={{ type: "button", callBack: () => { console.log("Help!") } }}
+          type={{ type: "button", callBack: () => setShowHelpDisplay(true) }}
           icon={<HelpIcon width={HELP_BUTTON_SIZE} height={HELP_BUTTON_SIZE} />}
           height={HELP_BUTTON_SIZE}
           width={HELP_BUTTON_SIZE}
@@ -143,6 +146,12 @@ export default function EditBlog() {
           sandbox=""
         />
       </div>
+
+      {/* Logic for showing the help dialogue */}
+      {showHelpDisplay
+        ? <HelpDisplay cardProps={cardProps} onClose={() => setShowHelpDisplay(false)} />
+        : null
+      }
     </PageContainer>
   )
 }

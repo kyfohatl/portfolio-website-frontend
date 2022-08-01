@@ -14,7 +14,9 @@ export interface FeatureDisplayCardProps {
   theme?: "dark" | "light",
   dimensions?: { width: string, height: string }
   borderRadius?: string,
-  boxShadow?: string
+  boxShadow?: string,
+  middleGap?: string,
+  textLineSize?: string,
 }
 
 // Uses Ref Forwarding to provide a ref access to the outer container div of this component to the parent
@@ -26,15 +28,21 @@ const FeatureDisplayCard = React.forwardRef<HTMLDivElement, FeatureDisplayCardPr
   theme = "light",
   dimensions,
   borderRadius,
-  boxShadow
+  boxShadow,
+  middleGap,
+  textLineSize
 }, ref) => {
   let outerContainerStyles: CSSProperties = {
     ...(dimensions),
     ...(borderRadius && { borderRadius: borderRadius }),
-    ...(boxShadow && { boxShadow: boxShadow })
+    ...(boxShadow && { boxShadow: boxShadow }),
+    ...(middleGap && { gap: middleGap })
   }
   let titleStyles: CSSProperties = {}
   let noteStyles: CSSProperties = {}
+  const textContainerStyles: CSSProperties = {
+    ...(textLineSize && { maxWidth: textLineSize })
+  }
 
   if (theme === "dark") {
     outerContainerStyles.backgroundColor = "darkred"
@@ -54,7 +62,7 @@ const FeatureDisplayCard = React.forwardRef<HTMLDivElement, FeatureDisplayCardPr
 
   return (
     <div ref={ref} className={styles.outerContainer} style={outerContainerStyles}>
-      <article className={styles.textContainer}>
+      <article className={styles.textContainer} style={textContainerStyles}>
         <h1 style={titleStyles}>{title}</h1>
         <ul>
           {notesList}

@@ -13,6 +13,7 @@ import PageContainer from "../components/PageContainer"
 import useRefState from "../hooks/useRefState"
 
 import TypeScriptLogo from "../assets/images/homePageDemos/techstackLogos/typescript_logo.png"
+import useKeyPress, { useKeyPressProps } from "../hooks/useKeyPress"
 
 const DIMENSIONS = { width: "600px", height: "450px" }
 const borderRadius = "40px"
@@ -56,12 +57,13 @@ const props: FeatureDisplayCardProps[] = [
 ]
 
 export default function Techstack() {
-  const [state, ref, setVals] = useRefState(true)
-  console.log("Ah", ref.current)
+  const keyProps: useKeyPressProps = [
+    { key: "[", callBack: () => console.log("[ is pressed!"), combKeys: { alt: true, ctrl: true } },
+    { key: "k", callBack: () => console.log("Yo k is pressed!"), combKeys: { shift: true } },
+    { key: "m", callBack: () => console.log("Aha m is pressed!") }
+  ]
 
-  useEffect(() => {
-    console.log("YO", ref.current)
-  }, [ref])
+  useKeyPress(keyProps)
 
   return (
     <PageContainer state={{ status: "normal" }}>

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useMemo, useState } from "react"
 import FeatureDisplayCard, { FeatureDisplayCardProps } from "../FeatureDisplayCard"
 import AnimatedCard from "./AnimatedCard"
 import AnimatedDial from "./AnimatedDial"
@@ -7,6 +7,7 @@ import DialContainer from "./DialContainer"
 import HelpDisplayPlaceholderButton from "./HelpDisplayPlaceholderButton"
 import HelpDisplaySideButton, { Direction } from "./HelpDisplaySideButton"
 import HelpDisplayCloseButton from "./HelpDisplayCloseButton"
+import useKeyPress, { useKeyPressProps } from "../../hooks/useKeyPress"
 
 interface HelpDisplayProps {
   cardProps: FeatureDisplayCardProps[],
@@ -28,7 +29,6 @@ export const OUTER_CONTAINER_GAP = "26px"
 export default function HelpDisplay({ cardProps, onClose }: HelpDisplayProps) {
   const [cardIndex, setCardIndex] = useState(0)
   const [animState, setAnimState] = useState<AnimationState>({ running: false })
-  // const [displayCardContainerClasses, setDisplayCardContainerClasses] = useState<string[]>([])
 
   const onAnimationEnd = useCallback(() => {
     if (!animState.running) {
@@ -67,6 +67,14 @@ export default function HelpDisplay({ cardProps, onClose }: HelpDisplayProps) {
     }
   }, [cardIndex, cardProps.length, onClick])
 
+  // Setup keyboard controls
+  const keyBindings: useKeyPressProps = useMemo(() => [
+    { key: "ArrowLeft", callBack: () => onButtonClick("left") },
+    { key: "ArrowRight", callBack: () => onButtonClick("right") },
+    { key: "Escape", callBack: onClose }
+  ], [onButtonClick, onClose])
+  useKeyPress(keyBindings)
+
   const curCard = cardProps[cardIndex]
 
   return (
@@ -98,12 +106,7 @@ export default function HelpDisplay({ cardProps, onClose }: HelpDisplayProps) {
             // If animation is not running, display the current card
             <div>
               <FeatureDisplayCard
-                title={curCard.title}
-                notes={curCard.notes}
-                visuals={curCard.visuals}
-                theme={curCard.theme}
-                dimensions={curCard.dimensions}
-                borderRadius={curCard.borderRadius}
+                {...curCard}
                 boxShadow="0px 0px 8px 10px #C1C1C1"
               />
             </div>

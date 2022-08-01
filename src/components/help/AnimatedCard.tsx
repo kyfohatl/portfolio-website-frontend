@@ -54,14 +54,7 @@ export default function AnimatedCard({ cardProps, direction, type, duration, onA
         "--animationDuration": duration
       } as React.CSSProperties}
     >
-      <FeatureDisplayCard
-        title={cardProps.title}
-        notes={cardProps.notes}
-        visuals={cardProps.visuals}
-        theme={cardProps.theme}
-        dimensions={cardProps.dimensions}
-        borderRadius={cardProps.borderRadius}
-      />
+      <FeatureDisplayCard {...cardProps} />
     </div>
   )
 }
