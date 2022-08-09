@@ -22,8 +22,8 @@ export default function Examples() {
       <BlogArticle title="CataLog">
         <LinkBlock
           links={[
-            <CustomLink href="https://github.com/bawses/it-project-crm" text="Github" />,
-            <CustomLink href="https://it-project-crm.vercel.app/welcome" text="Deployment" />,
+            <CustomLink key="githubLink" href="https://github.com/bawses/it-project-crm" text="Github" />,
+            <CustomLink key="crmLink" href="https://it-project-crm.vercel.app/welcome" text="Deployment" />,
           ]}
         />
         <p>
