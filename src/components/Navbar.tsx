@@ -57,7 +57,7 @@ export default function Navbar() {
       <div className={styles.auth}>
         {hasData()
           ?
-          <li className={styles.buttonAuth}>
+          <li className={styles.buttonAuth} key="singOutBtn">
             <Button
               text="Sign out"
               type={{ type: "button", callBack: onSignOutClick }}
@@ -69,7 +69,7 @@ export default function Navbar() {
             />
           </li>
           : [
-            <li className={styles.buttonAuth}>
+            <li className={styles.buttonAuth} key="signInBtn">
               <Link to="/signin" className={styles.authLink}>
                 <Button
                   text="Sign in"
@@ -82,7 +82,7 @@ export default function Navbar() {
                 />
               </Link>
             </li>,
-            <li className={styles.buttonAuth}>
+            <li className={styles.buttonAuth} key="signUpBtn">
               <Link to="/signup" className={styles.authLink}>
                 <Button
                   text="Sign up"

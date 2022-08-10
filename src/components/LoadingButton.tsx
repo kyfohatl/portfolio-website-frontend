@@ -10,13 +10,18 @@ interface LoadingButtonProps {
 
 export default function LoadingButton({
   fontSize = "14px",
-  width = "100px",
+  width = "150px",
   height = "100px",
   marginTop = "10px"
 }: LoadingButtonProps) {
-  // The height and width of the loading indicator will be half the size of the container
-  let indicatorSize: string = parseInt(height) * 0.5 + ""
-  if (height.at(height.length - 1) === "%") {
+  // Scale the indicator size with the size of the button, but make sure it does not overflow
+  // First find the smaller dimension
+  let smallerDimension = height
+  if (parseInt(width) < parseInt(height)) smallerDimension = width
+
+  // Then use that dimension to determine the size of the indicator
+  let indicatorSize: string = parseInt(smallerDimension) * 0.4 + ""
+  if (smallerDimension.at(smallerDimension.length - 1) === "%") {
     indicatorSize += "%"
   } else {
     indicatorSize += "px"

@@ -67,7 +67,7 @@ export default function Techstack() {
 
   return (
     <PageContainer state={{ status: "normal" }}>
-      <HelpDisplay cardProps={props} onClose={() => console.log("Closing!")} />
+      <LoadingButton />
     </PageContainer>
   )
 }
