@@ -51,12 +51,12 @@ const FeatureDisplayCard = React.forwardRef<HTMLDivElement, FeatureDisplayCardPr
   }
 
   // Create list of notes
-  const notesList = notes.map((note) => <li style={noteStyles}>{note}</li>)
+  const notesList = notes.map((note, index) => <li key={index} style={noteStyles}>{note}</li>)
   // Create a list of images if images are given
   let imgList: JSX.Element[] = []
   if ("images" in visuals) {
     imgList = visuals.images.map(
-      (image) => <img alt="None" src={image.imgLink} width={image.width} height={image.height} />
+      (image, index) => <img key={index} alt="None" src={image.imgLink} width={image.width} height={image.height} />
     )
   }
 
