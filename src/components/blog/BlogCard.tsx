@@ -20,7 +20,7 @@ export default function BlogCard({
   tags }: BlogCardProps) {
   let wrappedTags: JSX.Element[] = []
   if (tags && tags.length > 0) {
-    wrappedTags = tags.map((tag) => { return <span className={styles.tag}>{tag}</span> })
+    wrappedTags = tags.map((tag, index) => { return <span key={index} className={styles.tag}>{tag}</span> })
   }
 
   return (
@@ -28,11 +28,11 @@ export default function BlogCard({
       <div className={styles.outerContainer}>
         {image
           ? <img className={styles.thumbnail} src={image} alt={imageDescription} />
-          : <img className={styles.thumbnail} src={MissingImageIcon} alt="None" />
+          : <img className={styles.thumbnail} src={MissingImageIcon} alt="Missing" />
         }
         <div className={styles.textContainer}>
           <h2 className={styles.title}>{title}</h2>
-          {tags && <div className={styles.tagContainer}>{wrappedTags}</div>}
+          {tags && <div data-testid="tagContainer" className={styles.tagContainer}>{wrappedTags}</div>}
           <p className={styles.summary}>{description}</p>
         </div>
       </div>
