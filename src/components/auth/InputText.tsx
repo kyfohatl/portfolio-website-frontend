@@ -21,7 +21,7 @@ export default function InputText({ label, text, type = "text", setText, errorTe
           onChange={(e) => { setText(e.target.value) }}
         />
         {errorText &&
-          <p className="label-error">{errorText}</p>
+          <p data-testid="errorLabel" className="label-error">{errorText}</p>
         }
       </label>
     </>
