@@ -11,7 +11,7 @@ export default function LineCounter({ count }: LineCounterProps) {
   }
 
   return (
-    <div className={styles.linesCol}>
+    <div data-testid="container" className={styles.linesCol}>
       {lines}
     </div>
   )
