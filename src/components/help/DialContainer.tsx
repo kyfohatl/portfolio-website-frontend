@@ -29,7 +29,7 @@ export default function DialContainer({ curIndex, numDials, animState, onClick }
       }
 
       newDials.push(
-        <Dial {...dialProps} />
+        <Dial key={i} {...dialProps} />
       )
     }
 
