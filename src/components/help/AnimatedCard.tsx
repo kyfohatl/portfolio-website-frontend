@@ -19,10 +19,10 @@ function getCardClasses(type: AnimatedCardType, direction: Direction) {
   if (type === "incoming") {
     if (direction === "left") {
       // Incoming card coming from the left side
-      return `${styles.base} ${styles.inComingCardL} ${styles.incomingSlideR}`
+      return `${styles.base} ${styles.incomingCardL} ${styles.incomingSlideR}`
     }
     // Incoming card coming from the right side
-    return `${styles.base} ${styles.inComingCardR} ${styles.incomingSlideL}`
+    return `${styles.base} ${styles.incomingCardR} ${styles.incomingSlideL}`
   }
 
   // Note that outgoing cards travel in the opposite direction to incoming cards
@@ -47,6 +47,7 @@ export default function AnimatedCard({ cardProps, direction, type, duration, onA
 
   return (
     <div
+      data-testid="animatedCardContainer"
       className={getCardClasses(type, direction)}
       {...(onAnimationEnd ? { onAnimationEnd: onAnimationEnd } : {})}
       style={{
