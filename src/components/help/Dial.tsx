@@ -29,6 +29,6 @@ export default function Dial({ show, dialIndex, onClick }: DialProps) {
       )
     default:
       // Return an empty placeholder
-      return <div style={DIAL_SIZE_CSS}></div>
+      return <div data-testid="dialPlaceholder" style={DIAL_SIZE_CSS}></div>
   }
 }
