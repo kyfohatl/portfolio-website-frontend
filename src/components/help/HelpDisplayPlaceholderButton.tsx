@@ -2,6 +2,6 @@ import { BUTTON_SIZE } from "./HelpDisplaySideButton";
 
 export default function HelpDisplayPlaceholderButton() {
   return (
-    <div style={{ height: BUTTON_SIZE, width: BUTTON_SIZE }}></div>
+    <div data-testid="hdsb_placeholder" style={{ height: BUTTON_SIZE, width: BUTTON_SIZE }}></div>
   )
 }

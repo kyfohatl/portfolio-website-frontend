@@ -14,6 +14,7 @@ export default function Dial({ show, dialIndex, onClick }: DialProps) {
     case "normal":
       return (
         <button
+          data-testid="normalDial"
           className={styles.dial}
           style={{ ...DIAL_SIZE_CSS }}
           onClick={() => onClick(dialIndex)}
@@ -22,6 +23,7 @@ export default function Dial({ show, dialIndex, onClick }: DialProps) {
     case "active":
       return (
         <button
+          data-testid="activeDial"
           className={styles.dial}
           style={{ ...DIAL_SIZE_CSS, backgroundColor: ACTIVE_DIAL_COLOR }}
           onClick={() => onClick(dialIndex)}

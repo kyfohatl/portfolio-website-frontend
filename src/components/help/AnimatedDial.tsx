@@ -43,6 +43,7 @@ export default function AnimatedDial({
 
   return (
     <div
+      data-testid="animatedDial"
       className={styles.dial}
       style={{
         "--dialSize": DIAL_SIZE,
