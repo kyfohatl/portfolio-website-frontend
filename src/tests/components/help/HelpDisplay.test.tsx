@@ -1,42 +1,14 @@
 import { fireEvent, render, screen } from "@testing-library/react"
 import { FeatureDisplayCardProps } from "../../../components/FeatureDisplayCard"
-import DialContainer, { DialContainerProps } from "../../../components/help/DialContainer"
+import { ACTIVE_DIAL_COLOR } from "../../../components/help/DialContainer"
 import HelpDisplay from "../../../components/help/HelpDisplay"
-
-// Mock the FeatureDisplayCard component
-jest.mock("../../../components/FeatureDisplayCard", () => {
-  return (props: FeatureDisplayCardProps) => (
-    <div>
-      <h1>Display Card</h1>
-      <div data-testid="title">{props.title}</div>
-      <div data-testdid="notes">{props.notes}</div>
-      <div data-testid="visuals">
-        {"images" in props.visuals
-          ? props.visuals.images
-          : props.visuals.custom
-        }
-      </div>
-    </div>
-  )
-})
-
-// Mock the DialContainer component
-jest.mock("../../../components/help/DialContainer", () => {
-  return (props: DialContainerProps) => (
-    <div>
-      <div>Number of dials: {props.numDials}</div>
-      <div>Active dial: {props.curIndex}</div>
-      <div>Animation state: {props.animState.running + ""}</div>
-    </div>
-  )
-})
 
 const NOTES = ["note1", "note2", "note3"]
 const VISUALS = {
   custom: (
     <div>
-      <div>Visual 1</div>
-      <div>Visual 2</div>
+      <div data-testid="visual">Visual 1</div>
+      <div data-testid="visual">Visual 2</div>
     </div>
   )
 }
@@ -52,76 +24,136 @@ beforeEach(() => {
 })
 
 describe("When not in an animation state", () => {
-  describe("When the currently displayed card is in the middle of the stack", () => {
-    function setup() {
-      render(<HelpDisplay cardProps={cardProps} onClose={onCloseMock} initIdx={2} />)
-    }
+  function setup(curIdx: number) {
+    render(<HelpDisplay cardProps={cardProps} onClose={onCloseMock} initIdx={curIdx} />)
+  }
 
-    it("Displays the current card correctly", () => {
-      setup()
-      const card = screen.getByText(/Card2/)
-      expect(card).toBeInTheDocument()
+  function itBehavesLikeCorrectHelpDisplay(curIdx: number) {
+    it("Displays the current card title correctly", () => {
+      setup(curIdx)
+      const curCard = screen.getByRole("heading")
+      expect(curCard).toHaveTextContent(new RegExp(`Card${curIdx}`))
     })
 
-    it("Displays the active dial correctly", () => {
-      setup()
-      const activeDial = screen.getByText(/Active dial:/)
-      expect(activeDial).toHaveTextContent(/Active dial: 2/)
+    it("Displays the current card notes correctly", () => {
+      setup(curIdx)
+      const notes = screen.getAllByRole("listitem")
+      expect(notes[0]).toHaveTextContent(NOTES[0])
+      expect(notes[1]).toHaveTextContent(NOTES[1])
+      expect(notes[2]).toHaveTextContent(NOTES[2])
+    })
+
+    it("Displays the current card visuals correctly", () => {
+      setup(curIdx)
+      const visuals = screen.getAllByTestId("visual")
+      expect(visuals[0]).toHaveTextContent(/visual 1/i)
+      expect(visuals[1]).toHaveTextContent(/visual 2/i)
     })
 
     it("Displays the correct number of dials", () => {
-      setup()
-      const dials = screen.getByText(/Number of dials:/)
-      expect(dials).toHaveTextContent(/Number of dials: 6/)
+      setup(curIdx)
+      const dials = screen.getAllByTestId(/Dial/)
+      expect(dials).toHaveLength(6)
     })
 
+    it("Displays the dials correctly", () => {
+      setup(curIdx)
+      const dials = screen.getAllByTestId(/Dial/)
+      for (let i = 0; i < dials.length; i++) {
+        if (i === curIdx) continue
+        expect(dials[i].style.backgroundColor).not.toBe(ACTIVE_DIAL_COLOR)
+      }
+      expect(dials[curIdx].style.backgroundColor).toBe(ACTIVE_DIAL_COLOR)
+    })
+
+    it("Calls onClose when the close button is clicked on", () => {
+      setup(curIdx)
+      const closeBtn = screen.getAllByRole("button")[0]
+      fireEvent.click(closeBtn)
+      expect(onCloseMock).toHaveBeenCalledTimes(1)
+    })
+
+    it("Calls onClose when the background is clicked on", () => {
+      setup(curIdx)
+      const background = screen.getByTestId("helpDisplayBackground")
+      fireEvent.click(background)
+      expect(onCloseMock).toHaveBeenCalledTimes(1)
+    })
+  }
+
+  function itBehavesLikeShowLeftArrow(curIdx: number) {
     it("Displays a \"left\" arrow button", () => {
-      setup()
+      setup(curIdx)
       const button = screen.getByText(/chevronLeft/i)
       expect(button).toBeInTheDocument()
     })
+  }
 
+  function itBehavesLikeShowRightArrow(curIdx: number) {
     it("Displays a \"right\" arrow button", () => {
-      setup()
+      setup(curIdx)
       const button = screen.getByText(/chevronRight/i)
       expect(button).toBeInTheDocument()
     })
+  }
 
-    it("Closes the dialogue when the close button is clicked on", () => { })
-
-    it("Closes the dialogue when the background is clicked on", () => { })
+  describe("When the currently displayed card is in the middle of the stack", () => {
+    const CUR_IDX = 2
+    itBehavesLikeCorrectHelpDisplay(CUR_IDX)
+    itBehavesLikeShowLeftArrow(CUR_IDX)
+    itBehavesLikeShowRightArrow(CUR_IDX)
   })
 
-  describe("When the currently displayed card is at the top of the stack", () => { })
+  describe("When the currently displayed card is at the top of the stack", () => {
+    const CUR_IDX = 0
+    itBehavesLikeCorrectHelpDisplay(CUR_IDX)
+    itBehavesLikeShowRightArrow(CUR_IDX)
 
-  describe("When the currently displayed card is at the bottom of the stack", () => { })
+    it("Shows a placeholder instead of the left arrow", () => {
+      setup(CUR_IDX)
+      const placeholder = screen.getByTestId("hdsb_placeholder")
+      const leftBtn = screen.queryByText(/chevronLeft/i)
+
+      expect(placeholder).toBeInTheDocument()
+      expect(leftBtn).not.toBeInTheDocument()
+    })
+  })
+
+  describe("When the currently displayed card is at the bottom of the stack", () => {
+    const CUR_IDX = 5
+    itBehavesLikeCorrectHelpDisplay(CUR_IDX)
+    itBehavesLikeShowLeftArrow(CUR_IDX)
+
+    it("Shows a placeholder instead of the right arrow", () => {
+      setup(CUR_IDX)
+      const placeholder = screen.getByTestId("hdsb_placeholder")
+      const rightBtn = screen.queryByText(/chevronRight/i)
+
+      expect(placeholder).toBeInTheDocument()
+      expect(rightBtn).not.toBeInTheDocument()
+    })
+  })
 })
 
 describe("When in an animation state", () => {
-  const CUR_IDX = 2
+  const INIT_IDX = 2
 
-  describe("When the left button is clicked", () => {
-    function setup() {
-      render(<HelpDisplay cardProps={cardProps} onClose={onCloseMock} initIdx={CUR_IDX} />)
-      const leftBtn = screen.getAllByRole("button")[1]
-      fireEvent.click(leftBtn)
-    }
-
+  function itBehavesLikeCorrectCardSwipe(setup: () => void, nextIdx: number) {
     it("Displays the current card", () => {
       setup()
-      const curCard = screen.getByText(new RegExp(`Card${CUR_IDX}`))
-      expect(curCard).toBeInTheDocument()
+      const curCard = screen.getAllByRole("heading")[1]
+      expect(curCard).toHaveTextContent(new RegExp(`Card${INIT_IDX}`))
     })
 
-    it("Displays the previous card", () => {
+    it("Displays the next card", () => {
       setup()
-      const prevCard = screen.getByText(new RegExp(`Card${CUR_IDX - 1}`))
-      expect(prevCard).toBeInTheDocument()
+      const prevCard = screen.getAllByRole("heading")[0]
+      expect(prevCard).toHaveTextContent(new RegExp(`Card${nextIdx}`))
     })
 
     it("Only displays 2 cards", () => {
       setup()
-      const allCards = screen.getAllByText(/Card\d/)
+      const allCards = screen.getAllByRole("heading")
       expect(allCards).toHaveLength(2)
     })
 
@@ -130,7 +162,62 @@ describe("When in an animation state", () => {
       const animatedDial = screen.getByTestId("animatedDial")
       expect(animatedDial).toBeInTheDocument()
     })
+
+    it("Displays the target dial as a placeholder", () => {
+      setup()
+      const placeholder = screen.getAllByTestId(/dial/i)[nextIdx]
+      expect(placeholder).toHaveAttribute("data-testid", "dialPlaceholder")
+    })
+
+    it("Displays all dials other than the target dial and animated dial as normal", () => {
+      setup()
+      const dials = screen.getAllByTestId(/dial/i)
+      for (let i = 0; i < dials.length; i++) {
+        // Ignore placeholder and animated dials
+        if (i === nextIdx || i === dials.length - 1) continue
+        expect(dials[i].style.backgroundColor).not.toBe(ACTIVE_DIAL_COLOR)
+      }
+    })
+
+    it("Disables the \"left\" and \"right\" buttons", () => {
+      setup()
+      const leftBtn = screen.getAllByRole("button")[1]
+      const rightBtn = screen.getAllByRole("button")[2]
+
+      expect(leftBtn).toHaveAttribute("disabled")
+      expect(rightBtn).toHaveAttribute("disabled")
+    })
+  }
+
+  describe("When the left button is clicked", () => {
+    function setup() {
+      render(<HelpDisplay cardProps={cardProps} onClose={onCloseMock} initIdx={INIT_IDX} />)
+      const leftBtn = screen.getAllByRole("button")[1]
+      fireEvent.click(leftBtn)
+    }
+
+    itBehavesLikeCorrectCardSwipe(setup, INIT_IDX - 1)
   })
 
-  describe("When the right button is clicked", () => { })
+  describe("When the right button is clicked", () => {
+    function setup() {
+      render(<HelpDisplay cardProps={cardProps} onClose={onCloseMock} initIdx={INIT_IDX} />)
+      const rightBtn = screen.getAllByRole("button")[2]
+      fireEvent.click(rightBtn)
+    }
+
+    itBehavesLikeCorrectCardSwipe(setup, INIT_IDX + 1)
+  })
+
+  describe("When another dial other than the active dial is clicked", () => {
+    const TARGET_IDX = 4
+
+    function setup() {
+      render(<HelpDisplay cardProps={cardProps} onClose={onCloseMock} initIdx={INIT_IDX} />)
+      const targetDial = screen.getAllByTestId(/dial/i)[TARGET_IDX]
+      fireEvent.click(targetDial)
+    }
+
+    itBehavesLikeCorrectCardSwipe(setup, TARGET_IDX)
+  })
 })
