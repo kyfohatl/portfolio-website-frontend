@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
 import { FeatureDisplayCardProps } from "../../../components/FeatureDisplayCard"
 import { ACTIVE_DIAL_COLOR } from "../../../components/help/DialContainer"
 import HelpDisplay from "../../../components/help/HelpDisplay"
@@ -79,6 +80,12 @@ describe("When not in an animation state", () => {
       fireEvent.click(background)
       expect(onCloseMock).toHaveBeenCalledTimes(1)
     })
+
+    it("Calls onClose when the escape key is pressed", () => {
+      setup(curIdx)
+      userEvent.keyboard("{esc}")
+      expect(onCloseMock).toHaveBeenCalledTimes(1)
+    })
   }
 
   function itBehavesLikeShowLeftArrow(curIdx: number) {
@@ -87,6 +94,18 @@ describe("When not in an animation state", () => {
       const button = screen.getByText(/chevronLeft/i)
       expect(button).toBeInTheDocument()
     })
+
+    it("Starts the card swipe animation upon pressing the \"left arrow\" key", () => {
+      setup(curIdx)
+      userEvent.keyboard("{arrowleft}")
+
+      // Both the previous and current cards should now be present in the DOM
+      const prevCard = screen.getByText(new RegExp(`Card${curIdx - 1}`))
+      const curCard = screen.getByText(new RegExp(`Card${curIdx}`))
+
+      expect(prevCard).toBeInTheDocument()
+      expect(curCard).toBeInTheDocument()
+    })
   }
 
   function itBehavesLikeShowRightArrow(curIdx: number) {
@@ -94,6 +113,18 @@ describe("When not in an animation state", () => {
       setup(curIdx)
       const button = screen.getByText(/chevronRight/i)
       expect(button).toBeInTheDocument()
+    })
+
+    it("Starts the card swipe animation upon pressing the \"right arrow\" key", () => {
+      setup(curIdx)
+      userEvent.keyboard("{arrowright}")
+
+      // Both the next and current cards should now be present in the DOM
+      const nextCard = screen.getByText(new RegExp(`Card${curIdx + 1}`))
+      const curCard = screen.getByText(new RegExp(`Card${curIdx}`))
+
+      expect(nextCard).toBeInTheDocument()
+      expect(curCard).toBeInTheDocument()
     })
   }
 
