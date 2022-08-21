@@ -41,6 +41,7 @@ export default class Api {
     // Make sure an openid client id token is present
     if (!idToken) throw new FrontendError("No id token given!", 400)
 
+    let data: BackendResponse
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/login/facebook/callback`, {
         method: "POST",
@@ -49,19 +50,20 @@ export default class Api {
         body: JSON.stringify({ id_token: idToken })
       })
 
-      const data = await response.json() as BackendResponse
-
-      // Ensure callback response was successful
-      if (!("success" in data)) {
-        throw FrontendError.backendErrorToFrontendError(data)
-      } else if (!("userId" in data.success)) {
-        throw new FrontendError("No user id present in response!", 500)
-      }
-
-      return data
+      data = await response.json() as BackendResponse
     } catch (err) {
+      console.log(err)
       throw new FrontendError("Failed to fetch", 500, err)
     }
+
+    // Ensure callback response was successful
+    if (!("success" in data)) {
+      throw FrontendError.backendErrorToFrontendError(data)
+    } else if (typeof (data.success) !== "object" || data.success == null || !("userId" in data.success)) {
+      throw new FrontendError("No user id present in response!", 500)
+    }
+
+    return data
   }
 
   static async getBlog(blogId: string) {
