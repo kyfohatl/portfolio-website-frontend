@@ -5,8 +5,8 @@ import AuthContainer from "../components/auth/AuthContainer"
 import InputText from "../components/auth/InputText"
 import Button, { ButtonState } from "../components/Button"
 import PageContainer, { PageContainerState } from "../components/PageContainer"
-import { BackendResponse } from "../lib/commonTypes"
 import { useNavigate } from "react-router-dom"
+import Api from "../lib/api/Api"
 
 export default function SignUp() {
   // User inputs
@@ -54,34 +54,22 @@ export default function SignUp() {
 
     try {
       // Post new user
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/users`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          username: email.toLowerCase(),
-          password: pass
-        })
-      })
+      const response = (await Api.signUp(email, pass)).parsedResponse
 
-      const parsedResponse = await response.json() as BackendResponse
-      if (!("success" in parsedResponse)) {
-        if ("complexError" in parsedResponse) {
+      if (!("success" in response)) {
+        if ("complexError" in response) {
           // Set the new error message
-          setEmailErrMssg(parsedResponse.complexError.email)
+          setEmailErrMssg(response.complexError.email)
           // Set button back to normal state
           setSignUpState({ state: "normal" })
         } else {
           // Something went wrong
-          console.error(parsedResponse)
+          console.error(response)
           setPageState({ status: "Error", errorCode: "500" })
         }
       } else {
+        // TODO: sing user in at the same time
         // New user was created
-        console.log("New user created: ", parsedResponse)
-        // TODO
         // Navigate to home page
         navigate("/")
       }

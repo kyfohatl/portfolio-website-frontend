@@ -37,6 +37,28 @@ export default class Api {
     }
   }
 
+  static async signUp(username: string, password: string) {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/users`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          username: username.toLowerCase(),
+          password: password
+        })
+      })
+
+      const parsedResponse = await response.json() as BackendResponse
+      return { parsedResponse, headers: response.headers }
+    } catch (err) {
+      // Could not fetch
+      throw err
+    }
+  }
+
   static async postFacebookOpenIdCallback(idToken: string | null) {
     // Make sure an openid client id token is present
     if (!idToken) throw new FrontendError("No id token given!", 400)
@@ -120,6 +142,21 @@ export default class Api {
       )
 
       return response
+    } catch (err) {
+      throw err
+    }
+  }
+
+  // Test route to delete a user
+  static async deleteUser(username: string) {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_SERVER_ADDR}test/auth/user`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: username.toLowerCase() })
+      })
+
+      return await response.json() as BackendResponse
     } catch (err) {
       throw err
     }
