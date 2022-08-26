@@ -51,8 +51,7 @@ export default class Api {
         })
       })
 
-      const parsedResponse = await response.json() as BackendResponse
-      return { parsedResponse, headers: response.headers }
+      return await response.json() as BackendResponse
     } catch (err) {
       // Could not fetch
       throw err
@@ -142,21 +141,6 @@ export default class Api {
       )
 
       return response
-    } catch (err) {
-      throw err
-    }
-  }
-
-  // Test route to delete a user
-  static async deleteUser(username: string) {
-    try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_SERVER_ADDR}test/auth/user`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: username.toLowerCase() })
-      })
-
-      return await response.json() as BackendResponse
     } catch (err) {
       throw err
     }

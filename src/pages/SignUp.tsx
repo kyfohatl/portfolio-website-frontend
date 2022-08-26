@@ -54,7 +54,7 @@ export default function SignUp() {
 
     try {
       // Post new user
-      const response = (await Api.signUp(email, pass)).parsedResponse
+      const response = await Api.signUp(email, pass)
 
       if (!("success" in response)) {
         if ("complexError" in response) {
