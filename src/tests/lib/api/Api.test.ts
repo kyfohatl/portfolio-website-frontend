@@ -1,11 +1,11 @@
 import { setupServer } from 'msw/node'
 import { rest } from 'msw'
-import { redirectToSignInAndClearData } from '../../../lib/api/auth.api'
 import Api from '../../../lib/api/Api'
 import { FrontendError } from '../../../lib/commonTypes'
+import { redirectToSignInAndClearData } from '../../../lib/api/helpers/auth/redirectAndClearData'
 
 // Mock the auth api module
-jest.mock("../../../lib/api/auth.api")
+jest.mock("../../../lib/api/helpers/auth/redirectAndClearData")
 const redirectToSignInAndClearDataMock = jest.mocked(redirectToSignInAndClearData, true)
 
 // Mock the console object

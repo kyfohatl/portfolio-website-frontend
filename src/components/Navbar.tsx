@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import Api from "../lib/api/Api"
-import { hasData } from "../lib/api/auth.api"
+import { hasData } from "../lib/api/helpers/auth/redirectAndClearData"
 import Button, { ButtonState } from "./Button"
 
 import styles from "./Navbar.module.css"

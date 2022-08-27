@@ -1,5 +1,6 @@
 import { BackendError, BackendResponse, FrontendError } from "../commonTypes"
-import { fetchWithAuth, redirectToSignInAndClearData } from "./auth.api"
+import { fetchWithAuth } from "./helpers/auth/fetchWithAuth"
+import { redirectToSignInAndClearData } from "./helpers/auth/redirectAndClearData"
 
 export interface BlogProps {
   id: string,
