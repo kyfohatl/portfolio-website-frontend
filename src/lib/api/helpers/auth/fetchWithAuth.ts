@@ -25,7 +25,12 @@ export async function fetchWithAuth<T extends BackendResponse>(
     // If authentication was not successful, try again
     if (response.status === 401) {
       // Tokens are invalid. Try getting new tokens
-      await refreshTokens()
+      const refreshedTokens = await refreshTokens()
+      if (!refreshedTokens) {
+        // Unable to refresh tokens. Throw an error
+        throw new Error("Error: Unable to refresh tokens")
+      }
+
       // Got a new token pair. Try again
       return await fetchWithAuth(address, method, recursionLimit - 1, body)
     }

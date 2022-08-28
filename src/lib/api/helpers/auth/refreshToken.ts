@@ -15,11 +15,13 @@ export async function refreshTokens() {
     if (!response.ok) {
       // Refresh token was not valid, remove user data from storage and redirect to sign in page
       console.error("Error: Refresh token is not valid")
-      return redirectToSignInAndClearData()
+      redirectToSignInAndClearData()
+      return false
     }
 
     const data = await response.json() as { success: { userId: string } }
     localStorage.setItem("userId", data.success.userId)
+    return true
   } catch (err) {
     console.error("Error: Could not send refreshToken request", err)
     throw err
