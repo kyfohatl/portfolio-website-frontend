@@ -2,7 +2,7 @@ import { CSSProperties } from "react";
 import AnimationProps from "./AnimationProps";
 import styles from "./Saving.module.css"
 
-export type SavingStyleOverrides = {tickStyles: CSSProperties, circleStyles: CSSProperties}
+export type SavingStyleOverrides = { tickStyles: CSSProperties, circleStyles: CSSProperties }
 
 interface SavingProps extends AnimationProps {
   overrides?: SavingStyleOverrides
@@ -10,8 +10,9 @@ interface SavingProps extends AnimationProps {
 
 export default function Saving({ onAnimationEnd, overrides }: SavingProps) {
   return (
-    <svg className={styles.checkbox} viewBox="0 0 100 100" fill="none">
+    <svg data-testid="savingAnimation" className={styles.checkbox} viewBox="0 0 100 100" fill="none">
       <path
+        data-testid="savingCheckmark"
         onAnimationEnd={onAnimationEnd}
         style={overrides?.tickStyles}
         className={styles.check}

@@ -18,20 +18,22 @@ export default function EditBlog() {
   const [css, setCss] = useState<TextInfo>({ text: "", change: { changeType: "Other" } })
   const [saveButtonText, setSaveButtonText] = useState<"Create" | "Save">("Create")
   const [blog, setBlog] = useState<BlogProps>()
-  const [blogId, setBlogId] = useState(useParams().blogId)
+  const [blogId, setBlogId] = useState<string>()
   const [saveButtonState, setSaveButtonState] = useState<ButtonState>({ state: "normal" })
   const [showHelpDisplay, setShowHelpDisplay] = useState(false)
   const [pageState, setPageState] = useState<PageContainerState>({ status: "normal" })
 
-  // Load blog content from database
+  const blogIdParam = useParams().blogId
+
+  // Load blog content from database if editing an existing blog
   useEffect(() => {
     async function getBlog() {
       setPageState({ status: "loading" })
 
-      if (blogId) {
+      if (blogIdParam) {
         // We are editing an existing blog
         try {
-          const response = await Api.getBlog(blogId)
+          const response = await Api.getBlog(blogIdParam)
 
           // Check for error response
           if (!("success" in response)) {
@@ -42,6 +44,7 @@ export default function EditBlog() {
 
           // Successful response. Store blog properties
           setBlog(response.success.blog)
+          setBlogId(response.success.blog.id)
           setHtml({ text: response.success.blog.html, change: { changeType: "Other" } })
           setCss({ text: response.success.blog.css, change: { changeType: "Other" } })
         } catch (err) {
@@ -57,7 +60,7 @@ export default function EditBlog() {
     }
 
     getBlog()
-  }, [blogId])
+  }, [blogIdParam])
 
   // Change the "Create" button to "Save" if an exiting blog is being edited
   useEffect(() => {
