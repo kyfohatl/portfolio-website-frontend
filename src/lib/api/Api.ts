@@ -59,6 +59,22 @@ export default class Api {
     }
   }
 
+  static async signIn(username: string, password: string) {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/users/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include", // To allow cookies to be set by the server
+      body: JSON.stringify({
+        username: username.toLowerCase(),
+        password: password
+      })
+    })
+
+    return await response.json()
+  }
+
   static async postFacebookOpenIdCallback(idToken: string | null) {
     // Make sure an openid client id token is present
     if (!idToken) throw new FrontendError("No id token given!", 400)
