@@ -9,6 +9,9 @@ import { ReactComponent as GoogleLogo } from "../assets/images/googleIcon.svg"
 import { useNavigate } from "react-router-dom"
 import Api from "../lib/api/Api"
 
+export const EMAIL_ERR_MSSG = "A valid email is required!"
+export const PASS_ERR_MSSG = "A valid password is required!"
+
 export default function SignIn() {
   // User inputs
   const [email, setEmail] = useState("")
@@ -35,13 +38,13 @@ export default function SignIn() {
 
     // Check for input errors
     if (!email) {
-      setEmailErrMssg("A valid email is required!")
+      setEmailErrMssg(EMAIL_ERR_MSSG)
       return
     } else {
       setEmailErrMssg("")
     }
     if (!pass) {
-      setPassErrMssg("A valid password is required!")
+      setPassErrMssg(PASS_ERR_MSSG)
       return
     } else {
       setPassErrMssg("")
