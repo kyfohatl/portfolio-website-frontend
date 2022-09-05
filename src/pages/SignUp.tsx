@@ -8,6 +8,10 @@ import PageContainer, { PageContainerState } from "../components/PageContainer"
 import { useNavigate } from "react-router-dom"
 import Api from "../lib/api/Api"
 
+export const EMAIL_ERR_MSSG = "A valid email is required!"
+export const PASS_ERR_MSSG = "A valid password is required!"
+export const CONF_PASS_ERR_MSSG = "Passwords must match!"
+
 export default function SignUp() {
   // User inputs
   const [email, setEmail] = useState("")
@@ -30,19 +34,19 @@ export default function SignUp() {
 
     // Check for input errors
     if (!email) {
-      setEmailErrMssg("A valid email is required!")
+      setEmailErrMssg(EMAIL_ERR_MSSG)
       return
     } else {
       setEmailErrMssg("")
     }
     if (!pass) {
-      setPassErrMssg("A valid password is required!")
+      setPassErrMssg(PASS_ERR_MSSG)
       return
     } else {
       setPassErrMssg("")
     }
     if (pass !== confPass) {
-      setConfPassErrMssg("Passwords must match!")
+      setConfPassErrMssg(CONF_PASS_ERR_MSSG)
       return
     } else {
       setConfPassErrMssg("")
