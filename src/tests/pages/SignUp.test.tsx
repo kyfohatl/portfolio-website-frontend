@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event"
 import { MemoryRouter, Route, Routes } from "react-router-dom"
 import Api from "../../lib/api/Api"
 import { BackendResponse } from "../../lib/commonTypes"
-import SignUp, { EMAIL_ERR_MSSG } from "../../pages/SignUp"
+import SignUp, { CONF_PASS_ERR_MSSG, EMAIL_ERR_MSSG, PASS_ERR_MSSG } from "../../pages/SignUp"
 
 // Mock the navbar
 jest.mock("../../components/Navbar", () => {
@@ -81,6 +81,13 @@ describe("Regular sign up", () => {
     })
   })
 
+  function itBehavesLikeSignInNotCalled() {
+    it("Does not attempt to send sign up information to the backend", () => {
+      enterUsernameAndPassword()
+      expect(signUpMock).not.toHaveBeenCalled()
+    })
+  }
+
   describe("When no username is given", () => {
     beforeEach(() => {
       signUpMock.mockReset()
@@ -90,24 +97,67 @@ describe("Regular sign up", () => {
       enterUsernameAndPassword()
       const usernameLabel = screen.getByTestId("labelContainerEmail")
       const usernameErrTxt = screen.getByText(EMAIL_ERR_MSSG)
+
       expect(usernameLabel).toContainElement(usernameErrTxt)
     })
 
-    it("Does not attempt to send sign up information to the backend", () => {
-      enterUsernameAndPassword()
-      expect(signUpMock).not.toHaveBeenCalled()
-    })
+    itBehavesLikeSignInNotCalled()
   })
 
-  describe("When a username is given without a password", () => { })
+  describe("When a username is given without a password", () => {
+    beforeEach(() => {
+      signUpMock.mockReset()
+    })
 
-  describe("When a username is given with a password, but without a confirm password", () => { })
+    it("Displays an error on the password field", () => {
+      enterUsernameAndPassword(USERNAME)
+      const passwordLabel = screen.getByTestId("labelContainerPassword")
+      const errorTxt = screen.getByText(PASS_ERR_MSSG)
 
-  describe("When a username is given, but the password and confirm password do not match", () => { })
+      expect(passwordLabel).toContainElement(errorTxt)
+    })
 
-  describe("When a valid username is given with an invalid password", () => { })
+    itBehavesLikeSignInNotCalled()
+  })
 
-  describe("When an invalid username is given with some password", () => { })
+  function itBehavesLikePassAndConfPassNotMatching() {
+    beforeEach(() => {
+      signUpMock.mockReset()
+    })
+
+    it("Displays an error on the confirm password field", () => {
+      enterUsernameAndPassword(USERNAME, PASSWORD)
+      const confPassLabel = screen.getByTestId("labelContainerConfirm Password")
+      const errorTxt = screen.getByText(CONF_PASS_ERR_MSSG)
+
+      expect(confPassLabel).toContainElement(errorTxt)
+    })
+
+    itBehavesLikeSignInNotCalled()
+  }
+
+  describe("When a username is given with a password, but without a confirm password", () => {
+    itBehavesLikePassAndConfPassNotMatching()
+  })
+
+  describe("When a username is given, but the password and confirm password do not match", () => {
+    itBehavesLikePassAndConfPassNotMatching()
+  })
+
+  describe("When the given username already exists", () => {
+    const ERROR_MESSAGE = "Email already exists!"
+    const ERROR_CODE = 400
+
+    beforeEach(() => {
+      signUpMock.mockReset().mockResolvedValue({ complexError: { email: ERROR_MESSAGE }, code: ERROR_CODE })
+    })
+
+    it("Displays an error on the username field", async () => {
+      enterUsernameAndPassword(USERNAME, PASSWORD, PASSWORD)
+      const errorTxt = await screen.findByText(ERROR_MESSAGE)
+      const usernameLabel = screen.getByTestId("labelContainerEmail")
+
+      expect(usernameLabel).toContainElement(errorTxt)
+    })
+  })
 })
-
-describe("Third party sign up", () => { })
