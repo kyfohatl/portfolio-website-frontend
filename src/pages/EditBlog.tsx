@@ -98,7 +98,8 @@ export default function EditBlog() {
       // Set save button state to saving, and then back to normal
       setSaveButtonState({
         state: "animated",
-        animation: <Saving onAnimationEnd={() => { setSaveButtonState({ state: "normal" }) }} />
+        animation: <Saving onAnimationEnd={() => { setSaveButtonState({ state: "normal" }) }} />,
+        text: "Saved"
       })
       // Save the returning blog id
       setBlogId(response.success.id)

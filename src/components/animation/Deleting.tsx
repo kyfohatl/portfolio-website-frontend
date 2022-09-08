@@ -20,7 +20,7 @@ export default function Deleting({ onAnimationEnd, overrides }: DeletingProps) {
         <line x1="58.5" y1="35" x2="58.5" y2="90" stroke="black" strokeWidth="5" />
       </g>
       {/* Lid */}
-      <g style={overrides?.lidStyles} className={styles.lid} onAnimationEnd={onAnimationEnd}>
+      <g data-testid="binLid" style={overrides?.lidStyles} className={styles.lid} onAnimationEnd={onAnimationEnd}>
         <path d="M17 34C17 31.7909 18.7909 30 21 30H79C81.2091 30 83 31.7909 83 34V34H17V34Z" fill="black" />
         <path d="M45 28C45 26.3431 46.3431 25 48 25H52C53.6569 25 55 26.3431 55 28V30H45V28Z" fill="black" />
       </g>
