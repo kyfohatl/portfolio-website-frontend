@@ -104,17 +104,17 @@ describe("When the user is not signed in", () => {
 
   it("Navigates to the skills page when the Skills link is clicked", () => {
     setup()
-    itBehavesLikeCorrectLink(3, makeNewPageTest(0, /education/i))
+    itBehavesLikeCorrectLink(2, makeNewPageTest(0, /education/i))
   })
 
   it("Navigates to the examples page when the Examples of Work link is clicked", () => {
     setup()
-    itBehavesLikeCorrectLink(4, makeNewPageTest(0, /catalog/i))
+    itBehavesLikeCorrectLink(3, makeNewPageTest(0, /catalog/i))
   })
 
   it("Navigates to the view blogs page when the Blogs link is clicked", () => {
     setup()
-    itBehavesLikeCorrectLink(5, () => {
+    itBehavesLikeCorrectLink(4, () => {
       const blogsPage = screen.getByTestId("viewBlogsPage")
       expect(blogsPage).toBeInTheDocument()
     })
