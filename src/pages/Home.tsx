@@ -146,7 +146,8 @@ export default function Home() {
                 type={{ type: "submit" }}
                 buttonState={{
                   state: "animated",
-                  animation: <Deleting onAnimationEnd={onDeletingEnd} overrides={deletingAnimState} />
+                  animation: <Deleting onAnimationEnd={onDeletingEnd} overrides={deletingAnimState} />,
+                  text: "Deleting"
                 }}
                 width="120px"
                 height="46px"
@@ -156,7 +157,8 @@ export default function Home() {
                 type={{ type: "submit" }}
                 buttonState={{
                   state: "animated",
-                  animation: <Saving onAnimationEnd={onSavingEnd} overrides={savingAnimState} />
+                  animation: <Saving onAnimationEnd={onSavingEnd} overrides={savingAnimState} />,
+                  text: "Saving"
                 }}
                 width="120px"
                 height="46px"
