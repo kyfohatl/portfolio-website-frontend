@@ -104,6 +104,7 @@ export default function Editor({ textInfo, setText, title }: EditorProps) {
     }
   }, [inputRef, containerRef, textAreaDimensions, setText])
 
+  // Create indentation when the Tab key is pressed
   const onTabDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Tab") {
       // Prevent tab key from removing focus from the textarea element
@@ -114,7 +115,7 @@ export default function Editor({ textInfo, setText, title }: EditorProps) {
         const end = inputRef.current.selectionEnd
 
         const newText = textInfo.text.substring(0, start) + "\t" + textInfo.text.substring(end)
-        setText({ text: newText, change: { changeType: "Tab", changePos: end + 1 } }) /* increment end by 1 to account for the addition of a tab character */
+        setText({ text: newText, change: { changeType: "Tab", changePos: start + 1 } }) /* increment end by 1 to account for the addition of a tab character */
       }
     }
   }, [inputRef, textInfo, setText])

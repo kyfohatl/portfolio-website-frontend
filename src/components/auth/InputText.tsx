@@ -11,7 +11,7 @@ interface InputTextProps {
 export default function InputText({ label, text, type = "text", setText, errorText }: InputTextProps) {
   return (
     <>
-      <label className="input-text-label">
+      <label data-testid={"labelContainer" + label} className="input-text-label">
         <p className="label">{label}</p>
         <input
           type={type}
@@ -21,7 +21,7 @@ export default function InputText({ label, text, type = "text", setText, errorTe
           onChange={(e) => { setText(e.target.value) }}
         />
         {errorText &&
-          <p className="label-error">{errorText}</p>
+          <p data-testid="errorLabel" className="label-error">{errorText}</p>
         }
       </label>
     </>

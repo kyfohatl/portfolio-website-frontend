@@ -9,7 +9,7 @@ import styles from "./ViewBlogs.module.css"
 
 import { ReactComponent as CreateIcon } from "../assets/images/createIcon.svg"
 import { useNavigate } from "react-router-dom"
-import { hasData } from "../lib/api/auth.api"
+import { hasData } from "../lib/api/helpers/auth/redirectAndClearData"
 
 function getScrollPercentage() {
   const de = document.documentElement
@@ -120,6 +120,7 @@ export default function ViewBlogs() {
       state={pageState}
       contentStyle={{ marginTop: "42px", marginBottom: "42px" }}
       contentBlockStyle={{ display: "flex", flexDirection: "column", gap: "26px", alignItems: "flex-end" }}
+      contentTestId="viewBlogsPage"
     >
       {hasData()
         ?

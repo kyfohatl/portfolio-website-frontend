@@ -87,7 +87,8 @@ export default function ViewBlog() {
       // Show deletion animation, then redirect to the blogs page
       setDeleteButtonState({
         state: "animated",
-        animation: <Deleting onAnimationEnd={onDeleteAnimationEnd} />
+        animation: <Deleting onAnimationEnd={onDeleteAnimationEnd} />,
+        text: "Deleted"
       })
     } catch (err) {
       const castError = err as BackendError

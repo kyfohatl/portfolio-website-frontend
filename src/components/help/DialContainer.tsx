@@ -3,7 +3,7 @@ import Dial, { DialProps } from "./Dial"
 import { AnimationState } from "./HelpDisplay"
 import styles from "./DialContainer.module.css"
 
-interface DialContainerProps {
+export interface DialContainerProps {
   curIndex: number,
   numDials: number,
   animState: AnimationState,
@@ -29,7 +29,7 @@ export default function DialContainer({ curIndex, numDials, animState, onClick }
       }
 
       newDials.push(
-        <Dial {...dialProps} />
+        <Dial key={i} {...dialProps} />
       )
     }
 

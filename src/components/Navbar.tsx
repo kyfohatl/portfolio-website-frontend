@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import Api from "../lib/api/Api"
-import { hasData } from "../lib/api/auth.api"
+import { hasData } from "../lib/api/helpers/auth/redirectAndClearData"
 import Button, { ButtonState } from "./Button"
 
 import styles from "./Navbar.module.css"
@@ -44,7 +44,6 @@ export default function Navbar() {
     <nav className={styles.navbar}>
       <div className={styles.nav}>
         <li key="logo" className={styles.logo}><Link to="/" className={styles.logoLink}>Ehsan's Portfolio</Link></li>
-        <li key="techstack" className={styles.buttonNav}><Link to="/techstack" className={styles.navLink}>Techstack</Link></li>
         <li key="about" className={styles.buttonNav}><Link to="/about" className={styles.navLink}>About</Link></li>
         <li key="skills" className={styles.buttonNav}><Link to="/skills" className={styles.navLink}>Skills &amp; Qualifications</Link></li>
         <li key="examples" className={styles.buttonNav}><Link to="/examples" className={styles.navLink}>Examples of Work</Link></li>
@@ -57,7 +56,7 @@ export default function Navbar() {
       <div className={styles.auth}>
         {hasData()
           ?
-          <li className={styles.buttonAuth}>
+          <li className={styles.buttonAuth} key="singOutBtn">
             <Button
               text="Sign out"
               type={{ type: "button", callBack: onSignOutClick }}
@@ -69,7 +68,7 @@ export default function Navbar() {
             />
           </li>
           : [
-            <li className={styles.buttonAuth}>
+            <li className={styles.buttonAuth} key="signInBtn">
               <Link to="/signin" className={styles.authLink}>
                 <Button
                   text="Sign in"
@@ -82,7 +81,7 @@ export default function Navbar() {
                 />
               </Link>
             </li>,
-            <li className={styles.buttonAuth}>
+            <li className={styles.buttonAuth} key="signUpBtn">
               <Link to="/signup" className={styles.authLink}>
                 <Button
                   text="Sign up"

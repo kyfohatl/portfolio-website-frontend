@@ -3,11 +3,14 @@ import AuthContainer from "../components/auth/AuthContainer"
 import InputText from "../components/auth/InputText"
 import Button, { ButtonState } from "../components/Button"
 import PageContainer, { PageContainerState } from "../components/PageContainer"
-import { BackendResponse } from "../lib/commonTypes"
 
 import { ReactComponent as FacebookLogo } from "../assets/images/facebookIcon.svg"
 import { ReactComponent as GoogleLogo } from "../assets/images/googleIcon.svg"
 import { useNavigate } from "react-router-dom"
+import Api from "../lib/api/Api"
+
+export const EMAIL_ERR_MSSG = "A valid email is required!"
+export const PASS_ERR_MSSG = "A valid password is required!"
 
 export default function SignIn() {
   // User inputs
@@ -35,13 +38,13 @@ export default function SignIn() {
 
     // Check for input errors
     if (!email) {
-      setEmailErrMssg("A valid email is required!")
+      setEmailErrMssg(EMAIL_ERR_MSSG)
       return
     } else {
       setEmailErrMssg("")
     }
     if (!pass) {
-      setPassErrMssg("A valid password is required!")
+      setPassErrMssg(PASS_ERR_MSSG)
       return
     } else {
       setPassErrMssg("")
@@ -55,27 +58,14 @@ export default function SignIn() {
 
     // Attempt sign in
     try {
-      // Post new user
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/users/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include", // To allow cookies to be set by the server
-        body: JSON.stringify({
-          username: email.toLowerCase(),
-          password: pass
-        })
-      })
+      const response = await Api.signIn(email, pass)
 
-      const parsedResponse = await response.json() as BackendResponse
-
-      if (!("success" in parsedResponse)) {
+      if (!("success" in response)) {
         // An error has returned, respond accordingly
-        if ("complexError" in parsedResponse) {
-          if (parsedResponse.complexError.email) setEmailErrMssg(parsedResponse.complexError.email)
-          if (parsedResponse.complexError.password) setPassErrMssg(parsedResponse.complexError.password)
-          if (parsedResponse.complexError.generic) console.error(parsedResponse.complexError)
+        if ("complexError" in response) {
+          if (response.complexError.email) setEmailErrMssg(response.complexError.email)
+          if (response.complexError.password) setPassErrMssg(response.complexError.password)
+          if (response.complexError.generic) console.error(response.complexError)
 
           // Reset button states
           setSignInGoogleDisabled(false)
@@ -83,15 +73,15 @@ export default function SignIn() {
           setSignInState({ state: "normal" })
         } else {
           // Something went wrong
-          console.error(parsedResponse)
+          console.error(response)
           setPageState({ status: "Error", errorCode: "500" })
         }
       } else {
         // The request succeeded
         // Store the user id
-        localStorage.setItem("userId", parsedResponse.success.userId)
+        localStorage.setItem("userId", response.success.userId)
 
-        // TODO
+        // TODO: Redirect to user profile/home page when that page is ready
         // Redirect to home page
         navigate("/")
       }

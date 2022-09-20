@@ -8,7 +8,7 @@ import AnimationProps from "./animation/AnimationProps"
 export type ButtonState =
   { state: "normal" } |
   { state: "loading" } |
-  { state: "animated", animation: ReactElement<AnimationProps> }
+  { state: "animated", animation: ReactElement<AnimationProps>, text: string }
 
 // A callback button must come with a callback function
 interface CallBackButton {
@@ -95,7 +95,7 @@ export default function Button({
   } else if (buttonState.state === "animated") {
     button = <AnimatedButton
       animation={buttonState.animation}
-      text={text}
+      text={buttonState.text}
       fontSize={fontSize}
       width={width}
       height={height}

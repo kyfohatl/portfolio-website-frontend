@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react"
 
-interface KeyProps {
+export interface KeyProps {
   key: string,
   callBack: () => void,
   combKeys?: {

@@ -1,5 +1,6 @@
 import { BackendError, BackendResponse, FrontendError } from "../commonTypes"
-import { fetchWithAuth, redirectToSignInAndClearData } from "./auth.api"
+import { fetchWithAuth } from "./helpers/auth/fetchWithAuth"
+import { redirectToSignInAndClearData } from "./helpers/auth/redirectAndClearData"
 
 export interface BlogProps {
   id: string,
@@ -37,10 +38,48 @@ export default class Api {
     }
   }
 
+  static async signUp(username: string, password: string) {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/users`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          username: username.toLowerCase(),
+          password: password
+        })
+      })
+
+      return await response.json() as BackendResponse
+    } catch (err) {
+      // Could not fetch
+      throw err
+    }
+  }
+
+  static async signIn(username: string, password: string) {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/users/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include", // To allow cookies to be set by the server
+      body: JSON.stringify({
+        username: username.toLowerCase(),
+        password: password
+      })
+    })
+
+    return await response.json()
+  }
+
   static async postFacebookOpenIdCallback(idToken: string | null) {
     // Make sure an openid client id token is present
     if (!idToken) throw new FrontendError("No id token given!", 400)
 
+    let data: BackendResponse
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/login/facebook/callback`, {
         method: "POST",
@@ -49,19 +88,20 @@ export default class Api {
         body: JSON.stringify({ id_token: idToken })
       })
 
-      const data = await response.json() as BackendResponse
-
-      // Ensure callback response was successful
-      if (!("success" in data)) {
-        throw FrontendError.backendErrorToFrontendError(data)
-      } else if (!("userId" in data.success)) {
-        throw new FrontendError("No user id present in response!", 500)
-      }
-
-      return data
+      data = await response.json() as BackendResponse
     } catch (err) {
+      console.log(err)
       throw new FrontendError("Failed to fetch", 500, err)
     }
+
+    // Ensure callback response was successful
+    if (!("success" in data)) {
+      throw FrontendError.backendErrorToFrontendError(data)
+    } else if (typeof (data.success) !== "object" || data.success == null || !("userId" in data.success)) {
+      throw new FrontendError("No user id present in response!", 500)
+    }
+
+    return data
   }
 
   static async getBlog(blogId: string) {

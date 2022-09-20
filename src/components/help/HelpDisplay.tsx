@@ -11,7 +11,8 @@ import useKeyPress, { useKeyPressProps } from "../../hooks/useKeyPress"
 
 interface HelpDisplayProps {
   cardProps: FeatureDisplayCardProps[],
-  onClose: () => void
+  onClose: () => void,
+  initIdx?: number
 }
 
 interface AnimationRunningState {
@@ -26,8 +27,8 @@ const ANIMATION_DURATION = "0.3s"
 
 export const OUTER_CONTAINER_GAP = "26px"
 
-export default function HelpDisplay({ cardProps, onClose }: HelpDisplayProps) {
-  const [cardIndex, setCardIndex] = useState(0)
+export default function HelpDisplay({ cardProps, onClose, initIdx = 0 }: HelpDisplayProps) {
+  const [cardIndex, setCardIndex] = useState(initIdx)
   const [animState, setAnimState] = useState<AnimationState>({ running: false })
 
   const onAnimationEnd = useCallback(() => {
@@ -79,7 +80,7 @@ export default function HelpDisplay({ cardProps, onClose }: HelpDisplayProps) {
 
   return (
     <>
-      <div className={styles.background} onClick={onClose}></div>
+      <div data-testid="helpDisplayBackground" className={styles.background} onClick={onClose}></div>
 
       <div className={styles.outerContainer} style={{ gap: OUTER_CONTAINER_GAP }}>
         <div

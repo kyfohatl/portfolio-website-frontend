@@ -7,7 +7,7 @@ interface LineCounterProps {
 export default function LineCounter({ count }: LineCounterProps) {
   const lines: React.ReactNode[] = []
   for (let i = 0; i < count; i++) {
-    lines.push(<div className={styles.line}>{i + 1}</div>)
+    lines.push(<div key={i} className={styles.line}>{i + 1}</div>)
   }
 
   return (
