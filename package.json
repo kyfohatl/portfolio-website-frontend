@@ -42,6 +42,7 @@
     ]
   },
   "devDependencies": {
+    "cypress": "^10.8.0",
     "msw": "^0.44.2",
     "node-fetch": "^3.2.10"
   }
