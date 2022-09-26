@@ -38,7 +38,8 @@ interface ButtonProps {
   buttonState?: ButtonState,
   disabled?: boolean,
   borderRadius?: string,
-  boxShadow?: string
+  boxShadow?: string,
+  btnTestId?: string
 }
 
 export default function Button({
@@ -55,7 +56,8 @@ export default function Button({
   buttonState = { state: "normal" },
   disabled = false,
   borderRadius,
-  boxShadow
+  boxShadow,
+  btnTestId
 }: ButtonProps) {
   let buttonStyles: React.CSSProperties = {
     fontSize: fontSize,
@@ -75,6 +77,7 @@ export default function Button({
   }
 
   let button = <button
+    data-testid={btnTestId}
     className={styles.button}
     type={type.type}
     style={buttonStyles}

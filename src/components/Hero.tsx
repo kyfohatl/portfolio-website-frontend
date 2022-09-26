@@ -9,7 +9,7 @@ interface HeroProps {
 
 export default function Hero({ onExploreClick }: HeroProps) {
   return (
-    <div className={styles.outerContainer}>
+    <div className={styles.outerContainer} data-testid="heroOuterContainer">
       <article className={styles.textContainer}>
         <h1>Ehsan's Blog</h1>
         <p>

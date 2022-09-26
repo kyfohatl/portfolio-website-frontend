@@ -117,6 +117,7 @@ export default function SignUp() {
           height="36px"
           text="Sign up"
           buttonState={signUpState}
+          btnTestId="signUpBtn"
         />
         <p
           className="auth-help"
