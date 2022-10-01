@@ -37,13 +37,16 @@
 // }
 
 import '@testing-library/cypress/add-commands'
+import { AuthService } from '../../src/lib/commonTypes'
 
 declare global {
   namespace Cypress {
     interface Chainable {
       clearDb(): Chainable<void>,
+      waitForAuthCompletion(): Chainable<void>,
       signUp(username: string, password: string): Chainable<void>,
-      waitForAuthCompletion(): Chainable<void>
+      signUpTp(username: string, provider: AuthService, providerUserId: string): Chainable<void>,
+      inputBoxShouldDisplayError(type: "Email" | "Password" | "Confirm Password", errTxt: string): Chainable<void>
     }
   }
 }
@@ -60,7 +63,7 @@ Cypress.Commands.add("waitForAuthCompletion", () => {
   cy.get('[data-testid="heroOuterContainer"]')
 })
 
-// Signs up a user with the given username and password
+// Signs up regular a user with the given username and password
 Cypress.Commands.add("signUp", (username: string, password: string) => {
   // Go to the sign up page
   cy.visit("/signup")
@@ -75,3 +78,25 @@ Cypress.Commands.add("signUp", (username: string, password: string) => {
   // Wait until sign up is finished and we have redirected to the home page
   cy.waitForAuthCompletion()
 })
+
+// Signs up a third party user with the given provider, provider id and username
+Cypress.Commands.add("signUpTp", (username: string, provider: AuthService, providerUserId: string) => {
+  cy.request({
+    method: "POST",
+    url: `${Cypress.env("backendAddr")}/test/auth/tp_user`,
+    body: { username, provider, providerUserId }
+  })
+})
+
+// Insures that the given input box type is displaying an error with the correct error message
+Cypress.Commands.add(
+  "inputBoxShouldDisplayError",
+  (type: "Email" | "Password" | "Confirm Password", errTxt: string) => {
+    // The input box should have the error class
+    cy.get(`[data-testid="labelContainer${type}"]`).find("input").should("have.class", "input-text-box-error")
+    // The input box should not have the regular class
+    cy.get(`[data-testid="labelContainer${type}"]`).find("input").should("not.have.class", "input-text-box")
+    // The input box should display the given error text
+    cy.get(`[data-testid="errorLabel${type}"]`).should("contain.text", errTxt)
+  }
+)
