@@ -26,6 +26,7 @@ export default function Hero({ onExploreClick }: HeroProps) {
           color="white"
           width="118px"
           height="40px"
+          btnTestId="exploreBtn"
         />
         <DownArrow width="26px" height="26px" className={styles.arrow} />
       </div>

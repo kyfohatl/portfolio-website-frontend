@@ -19,39 +19,52 @@ import './commands'
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-// function isInViewPort(_chai: Chai.ChaiStatic, utils: Chai.ChaiUtils) {
-//   function assertIsInViewPort(options: any) {
-//     this.assert()
-//   }
-// }
-
-// chai.use((_chai, utils) => {
-//   _chai.Assertion.addMethod("abc", (options) => {
-//     const abc: JQuery = this._obj
-//   })
-// })
-
 declare global {
   namespace Cypress {
     interface Chainer<Subject> {
-      (chainer: "be.upperCase"): Chainable<Subject>
+      (chainer: "be.fullyInViewport", win: Cypress.AUTWindow): Chainable<Subject>,
+      (chainer: "not.be.fullyInViewport", win: Cypress.AUTWindow): Chainable<Subject>,
+      (chainer: "be.inViewport", win: Cypress.AUTWindow): Chainable<Subject>,
+      (chainer: "not.be.inViewport", win: Cypress.AUTWindow): Chainable<Subject>
     }
   }
 }
 
-function isUpperCase(this: Chai.AssertionStatic, expected: string) {
+// Asserts if the element is fully visible within the viewport
+function isFullyInViewPort(this: Chai.AssertionStatic, win: Cypress.AUTWindow) {
   const element: JQuery = this._obj
+  const rect = element[0].getBoundingClientRect()
+
+  const fullHeightInView = rect.top >= 0 && rect.bottom <= win.innerHeight
+  const fullWidthInView = rect.left >= 0 && rect.right <= win.innerWidth
+
   this.assert(
-    element.text() === expected.toUpperCase(),
-    'expected #{this} to have text #{exp} after upper case, but the text was #{act}',
-    'expected #{this} not to have text #{exp} after upper case',
-    expected,
-    element.text()
+    fullHeightInView && fullWidthInView,
+    'expected #{this} to be fully inside the viewport, but it was not',
+    'expected #{this} not to be fully inside the viewport',
+    win
+  )
+}
+
+// Asserts if the element is at least partially visible in the viewport
+function isInViewPort(this: Chai.AssertionStatic, win: Cypress.AUTWindow) {
+  const element: JQuery = this._obj
+  const rect = element[0].getBoundingClientRect()
+
+  const partialHeightInView = rect.bottom > 0 && rect.top < win.innerHeight
+  const partialWidthInView = rect.right > 0 && rect.left < win.innerWidth
+
+  this.assert(
+    partialHeightInView && partialWidthInView,
+    'expected #{this} to be at least partially inside the viewport, but it was not',
+    'expected #{this} to not be visible inside the viewport at all',
+    win
   )
 }
 
 before(() => {
   chai.use((_chai, utils) => {
-    _chai.Assertion.addMethod("upperCase", isUpperCase)
+    _chai.Assertion.addMethod("fullyInViewport", isFullyInViewPort)
+    _chai.Assertion.addMethod("inViewport", isInViewPort)
   })
 })
