@@ -121,11 +121,11 @@ export default function Editor({ textInfo, setText, title }: EditorProps) {
   }, [inputRef, textInfo, setText])
 
   return (
-    <div className={styles.outerContainer}>
+    <div className={styles.outerContainer} data-testid={`${title}Editor`}>
       <div className={styles.title}><p>{title}</p></div>
       <div className={styles.middleContainer}>
         <div className={styles.innerContainer} ref={containerRef}>
-          <LineCounter count={numLines} />
+          <LineCounter count={numLines} editorTitle={title} />
           <textarea
             className={styles.inputField}
             ref={inputRef}
