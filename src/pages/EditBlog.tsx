@@ -148,6 +148,7 @@ export default function EditBlog() {
           srcDoc={srcDoc}
           title="output"
           sandbox=""
+          data-testid="outputWindow"
         />
       </div>
 

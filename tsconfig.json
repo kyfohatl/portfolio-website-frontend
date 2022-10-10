@@ -20,13 +20,9 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "downlevelIteration": true,
-    "types": [
-      "cypress",
-      "@testing-library/cypress"
-    ]
+    "types": []
   },
   "include": [
-    "src",
-    "cypress"
+    "src"
   ]
 }
