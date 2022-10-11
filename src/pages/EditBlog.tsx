@@ -136,6 +136,7 @@ export default function EditBlog() {
           width="100px"
           icon={<SaveIcon width={21} height={21} />}
           buttonState={saveButtonState}
+          btnTestId="saveBtn"
         />
       </div>
       <div className={styles.topPane}>

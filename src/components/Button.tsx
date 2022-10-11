@@ -94,6 +94,7 @@ export default function Button({
       width={width}
       height={height}
       marginTop={marginTop}
+      testId={btnTestId}
     />
   } else if (buttonState.state === "animated") {
     button = <AnimatedButton

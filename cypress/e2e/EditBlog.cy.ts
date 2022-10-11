@@ -128,6 +128,31 @@ describe("Creating a new blog", () => {
       })
     })
   })
+
+  describe("When clicking the save button", () => {
+    const HTML = "<h1>Some Title</h1>\n<p>Some content</p>"
+    const CSS = "h1 {color: blue;}\np{color: red;}"
+
+    before(() => {
+      // Clear database
+      cy.clearDb()
+      // Create a test user
+      cy.signUp("someUsername", "s0m3TestPass#%@$")
+    })
+
+    it.only("Saves the blog content to the database", () => {
+      // Type in the blog content
+      cy.get('[data-testid="HTMLEditor"]').type(HTML, {parseSpecialCharSequences: false})
+      cy.get('[data-testid="CSSEditor"]').type(CSS, {parseSpecialCharSequences: false})
+      // Click the save button
+      cy.get('[data-testid="saveBtn"]').click()
+      // Wait until the loading button is gone
+      cy.get('[data-testid="saveBtnLoading"]').should("not.exist")
+      // Now navigate away from this page
+      cy.visit("/")
+      // Check if the blog has been saved
+    })
+  })
 })
 
 describe("Editing an existing blog", () => {
