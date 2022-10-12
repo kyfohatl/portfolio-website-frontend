@@ -46,6 +46,7 @@ declare global {
       waitForAuthCompletion(): Chainable<void>,
       signUp(username: string, password: string): Chainable<void>,
       signUpTp(username: string, provider: AuthService, providerUserId: string): Chainable<void>,
+      signIn(username: string, password: string): Chainable<void>,
       inputBoxShouldDisplayError(type: "Email" | "Password" | "Confirm Password", errTxt: string): Chainable<void>
     }
   }
@@ -86,6 +87,18 @@ Cypress.Commands.add("signUpTp", (username: string, provider: AuthService, provi
     url: `${Cypress.env("backendAddr")}/test/auth/tp_user`,
     body: { username, provider, providerUserId }
   })
+})
+
+// Signs in the user with the given username and password (assumes user exists)
+Cypress.Commands.add("signIn", (username: string, password: string) => {
+  cy.intercept("POST", "/auth/users/login").as("signIn")
+
+  cy.visit("/signin")
+  cy.get('[data-testid="labelContainerEmail"]').find("input").type(username)
+  cy.get('[data-testid="labelContainerPassword"]').find("input").type(password)
+  cy.get('[data-testid="signInBtn"]').click()
+
+  cy.wait("@signIn")
 })
 
 // Insures that the given input box type is displaying an error with the correct error message

@@ -138,7 +138,7 @@ export default function ViewBlog() {
         :
         null
       }
-      <iframe srcDoc={srcDoc} title="output" sandbox="" className={styles.frame} />
+      <iframe srcDoc={srcDoc} title="output" sandbox="" className={styles.frame} data-testid="blogFrame" />
     </PageContainer>
   )
 }
