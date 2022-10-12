@@ -132,6 +132,7 @@ describe("Creating a new blog", () => {
   describe("When clicking the save button", () => {
     const HTML = "<h1>Some Title</h1>\n<p>Some content</p>"
     const CSS = "h1 {color: blue;}\np{color: red;}"
+    let blogId: string
 
     before(() => {
       // Clear database
@@ -140,27 +141,74 @@ describe("Creating a new blog", () => {
       cy.signUp("someUsername", "s0m3TestPass#%@$")
     })
 
-    it.only("Saves the blog content to the database", () => {
+    beforeEach(() => {
+      cy.intercept("POST", "/blog/create", (req) => {
+        // Save the blog id returned in the response for later use
+        req.continue((res) => {
+          blogId = res.body.success.id
+        })
+      })
+    })
+
+    it("Saves the blog content to the database", () => {
       // Type in the blog content
-      cy.get('[data-testid="HTMLEditor"]').type(HTML, {parseSpecialCharSequences: false})
-      cy.get('[data-testid="CSSEditor"]').type(CSS, {parseSpecialCharSequences: false})
+      cy.get('[data-testid="HTMLEditor"]').find("textarea").type(HTML, { parseSpecialCharSequences: false })
+      cy.get('[data-testid="CSSEditor"]').find("textarea").type(CSS, { parseSpecialCharSequences: false })
       // Click the save button
       cy.get('[data-testid="saveBtn"]').click()
       // Wait until the loading button is gone
-      cy.get('[data-testid="saveBtnLoading"]').should("not.exist")
-      // Now navigate away from this page
-      cy.visit("/")
-      // Check if the blog has been saved
+      cy.get('[data-testid="saveBtnLoading"]').should("not.exist").then(() => {
+        // Now navigate to the edit blog page using the new blog's id
+        cy.visit(`/editblog/${blogId}`)
+        // Check if the blog has been saved correctly
+        cy.get('[data-testid="HTMLEditor"]').find("textarea").should("have.text", HTML)
+        cy.get('[data-testid="CSSEditor"]').find("textarea").should("have.text", CSS)
+      })
     })
   })
 })
 
 describe("Editing an existing blog", () => {
+  const HTML = "<h1>Some Title</h1>\n<p>Some content</p>"
+  const CSS = "h1 {color: blue;}\np {color: red;}"
+  let blogId: string
+
   before(() => {
     // Clear the database
     cy.clearDb()
     // Create a test user
+    cy.signUp("someUsername", "s0m3TestPass#%@$")
 
+    // Intercept save blog requests to keep track of blog id
+    cy.intercept("POST", "/blog/create", (req) => {
+      req.continue((res) => {
+        blogId = res.body.success.id
+      })
+    })
+
+    // Create a test blog
+    cy.visit("/editblog")
+    cy.get('[data-testid="HTMLEditor"]').find("textarea").type(HTML, { parseSpecialCharSequences: false })
+    cy.get('[data-testid="CSSEditor"]').find("textarea").type(CSS, { parseSpecialCharSequences: false })
+    cy.get('[data-testid="saveBtn"]').click()
+  })
+
+  beforeEach(() => {
+    cy.visit(`/editblog/${blogId}`)
+  })
+
+  it("Displays the content of the blog in the editors", () => {
+    cy.get('[data-testid="HTMLEditor"]').find("textarea").should("have.text", HTML)
+    cy.get('[data-testid="CSSEditor"]').find("textarea").should("have.text", CSS)
+  })
+
+  it.only("Saves any changes made to the blog", () => {
+    const ADDITIONAL_HTML = "\n<p>And even more content!</p>"
+    // const ADDITIONAL_CSS = "\nbody {background-color: yellow;}"
+
+    // Make some changes to the blog content
+    cy.get('[data-testid="HTMLEditor"]').find("textarea").type(ADDITIONAL_HTML, { parseSpecialCharSequences: false })
+    // cy.get('[data-testid="CSSEditor"]').find("textarea").type(ADDITIONAL_CSS, { parseSpecialCharSequences: false })
   })
 })
 
