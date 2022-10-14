@@ -123,6 +123,7 @@ export default function ViewBlog() {
             icon={<EditIcon width={21} height={21} />}
             buttonState={editButtonState}
             disabled={editButtonDisabled}
+            btnTestId="editBtn"
           />
           <Button
             text="Delete"
@@ -133,6 +134,7 @@ export default function ViewBlog() {
             icon={<DeleteIcon width={21} height={21} />}
             buttonState={deleteButtonState}
             disabled={deleteButtonDisabled}
+            btnTestId="deleteBtn"
           />
         </div>
         :

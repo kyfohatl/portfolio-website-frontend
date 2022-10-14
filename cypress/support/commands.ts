@@ -38,6 +38,7 @@
 
 import '@testing-library/cypress/add-commands'
 import { AuthService } from '../../src/lib/commonTypes'
+import Updatable from "../../src/lib/Updatable"
 
 declare global {
   namespace Cypress {
@@ -47,7 +48,9 @@ declare global {
       signUp(username: string, password: string): Chainable<void>,
       signUpTp(username: string, provider: AuthService, providerUserId: string): Chainable<void>,
       signIn(username: string, password: string): Chainable<void>,
-      inputBoxShouldDisplayError(type: "Email" | "Password" | "Confirm Password", errTxt: string): Chainable<void>
+      inputBoxShouldDisplayError(type: "Email" | "Password" | "Confirm Password", errTxt: string): Chainable<void>,
+      createBlog(html: string, css: string, updatable?: Updatable<string>): Chainable<void>,
+      verifyBlog(blogId: string, html: string, css: string): Chainable<void>
     }
   }
 }
@@ -113,3 +116,30 @@ Cypress.Commands.add(
     cy.get(`[data-testid="errorLabel${type}"]`).should("contain.text", errTxt)
   }
 )
+
+// Creates a blog with the given html and cc. Assumes a user is signed in
+Cypress.Commands.add("createBlog", (html: string, css: string, updatable?: Updatable<string>) => {
+  cy.intercept("POST", "/blog/create", (req) => {
+    req.continue((res) => {
+      if (res.statusCode !== 201) throw new Error("Could not create blog!")
+      if (updatable) updatable.update(res.body.success.id)
+    })
+  }).as("createBlog")
+
+  cy.visit("/editblog")
+  cy.get('[data-testid="HTMLEditor"]').find("textarea").type(html, { parseSpecialCharSequences: false })
+  cy.get('[data-testid="CSSEditor"]').find("textarea").type(css, { parseSpecialCharSequences: false })
+  cy.get('[data-testid="saveBtn"]').click()
+
+  cy.wait("@createBlog")
+})
+
+Cypress.Commands.add("verifyBlog", (blogId: string, html: string, css: string) => {
+  cy.visit(`/blog/${blogId}`)
+  cy.get('[data-testid="blogFrame"]').invoke("attr", "srcDoc").should("not.be.undefined").then((srcDoc) => {
+    if (!srcDoc) throw new Error("iframe srcDoc is undefined!")
+
+    expect(srcDoc).to.match(new RegExp(html))
+    expect(srcDoc).to.match(new RegExp(css))
+  })
+})

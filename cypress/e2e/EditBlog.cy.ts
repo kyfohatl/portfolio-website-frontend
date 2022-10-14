@@ -1,13 +1,3 @@
-function itBehavesLikeCorrectlySavedBlog(blogId: string, html: string, css: string) {
-  cy.visit(`/blog/${blogId}`)
-  cy.get('[data-testid="blogFrame"]').invoke("attr", "srcDoc").should("not.be.undefined").then((srcDoc) => {
-    if (!srcDoc) throw new Error("iframe srcDoc is undefined!")
-
-    expect(srcDoc).to.match(new RegExp(html))
-    expect(srcDoc).to.match(new RegExp(css))
-  })
-}
-
 describe("Creating a new blog", () => {
   beforeEach(() => {
     cy.visit("/editblog")
@@ -176,7 +166,7 @@ describe("Creating a new blog", () => {
       // Wait until the loading button is gone
       cy.get('[data-testid="saveBtnLoading"]').should("not.exist").then(() => {
         // Now ensure that the blog has been saved correctly
-        itBehavesLikeCorrectlySavedBlog(blogId, HTML, CSS)
+        cy.verifyBlog(blogId, HTML, CSS)
       })
     })
   })
@@ -235,7 +225,7 @@ describe("Editing an existing blog", () => {
     cy.get('[data-testid="saveBtnLoading"]').should("not.exist")
 
     // Now ensure the changes are saved correctly
-    itBehavesLikeCorrectlySavedBlog(blogId, HTML + ADDITIONAL_HTML, CSS + ADDITIONAL_CSS)
+    cy.verifyBlog(blogId, HTML + ADDITIONAL_HTML, CSS + ADDITIONAL_CSS)
   })
 })
 
