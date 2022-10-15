@@ -1,5 +1,10 @@
 import Updatable from "../../src/lib/Updatable"
 
+function itBehavesLikeBlogDoesNotExists(blogId: string) {
+  cy.visit(`/blog/${blogId}`)
+  cy.get('[data-testid="errorContainer"]').find("h2").should("have.text", "Error  404")
+}
+
 describe("When viewing a blog that exists", () => {
   const USERNAME = "someUsername"
   const PASSWORD = "s0m3Password#&^*&"
@@ -68,10 +73,27 @@ describe("When viewing a blog that exists", () => {
       })
     })
 
-    describe("When clicking the delete button", () => { })
+    describe("When clicking the delete button", () => {
+      it("Deletes the blog, then displays a deletion animation, and then navigates the client to the view blogs page", () => {
+        cy.visit(`/blog/${blogIdContainer.getContent()}`)
+        cy.get('[data-testid="deleteBtn"]').click()
+
+        // We should see a deletion animation
+        cy.get('[data-testid="binLid"]').should("exist")
+        // Then we should be sent to the view blogs page
+        cy.get('[data-testid="viewBlogsPage"]').should("exist")
+
+        // Ensure that the blog is actually deleted
+        itBehavesLikeBlogDoesNotExists(blogIdContainer.getContent())
+      })
+    })
   })
 })
 
-describe("When viewing a blog that does not exist", () => { })
+describe("When viewing a blog that does not exist", () => {
+  it("Displays a 404 error", () => {
+    itBehavesLikeBlogDoesNotExists("72d7b3f9-c60f-4ada-a4b9-940d26a9c8aa")
+  })
+})
 
 export { }
