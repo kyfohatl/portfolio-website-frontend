@@ -45,7 +45,7 @@ declare global {
     interface Chainable {
       clearDb(): Chainable<void>,
       waitForAuthCompletion(): Chainable<void>,
-      signUp(username: string, password: string): Chainable<void>,
+      signUp(username: string, password: string, userIdContainer?: Updatable<string>): Chainable<void>,
       signUpTp(username: string, provider: AuthService, providerUserId: string): Chainable<void>,
       signIn(username: string, password: string): Chainable<void>,
       inputBoxShouldDisplayError(type: "Email" | "Password" | "Confirm Password", errTxt: string): Chainable<void>,
@@ -68,7 +68,16 @@ Cypress.Commands.add("waitForAuthCompletion", () => {
 })
 
 // Signs up regular a user with the given username and password
-Cypress.Commands.add("signUp", (username: string, password: string) => {
+// If given an Updatable container, it will fill the container with the returned user id
+Cypress.Commands.add("signUp", (username: string, password: string, userIdContainer?: Updatable<string>) => {
+  cy.intercept("POST", "/auth/users", (req) => {
+    req.continue((res) => {
+      if (userIdContainer && "success" in res.body) {
+        userIdContainer.update(res.body.success.userId)
+      }
+    })
+  }).as("signUp")
+
   // Go to the sign up page
   cy.visit("/signup")
   // Type in the username
@@ -79,8 +88,8 @@ Cypress.Commands.add("signUp", (username: string, password: string) => {
   cy.get('[data-testid="labelContainerConfirm Password"]').find("input").type(password)
   // Click on the sign up button
   cy.get('[data-testid="signUpBtn"]').click()
-  // Wait until sign up is finished and we have redirected to the home page
-  cy.waitForAuthCompletion()
+  // Wait until sign up is finished
+  cy.wait("@signUp")
 })
 
 // Signs up a third party user with the given provider, provider id and username
