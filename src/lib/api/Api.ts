@@ -1,4 +1,3 @@
-import TestApi from "../../tests/lib/api/TestApi"
 import { BackendError, BackendResponse, FrontendError } from "../commonTypes"
 import { fetchWithAuth } from "./helpers/auth/fetchWithAuth"
 import { redirectToSignInAndClearData } from "./helpers/auth/redirectAndClearData"
@@ -16,8 +15,6 @@ export interface BlogProps {
 }
 
 export default class Api {
-  static test = new TestApi()
-
   static async signOut() {
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/users/logout`, {

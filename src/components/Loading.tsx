@@ -7,7 +7,13 @@ interface LoadingProps {
 
 export default function Loading({ overrideStyles }: LoadingProps) {
   return (
-    <svg className={styles.indicator} style={overrideStyles} viewBox="0 0 100 100" fill="none">
+    <svg
+      className={styles.indicator}
+      style={overrideStyles}
+      viewBox="0 0 100 100"
+      fill="none"
+      data-testid="loadingIndicator"
+    >
       <circle cx="50" cy="50" r="47.5" stroke="#8B0000" strokeWidth="5" />
       <circle cx="50" cy="50" r="37.5" stroke="#B57F50" strokeWidth="5" />
       <circle cx="50" cy="50" r="27.5" stroke="#8B0000" strokeWidth="5" />

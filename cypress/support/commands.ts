@@ -50,9 +50,16 @@ declare global {
       signIn(username: string, password: string): Chainable<void>,
       inputBoxShouldDisplayError(type: "Email" | "Password" | "Confirm Password", errTxt: string): Chainable<void>,
       createBlog(html: string, css: string, updatable?: Updatable<string>): Chainable<void>,
-      verifyBlog(blogId: string, html: string, css: string): Chainable<void>
+      verifyBlog(blogId: string, html: string, css: string): Chainable<void>,
+      createMultBlogs(blogs: TestBlogInfo[]): Chainable<void>
     }
   }
+}
+
+export interface TestBlogInfo {
+  userId: string,
+  html: string,
+  css: string
 }
 
 // Clears the database
@@ -143,6 +150,7 @@ Cypress.Commands.add("createBlog", (html: string, css: string, updatable?: Updat
   cy.wait("@createBlog")
 })
 
+// Verifies that the blog with the given id, html and css exist on the app and can be displayed when going to its page
 Cypress.Commands.add("verifyBlog", (blogId: string, html: string, css: string) => {
   cy.visit(`/blog/${blogId}`)
   cy.get('[data-testid="blogFrame"]').invoke("attr", "srcDoc").should("not.be.undefined").then((srcDoc) => {
@@ -151,4 +159,9 @@ Cypress.Commands.add("verifyBlog", (blogId: string, html: string, css: string) =
     expect(srcDoc).to.match(new RegExp(html))
     expect(srcDoc).to.match(new RegExp(css))
   })
+})
+
+// Creates all given blogs on the backend
+Cypress.Commands.add("createMultBlogs", (blogs: TestBlogInfo[]) => {
+  cy.request("POST", `${Cypress.env("backendAddr")}/test/blog/createall`, { blogs })
 })

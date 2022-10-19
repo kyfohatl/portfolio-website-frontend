@@ -25,7 +25,7 @@ export default function BlogCard({
 
   return (
     <Link className={styles.link} to={link}>
-      <div className={styles.outerContainer}>
+      <div className={styles.outerContainer} data-testid={`blogCard_${title}`}>
         {image
           ? <img className={styles.thumbnail} src={image} alt={imageDescription} />
           : <img className={styles.thumbnail} src={MissingImageIcon} alt="Missing" />

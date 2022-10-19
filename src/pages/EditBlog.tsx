@@ -117,6 +117,7 @@ export default function EditBlog() {
       contentStyle={{ marginTop: "56px" }}
       contentBlockStyle={{ display: "flex", flexDirection: "column", maxWidth: "80vw", maxHeight: "95vh", gap: "20px" }}
       state={pageState}
+      contentTestId="editBlogPage"
     >
       <div className={styles.savePane}>
         <Button
