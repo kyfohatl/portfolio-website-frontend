@@ -10,7 +10,7 @@ import Api, { BlogProps } from "../lib/api/Api";
 import { useParams } from "react-router-dom";
 import Saving from "../components/animation/Saving";
 import HelpDisplay from "../components/help/HelpDisplay";
-import { cardProps } from "../resources/editBlogHelpCards";
+import { cardProps } from "../resources/editBlogHelpCards/cardContent";
 
 
 export default function EditBlog() {
@@ -128,6 +128,7 @@ export default function EditBlog() {
           padding="0px"
           borderRadius="50px"
           backgroundColor="transparent"
+          btnTestId="helpMenuBtn"
         />
 
         <Button

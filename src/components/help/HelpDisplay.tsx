@@ -46,8 +46,8 @@ export default function HelpDisplay({ cardProps, onClose, initIdx = 0 }: HelpDis
       throw new Error(`Help display index of ${nextIndex} is out of bounds!`)
     }
 
-    // nextIndex should never be the same as the current index
-    if (nextIndex === cardIndex) throw new Error("Help display next and current index are the same!")
+    // If the nextIndex is the same as cardIndex, then we do not need to do anything
+    if (nextIndex === cardIndex) return
 
     if (nextIndex > cardIndex) {
       // Movement to the right
@@ -82,7 +82,11 @@ export default function HelpDisplay({ cardProps, onClose, initIdx = 0 }: HelpDis
     <>
       <div data-testid="helpDisplayBackground" className={styles.background} onClick={onClose}></div>
 
-      <div className={styles.outerContainer} style={{ gap: OUTER_CONTAINER_GAP }}>
+      <div
+        className={styles.outerContainer}
+        style={{ gap: OUTER_CONTAINER_GAP }}
+        data-testid="helpDisplayOuterContainer"
+      >
         <div
           className={styles.closeButtonContainer}
           style={{ "--cardWidth": curCard.dimensions?.width } as React.CSSProperties}

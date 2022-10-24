@@ -28,6 +28,7 @@ export default function HelpDisplaySideButton({ direction, callBack, disabled }:
       backgroundColor="#FFF5EE"
       disabled={disabled}
       boxShadow="0px 0px 4px 4px #C1C1C1"
+      btnTestId={`helpDisplaySideBtn_${direction}`}
     />
   )
 }

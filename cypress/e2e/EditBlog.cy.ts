@@ -1,3 +1,5 @@
+import { cardTexts } from "../../src/resources/editBlogHelpCards/cardTexts"
+
 describe("Creating a new blog", () => {
   beforeEach(() => {
     cy.visit("/editblog")
@@ -226,6 +228,237 @@ describe("Editing an existing blog", () => {
 
     // Now ensure the changes are saved correctly
     cy.verifyBlog(blogId, HTML + ADDITIONAL_HTML, CSS + ADDITIONAL_CSS)
+  })
+})
+
+describe("Help display", () => {
+  beforeEach(() => {
+    cy.visit("/editblog")
+  })
+
+  describe("When the help menu is not displaying", () => {
+    it("Displays a help button that when clicked on opens the help menu", () => {
+      // Initially the help menu should not be shown
+      cy.get('[data-testid="helpDisplayOuterContainer"]').should("not.exist")
+      // Now click the help button
+      cy.get('[data-testid="helpMenuBtn"]').click().then(() => {
+        // Now the menu should be displayed
+        cy.get('[data-testid="helpDisplayOuterContainer"]').should("exist")
+      })
+    })
+  })
+
+  describe("When the help menu is displaying", () => {
+    function waitForAnimationToFinish() {
+      // Wait for the transition to complete
+      cy.get('[data-testid="animatedDial"]').should("not.exist")
+      cy.get('[data-testid="dialPlaceholder"]').should("not.exist")
+    }
+
+    function itBehavesLikeShowCurrentCard(idx: number) {
+      cy.get(`[data-testid="featureDisplay_${cardTexts[idx].title}"]`).then((card) => {
+        // Check the title
+        cy.wrap(card).find("h1").should("contain.text", cardTexts[idx].title)
+        // Check the notes
+        cy.wrap(card).find("ul").then((list) => {
+          for (const note of cardTexts[idx].notes) {
+            expect(list).to.contain.text(note)
+          }
+        })
+      })
+    }
+
+    function itBehavesLikeActiveDialInPos(idx: number) {
+      cy.get('[data-testid="dialContainer"]')
+        .find("button")
+        .eq(idx)
+        .invoke("attr", "data-testid")
+        .should("eq", "activeDial")
+    }
+
+    function itBehavesLikeClickLeftArrow(curIdx: number) {
+      describe("When clicking the left arrow button", () => {
+        it("Brings in the previous card, and moves the bottom dial one to the left", () => {
+          cy.get('[data-testid="helpDisplaySideBtn_left"]').click()
+          waitForAnimationToFinish()
+          // Ensure the current card is displayed correctly
+          itBehavesLikeShowCurrentCard(curIdx - 1)
+          // Ensure the active dial is in the correct spot
+          itBehavesLikeActiveDialInPos(curIdx - 1)
+        })
+      })
+    }
+
+    function itBehavesLikeClickRightArrow(curIdx: number) {
+      describe("When clicking the right arrow button", () => {
+        it("Brings in the next card, and moves the bottom dial one to the right", () => {
+          cy.get('[data-testid="helpDisplaySideBtn_right"]').click()
+          waitForAnimationToFinish()
+          // Ensure the current card is displayed correctly
+          itBehavesLikeShowCurrentCard(curIdx + 1)
+          // Ensure the active dial is in the correct spot
+          itBehavesLikeActiveDialInPos(curIdx + 1)
+        })
+      })
+    }
+
+    function itBehavesLikeClickDialToLeft(curIdx: number) {
+      describe("When clicking on a dial 2 positions to the left of the current dial", () => {
+        it("Moves the stack 2 cards back and the bottom dial moves two positions to the left", () => {
+          cy.get('[data-testid="dialContainer"]').find("button").eq(curIdx - 2).click()
+          waitForAnimationToFinish()
+          // Ensure the current card is displayed correctly
+          itBehavesLikeShowCurrentCard(curIdx - 2)
+          // Ensure the active dial is in the correct spot
+          itBehavesLikeActiveDialInPos(curIdx - 2)
+        })
+      })
+    }
+
+    function itBehavesLikeClickDialToRight(curIdx: number) {
+      describe("When clicking on a dial two positions to the right of the current dial", () => {
+        it("Moves the stack 2 cards forwards and the bottom dial moves two positions to the right", () => {
+          cy.get('[data-testid="dialContainer"]').find("button").eq(curIdx + 2).click()
+          waitForAnimationToFinish()
+          // Ensure the current card is displayed correctly
+          itBehavesLikeShowCurrentCard(curIdx + 2)
+          // Ensure the active dial is in the correct spot
+          itBehavesLikeActiveDialInPos(curIdx + 2)
+        })
+      })
+    }
+
+    function itBehavesLikePressLeftArrowKey(curIdx: number) {
+      describe("When pressing the \"left arrow\" key on the keyboard", () => {
+        it("Brings in the previous card, and moves the bottom dial one to the left", () => {
+          // To use keyboard shortcuts in Cypress, we can "type" into the document body
+          cy.get("body").type("{leftArrow}")
+          waitForAnimationToFinish()
+          // Ensure that the current card is displayed correctly
+          itBehavesLikeShowCurrentCard(curIdx - 1)
+          // Ensure the active dial is in the correct spot
+          itBehavesLikeActiveDialInPos(curIdx - 1)
+        })
+      })
+    }
+
+    function itBehavesLikePressRightArrowKey(curIdx: number) {
+      describe("When pressing the \"right arrow\" key on the keyboard", () => {
+        it("Brings in the next card, and moves the bottom dial one to the right", () => {
+          // To use keyboard shortcuts in Cypress, we can "type" into the document body
+          cy.get("body").type("{rightArrow}")
+          waitForAnimationToFinish()
+          // Ensure the current card is displayed correctly
+          itBehavesLikeShowCurrentCard(curIdx + 1)
+          // Ensure the active dial is in the correct spot
+          itBehavesLikeActiveDialInPos(curIdx + 1)
+        })
+      })
+    }
+
+    function itBehavesLikeCorrectLeftwardBehavior(curIdx: number) {
+      itBehavesLikeClickLeftArrow(curIdx)
+      itBehavesLikeClickDialToLeft(curIdx)
+      itBehavesLikePressLeftArrowKey(curIdx)
+    }
+
+    function itBehavesLikeCorrectRightwardBehavior(curIdx: number) {
+      itBehavesLikeClickRightArrow(curIdx)
+      itBehavesLikeClickDialToRight(curIdx)
+      itBehavesLikePressRightArrowKey(curIdx)
+    }
+
+    beforeEach(() => {
+      cy.get('[data-testid="helpMenuBtn"]').click()
+    })
+
+    describe("When the menu is displaying the first card", () => {
+      it("Displays the content of the first help card, along with only a right arrow button, and the bottom dial is at the leftmost position", () => {
+        itBehavesLikeShowCurrentCard(0)
+
+        cy.get('[data-testid="helpDisplaySideBtn_right"]').should("exist")
+        cy.get('[data-testid="helpDisplaySideBtn_left"]').should("not.exist")
+
+        itBehavesLikeActiveDialInPos(0)
+      })
+
+      itBehavesLikeCorrectRightwardBehavior(0)
+    })
+
+    describe("When the menu is displaying a middle card", () => {
+      beforeEach(() => {
+        // Click the right arrow twice to get the the middle of the help card stack
+        cy.get('[data-testid="helpDisplaySideBtn_right"]').click().then(() => {
+          cy.get('[data-testid="helpDisplaySideBtn_right"]').click()
+          waitForAnimationToFinish()
+        })
+      })
+
+      it("Displays the content of the relevant card, shows both left and right arrow buttons, and the bottom dial is in the middle position", () => {
+        itBehavesLikeShowCurrentCard(2)
+
+        cy.get('[data-testid="helpDisplaySideBtn_right"]').should("exist")
+        cy.get('[data-testid="helpDisplaySideBtn_left"]').should("exist")
+
+        itBehavesLikeActiveDialInPos(2)
+      })
+
+      itBehavesLikeCorrectRightwardBehavior(2)
+      itBehavesLikeCorrectLeftwardBehavior(2)
+    })
+
+    describe("When the help menu is displaying the final card", () => {
+      const curIdx = cardTexts.length - 1
+
+      beforeEach(() => {
+        // Click the final dial to go to the last card
+        cy.get('[data-testid="dialContainer"]').find("button").last().click()
+        waitForAnimationToFinish()
+      })
+
+      it("Displays the content of the final card, along with only a right arrow button, and the bottom dial is in the final position", () => {
+        itBehavesLikeShowCurrentCard(curIdx)
+
+        cy.get('[data-testid="helpDisplaySideBtn_right"]').should("not.exist")
+        cy.get('[data-testid="helpDisplaySideBtn_left"]').should("exist")
+
+        itBehavesLikeActiveDialInPos(curIdx)
+      })
+
+      itBehavesLikeCorrectLeftwardBehavior(curIdx)
+    })
+
+    describe("When clicking away from the help menu", () => {
+      it("Closes the help menu", () => {
+        cy.get("body").click(0, 0).then(() => {
+          cy.get('[data-testid="helpDisplayOuterContainer"]').should("not.exist")
+        })
+      })
+    })
+
+    describe("When clicking on the \"X\" button", () => {
+      it("Closes the help menu", () => {
+        cy.get('[data-testid="helpDisplayCloseBtn"]').click().then(() => {
+          cy.get('[data-testid="helpDisplayOuterContainer"]').should("not.exist")
+        })
+      })
+    })
+
+    describe("When pressing the \"escape\" key", () => {
+      it("Closes the help menu", () => {
+        cy.get("body").type("{esc}").then(() => {
+          cy.get('[data-testid="helpDisplayOuterContainer"]').should("not.exist")
+        })
+      })
+    })
+
+    describe("When clicking on the currently active dial", () => {
+      it("Does not change the current card", () => {
+        cy.get('[data-testid="dialContainer"]').find("button").first().click().then(() => {
+          itBehavesLikeShowCurrentCard(0)
+        })
+      })
+    })
   })
 })
 
