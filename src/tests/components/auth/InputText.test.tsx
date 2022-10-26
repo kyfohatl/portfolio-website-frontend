@@ -70,7 +70,7 @@ describe("When error text is given", () => {
 
   it("Displays the Error label", () => {
     setup()
-    const errorLabel = screen.getByTestId("errorLabel")
+    const errorLabel = screen.getByTestId(/errorLabel/)
     expect(errorLabel).toBeInTheDocument()
   })
 })

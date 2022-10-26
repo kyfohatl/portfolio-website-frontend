@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react"
+import { fireEvent, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { FeatureDisplayCardProps } from "../../../components/FeatureDisplayCard"
 import { ACTIVE_DIAL_COLOR } from "../../../components/help/DialContainer"
@@ -196,7 +196,8 @@ describe("When in an animation state", () => {
 
     it("Displays the target dial as a placeholder", () => {
       setup()
-      const placeholder = screen.getAllByTestId(/dial/i)[nextIdx]
+      const dialContainer = screen.getByTestId(/dialContainer/)
+      const placeholder = within(dialContainer).getAllByTestId(/dial/i)[nextIdx]
       expect(placeholder).toHaveAttribute("data-testid", "dialPlaceholder")
     })
 
@@ -245,7 +246,8 @@ describe("When in an animation state", () => {
 
     function setup() {
       render(<HelpDisplay cardProps={cardProps} onClose={onCloseMock} initIdx={INIT_IDX} />)
-      const targetDial = screen.getAllByTestId(/dial/i)[TARGET_IDX]
+      const dialContainer = screen.getByTestId(/dialContainer/)
+      const targetDial = within(dialContainer).getAllByTestId(/dial/i)[TARGET_IDX]
       fireEvent.click(targetDial)
     }
 
