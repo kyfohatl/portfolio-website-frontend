@@ -32,3 +32,17 @@ jobs:
       # Run all tests
       - name: Run all tests
         run: npm run test
+  
+  # Run Cypress e2e tests
+  runE2eTests:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the backend repo onto the runner
+      - name: Checkout backend
+        uses: actions/checkout@v3
+        with:
+          repository: kyfohatl/portfolio-website-backend
+      
+      - name: Check if it worked
+        run: ls -a
