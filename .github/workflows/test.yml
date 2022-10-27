@@ -5,8 +5,10 @@ name: Test
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  # Setup the environment and then run tests
-  runTests:
+  # Run all unit and integration tests
+  runJestTests:
+    name: Run jest tests
+
     # Run tests on a ubuntu machine
     runs-on: ubuntu-latest
 
@@ -35,6 +37,8 @@ jobs:
   
   # Run Cypress e2e tests
   runE2eTests:
+    name: Run end-to-end tests
+
     runs-on: ubuntu-latest
 
     # Setup required environment variables for backend
@@ -97,10 +101,10 @@ jobs:
           cd frontend
           npm ci
           npm run build
-          npm start &
+          PORT=3000 npm start &
       
-      - name: Check if it worked
+      # Run Cypress tests
+      - name: Run Cypress tests
         run: |
-          ls -a
           cd frontend
-          npm test
+          npx cypress run
