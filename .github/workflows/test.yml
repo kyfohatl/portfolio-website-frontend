@@ -37,12 +37,30 @@ jobs:
   runE2eTests:
     runs-on: ubuntu-latest
 
+    # Setup required environment variables for backend
+    env:
+      ACCESS_TOKEN_SECRET: 46131ad1377ebb6fcb7bc0d9d4b3be424a5d3ca300bae2880db1e74445e58dd72e4dcd01062d27c837a3a74e6f4eaaca44676b839b6eea997b31524cef2092d2
+      REFRESH_TOKEN_SECRET: 6c10c749a07308d384ea10e666fd4177f638fd4ddc904ac48f344830be416a6c3e087725bd27f88d017278bf2f8cf3ce77057e6676ec44664f9184eae8be6aee
+      TEST_DATABASE_URL: postgresql://postgres:1234pass@localhost:5432/test_portfolio_backend
+      PORT: 8000
+      TEST_SERVER_PORT: 8001
+      FRONTEND_SERVER_ADDR: http://localhost:3000
+      BACKEND_SERVER_ADDR: http://localhost:8000
+      TEST_SERVER_ADDR: http://localhost:8001
+      DOT_ENV_IS_RUNNING: true
+
     steps:
       # Create directories for the backend and frontend
       - name: Create directories
         run: |
           mkdir backend
           mkdir frontend
+
+      # Setup node
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.4.1
+        with:
+          node-version: '17.5.0'
 
       # Checkout the backend repo onto the runner
       - name: Checkout backend
@@ -51,18 +69,38 @@ jobs:
           repository: kyfohatl/portfolio-website-backend
           path: backend
       
+      # Setup Postgres for backend
+      - name: Setup Postgres
+        run: |
+          sudo apt install postgresql postgresql-contrib
+          sudo service postgresql start
+          sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '1234pass';"
+          sudo -u postgres psql -f setupTestDatabase.sql
+      
+      # Setup backend server
+      - name: Setup backend server
+        run: |
+          cd backend
+          npm ci
+          npm run build
+          node dist/server.js -t
+      
       # Checkout the frontend repo onto the runner
       - name: Checkout frontend
         uses: actions/checkout@v3
         with:
           path: frontend
-      
-      # Install backend dependencies
-      - name: Install backend dependencies
+
+      # Setup frontend server
+      - name: Setup frontend server
         run: |
-          cd backend
+          cd frontend
           npm ci
+          npm run build
+          npm start
       
       - name: Check if it worked
         run: |
           ls -a
+          cd frontend
+          npm test
