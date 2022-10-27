@@ -57,12 +57,13 @@ jobs:
         with:
           path: frontend
       
+      # Install backend dependencies
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          npm ci
+      
       - name: Check if it worked
         run: |
-          ls -a
-          echo "now checking backend:"
-          cd backend/
-          ls -a
-          echo "now checking frontend:"
-          cd ../frontend
+          cd ../
           ls -a
