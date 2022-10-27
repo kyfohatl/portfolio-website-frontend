@@ -50,4 +50,6 @@ jobs:
           path: backend
       
       - name: Check if it worked
-        run: ls -a
+        run: |
+          cd backend/
+          ls -a
