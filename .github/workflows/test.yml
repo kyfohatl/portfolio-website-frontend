@@ -38,9 +38,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Create directory for the backend
-      - name: Create backend directory
-        run: mkdir backend
+      # Create directories for the backend and frontend
+      - name: Create directories
+        run: |
+          mkdir backend
+          mkdir frontend
 
       # Checkout the backend repo onto the runner
       - name: Checkout backend
@@ -49,7 +51,18 @@ jobs:
           repository: kyfohatl/portfolio-website-backend
           path: backend
       
+      # Checkout the frontend repo onto the runner
+      - name: Checkout frontend
+        uses: actions/checkout@v3
+        with:
+          path: frontend
+      
       - name: Check if it worked
         run: |
+          ls -a
+          echo "now checking backend:"
           cd backend/
+          ls -a
+          echo "now checking frontend:"
+          cd ../frontend
           ls -a
