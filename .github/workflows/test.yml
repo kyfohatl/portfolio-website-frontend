@@ -38,11 +38,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Create directory for the backend
+      - name: Create backend directory
+        run: mkdir backend
+
       # Checkout the backend repo onto the runner
       - name: Checkout backend
         uses: actions/checkout@v3
         with:
           repository: kyfohatl/portfolio-website-backend
+          path: backend
       
       - name: Check if it worked
         run: ls -a
