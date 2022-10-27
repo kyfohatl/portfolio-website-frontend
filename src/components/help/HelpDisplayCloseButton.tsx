@@ -17,6 +17,7 @@ export default function HelpDisplayCloseButton({ onClose }: HelpDisplayCloseButt
       height={CLOSE_BUTTON_SIZE}
       width={CLOSE_BUTTON_SIZE}
       boxShadow="0px 0px 4px 4px #C1C1C1"
+      btnTestId="helpDisplayCloseBtn"
     />
   )
 }

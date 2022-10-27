@@ -139,6 +139,7 @@ export default function SignIn() {
           text="Sign in"
           buttonState={signInState}
           disabled={signInDisabled}
+          btnTestId="signInBtn"
         />
         <Button
           type={{ type: "button", callBack: onSignInGoogle }}

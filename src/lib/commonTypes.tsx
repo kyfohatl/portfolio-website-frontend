@@ -33,3 +33,6 @@ export class FrontendError extends Error {
 export type BackendResponse =
   { success: any, code?: number } |
   BackendError
+
+// Third party authentication services
+export type AuthService = "google" | "facebook"

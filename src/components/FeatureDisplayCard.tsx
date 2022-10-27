@@ -61,7 +61,12 @@ const FeatureDisplayCard = React.forwardRef<HTMLDivElement, FeatureDisplayCardPr
   }
 
   return (
-    <div ref={ref} className={styles.outerContainer} style={outerContainerStyles}>
+    <div
+      ref={ref}
+      className={styles.outerContainer}
+      style={outerContainerStyles}
+      data-testid={`featureDisplay_${title}`}
+    >
       <article className={styles.textContainer} style={textContainerStyles}>
         <h1 style={titleStyles}>{title}</h1>
         <ul>

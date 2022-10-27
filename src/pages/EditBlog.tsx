@@ -10,7 +10,7 @@ import Api, { BlogProps } from "../lib/api/Api";
 import { useParams } from "react-router-dom";
 import Saving from "../components/animation/Saving";
 import HelpDisplay from "../components/help/HelpDisplay";
-import { cardProps } from "../resources/editBlogHelpCards";
+import { cardProps } from "../resources/editBlogHelpCards/cardContent";
 
 
 export default function EditBlog() {
@@ -117,6 +117,7 @@ export default function EditBlog() {
       contentStyle={{ marginTop: "56px" }}
       contentBlockStyle={{ display: "flex", flexDirection: "column", maxWidth: "80vw", maxHeight: "95vh", gap: "20px" }}
       state={pageState}
+      contentTestId="editBlogPage"
     >
       <div className={styles.savePane}>
         <Button
@@ -127,6 +128,7 @@ export default function EditBlog() {
           padding="0px"
           borderRadius="50px"
           backgroundColor="transparent"
+          btnTestId="helpMenuBtn"
         />
 
         <Button
@@ -136,6 +138,7 @@ export default function EditBlog() {
           width="100px"
           icon={<SaveIcon width={21} height={21} />}
           buttonState={saveButtonState}
+          btnTestId="saveBtn"
         />
       </div>
       <div className={styles.topPane}>
@@ -148,6 +151,7 @@ export default function EditBlog() {
           srcDoc={srcDoc}
           title="output"
           sandbox=""
+          data-testid="outputWindow"
         />
       </div>
 

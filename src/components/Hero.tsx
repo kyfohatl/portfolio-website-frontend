@@ -9,7 +9,7 @@ interface HeroProps {
 
 export default function Hero({ onExploreClick }: HeroProps) {
   return (
-    <div className={styles.outerContainer}>
+    <div className={styles.outerContainer} data-testid="heroOuterContainer">
       <article className={styles.textContainer}>
         <h1>Ehsan's Blog</h1>
         <p>
@@ -26,6 +26,7 @@ export default function Hero({ onExploreClick }: HeroProps) {
           color="white"
           width="118px"
           height="40px"
+          btnTestId="exploreBtn"
         />
         <DownArrow width="26px" height="26px" className={styles.arrow} />
       </div>

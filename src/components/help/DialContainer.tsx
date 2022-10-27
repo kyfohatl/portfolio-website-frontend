@@ -37,7 +37,7 @@ export default function DialContainer({ curIndex, numDials, animState, onClick }
   }, [curIndex, numDials, animState, onClick])
 
   return (
-    <div className={styles.container} style={{ gap: DIAL_GAP }}>
+    <div className={styles.container} style={{ gap: DIAL_GAP }} data-testid="dialContainer">
       {dials}
     </div>
   )

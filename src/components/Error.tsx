@@ -25,7 +25,7 @@ export default function Error({ code }: ErrorProps) {
   const message = getErrorMessage(code)
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-testid="errorContainer">
       <h2>Error  {code}</h2>
       <h4 className={styles.message}>{message}</h4>
       <svg data-testid="errorImage" viewBox="0 0 478 291" fill="none">

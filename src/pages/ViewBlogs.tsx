@@ -10,6 +10,7 @@ import styles from "./ViewBlogs.module.css"
 import { ReactComponent as CreateIcon } from "../assets/images/createIcon.svg"
 import { useNavigate } from "react-router-dom"
 import { hasData } from "../lib/api/helpers/auth/redirectAndClearData"
+import { NUM_ADDITIONAL_BLOGS, NUM_INIT_BLOGS } from "../resources/ViewBlogsConstants"
 
 function getScrollPercentage() {
   const de = document.documentElement
@@ -46,6 +47,8 @@ export default function ViewBlogs() {
         if (response.code === 404) {
           // No more blogs to show
           setAllBlogsShown(true)
+          // Ensure that the page state is back to normal
+          setPageState({ status: "normal" })
         } else {
           // Some other problem
           console.error(response)
@@ -84,7 +87,7 @@ export default function ViewBlogs() {
 
   // Load initial blogs
   useEffect(() => {
-    getBlogs(8)
+    getBlogs(NUM_INIT_BLOGS)
   }, [getBlogs])
 
   // Load more blogs upon scrolling to the bottom of the page, if more blogs are available
@@ -94,7 +97,7 @@ export default function ViewBlogs() {
         // Display the loading indicator card
         setLoadingBlogs(true)
         // Get the nex batch of blogs
-        await getBlogs(5)
+        await getBlogs(NUM_ADDITIONAL_BLOGS)
         // Remove the loading indicator card
         setLoadingBlogs(false)
       }
@@ -133,13 +136,14 @@ export default function ViewBlogs() {
           width="158px"
           height="40px"
           buttonState={createButtonState}
+          btnTestId="createBlogBtn"
         />
         :
         null
       }
       <div className={styles.blogsContainer}>
         {allBlogsShownState && numBlogsRef.current === 0
-          ? <p>No blogs to show!</p>
+          ? <p data-testid="noBlogsTxt">No blogs to show!</p>
           : cards
         }
         {loadingBlogsState
