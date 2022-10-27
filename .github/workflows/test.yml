@@ -83,7 +83,7 @@ jobs:
           cd backend
           npm ci
           npm run build
-          node dist/server.js -t
+          node dist/server.js -t &
       
       # Checkout the frontend repo onto the runner
       - name: Checkout frontend
@@ -97,7 +97,7 @@ jobs:
           cd frontend
           npm ci
           npm run build
-          npm start
+          npm start &
       
       - name: Check if it worked
         run: |
