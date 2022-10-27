@@ -65,5 +65,4 @@ jobs:
       
       - name: Check if it worked
         run: |
-          cd ../
           ls -a
