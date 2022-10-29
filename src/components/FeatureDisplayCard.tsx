@@ -9,7 +9,7 @@ interface imgProps {
 
 export interface FeatureDisplayCardProps {
   title: string,
-  notes: string[],
+  notes: (string | JSX.Element)[],
   visuals: { images: imgProps[] } | { custom: JSX.Element },
   theme?: "dark" | "light",
   dimensions?: { width: string, height: string }
@@ -36,7 +36,12 @@ const FeatureDisplayCard = React.forwardRef<HTMLDivElement, FeatureDisplayCardPr
     ...(dimensions),
     ...(borderRadius && { borderRadius: borderRadius }),
     ...(boxShadow && { boxShadow: boxShadow }),
-    ...(middleGap && { gap: middleGap })
+    ...(middleGap && { gap: middleGap }),
+    ...(
+      theme === "dark"
+        ? { "--link-normal-color": "yellow", "--link-visited-color": "lime" }
+        : { "--link-normal-color": "blue", "--link-visited-color": "purple" }
+    )
   }
   let titleStyles: CSSProperties = {}
   let noteStyles: CSSProperties = {}

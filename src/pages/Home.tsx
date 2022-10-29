@@ -17,6 +17,8 @@ import Saving, { SavingStyleOverrides } from "../components/animation/Saving"
 import Button from "../components/Button"
 import Loading from "../components/Loading"
 import FigmaDesignImg from "../assets/images/homePageDemos/figma_designs.png"
+import FrontendTestImg from "../assets/images/homePageDemos/frontendTesting.png"
+import GithubActionsImg from "../assets/images/homePageDemos/githubActions.png"
 import UpcomingCodeImg from "../assets/images/homePageDemos/upcoming_features.jpg"
 
 // Logos
@@ -30,8 +32,11 @@ import JwtLogo from "../assets/images/homePageDemos/techstackLogos/jwt_logo.png"
 import PostgresLogo from "../assets/images/homePageDemos/techstackLogos/postgres_logo.png"
 import HerokuLogo from "../assets/images/homePageDemos/techstackLogos/heroku_logo.png"
 import JestLogo from "../assets/images/homePageDemos/techstackLogos/jest_logo.png"
+import ReactTestingLibLogo from "../assets/images/homePageDemos/techstackLogos/reactTestingLibrary_logo.png"
+import CypressLogo from "../assets/images/homePageDemos/techstackLogos/cypress_logo.png"
 import GitLogo from "../assets/images/homePageDemos/techstackLogos/git_logo.png"
 import GitHubLogo from "../assets/images/homePageDemos/techstackLogos/github_logo.png"
+import GithubActionsLogo from "../assets/images/homePageDemos/techstackLogos/githubActions_logo.png"
 import FigmaLogo from "../assets/images/homePageDemos/techstackLogos/figma_logo.png"
 
 export default function Home() {
@@ -79,7 +84,7 @@ export default function Home() {
       <FeatureDisplayCard
         title="Summarize Your Blogs"
         notes={[
-          "Use the popular Open Graph (OG) protocol to write a summary of your blog",
+          <div>Use the popular <a href="https://ogp.me/">Open Graph (OG)</a> protocol to write a summary of your blog</div>,
           "Your blog summary is then displayed on the main blogs page, where it can entice viewers to click on your blog and read it",
           "The OG protocol implementation has the added benefit of being automatically compatible with many social media platforms. When sharing your blog on sites such as Facebook and LinkedIn, your summary will be displayed.",
           "Use the “keywords” meta tag to add tags to your blog, which will be displayed on the summary card"
@@ -115,7 +120,7 @@ export default function Home() {
       <FeatureDisplayCard
         title="Login"
         notes={[
-          "Custom authentication system built using the Json Web Token (JWT) and BCrypt frameworks",
+          <div>Custom authentication system built using the <a href="https://jwt.io/">Json Web Token (JWT)</a> and <a href="https://www.npmjs.com/package/bcrypt">BCrypt libraries</a></div>,
           "Uses Access and Refresh tokens to verify the authenticity of communications between the frontend and backend",
           "Uses HTTP-only cookies to store tokens safely (instead of browser local storage), preventing an XSS attacker from stealing them",
           "Automatic extension of sessions using refresh tokens"
@@ -125,7 +130,7 @@ export default function Home() {
       <FeatureDisplayCard
         title="Google and Facebook Login"
         notes={[
-          "Uses the OpenID Client protocol to securely verify a user with a third party authenticator (Google and Facebook)",
+          <div>Uses the <a href="https://openid.net/connect/">OpenID Connect</a> protocol to securely verify a user with a third party authenticator (Google and Facebook)</div>,
           "After the first third party sign in, an account is created for the user on the backend automatically. Subsequent third party logins will invoke the user account",
           "Only requests an id_token, and not an OAuth2.0 access code. This ensures that only the bare minimum required information is given to this website's system (mainly email and user id)"
         ]}
@@ -177,10 +182,57 @@ export default function Home() {
       <FeatureDisplayCard
         title="Design"
         notes={[
-          "All pages were first designed in Figma and then built from the design",
+          <div>All pages were first designed in <a href="https://www.figma.com/">Figma</a> and then built from the design</div>,
           "Building pages from designs enforced good consistency of theme and colors throughout the website"
         ]}
         visuals={{ images: [{ imgLink: FigmaDesignImg, width: "593px", height: "439px" }] }}
+        theme="dark"
+      />
+      <FeatureDisplayCard
+        title="Integration &amp; Unit Testing"
+        notes={[
+          "Comprehensive coverage of both the backend and frontend with unit and integration testing",
+          <div>The backend is tested using the <a href="https://jestjs.io/">Jest</a> testing framework</div>,
+          <div>Frontend testing is done using the Jest-based <a href="https://testing-library.com/docs/react-testing-library/intro/">React Testing Library</a></div>,
+          "Unit tests take full advantage of Jest's powerful mocking and spying systems to properly isolate subject components",
+          <div>Frontend tests use the <a href="https://mswjs.io/">Mock Service Worker</a> library to mock API requests. This allows interception of requests at the network level, and hence makes tests independent of the request library used, in turn making tests more resilient to changes</div>
+        ]}
+        visuals={{ images: [{ imgLink: FrontendTestImg, width: "520px", height: "321px" }] }}
+      />
+      <FeatureDisplayCard
+        title="End-to-End Testing"
+        notes={[
+          <div>Extensive end-to-end testing of the website is done using the <a href="https://www.cypress.io/">Cypress</a> testing framework</div>,
+          <div>Tests make strict adherence to good end-to-end testing practices as <a href="https://docs.cypress.io/guides/references/best-practices">recommended by Cypress</a>, avoiding anti-patterns and following common design principles, to ensure resilience</div>
+        ]}
+        visuals={{
+          custom:
+            <video loop autoPlay muted width="597px" height="335px">
+              <source src={process.env.PUBLIC_URL + "/assets/cypressViewBlog.mp4"} type="video/mp4" />
+            </video>
+        }}
+        theme="dark"
+      />
+      <FeatureDisplayCard
+        title="Continuous Integration"
+        notes={[
+          <div><a href="https://github.com/features/actions">Github Actions</a> is used for the CI process of both the backend and frontend</div>,
+          "All unit, integration and end-to-end tests are run automatically upon any commit to the code, or any merging of branches, to minimize the chance of bugs being introduced",
+          <div>An example of one of the CI flows used for this app can be viewed <a href="https://github.com/kyfohatl/portfolio-website-frontend/blob/main/.github/workflows/test.yml">here</a></div>
+        ]}
+        visuals={{ images: [{ imgLink: GithubActionsImg, width: "600px", height: "391px" }] }}
+      />
+      <FeatureDisplayCard
+        title="Upcoming Features"
+        notes={[
+          "Full mobile site support, with completely new designs of most pages specifically for smaller screens",
+          "Even more animations, including a WebGL powered Hero",
+          "User profile pages",
+          "Improvements to the blog editor",
+          "Additional features for blogs, such as liking and sharing",
+          "And more!"
+        ]}
+        visuals={{ images: [{ imgLink: UpcomingCodeImg, width: "426px", height: "569px" }] }}
         theme="dark"
       />
       <FeatureDisplayCard
@@ -192,8 +244,9 @@ export default function Home() {
           "Json Web Token (JWT) and Bcrypt are used for authentication",
           "PostgreSQL for database management",
           "Heroku for deployment of both backend and frontend",
-          "JEST for testing",
+          "JEST, React Testing Library and Cypress for testing",
           "Git and Github are used for repository management and source control",
+          "Github Actions for CI",
           "Figma for designs"
         ]}
         visuals={{
@@ -217,24 +270,14 @@ export default function Home() {
               <img alt="Postgres Logo" src={PostgresLogo} width="89px" height="93px" />
               <img alt="Heroku Logo" src={HerokuLogo} width="123px" height="35px" />
               <img alt="Jest Logo" src={JestLogo} width="78px" height="86px" />
+              <img alt="React Testing Library Logo" src={ReactTestingLibLogo} width="77px" height="77px" />
+              <img alt="Cypress Logo" src={CypressLogo} width="120px" height="30px" />
               <img alt="Git Logo" src={GitLogo} width="77px" height="77px" />
               <img alt="Github Logo" src={GitHubLogo} width="74px" height="74px" />
+              <img alt="Github Actions Logo" src={GithubActionsLogo} width="77px" height="77px" />
               <img alt="Figma Logo" src={FigmaLogo} width="56px" height="84px" />
             </div>
         }}
-      />
-      <FeatureDisplayCard
-        title="Upcoming Features"
-        notes={[
-          "Full mobile site support, with completely new designs of most pages specifically for smaller screens",
-          "Even more animations, including a WebGL powered Hero",
-          "User profile pages",
-          "Improvements to the blog editor",
-          "Additional features for blogs, such as liking and sharing",
-          "And more!"
-        ]}
-        visuals={{ images: [{ imgLink: UpcomingCodeImg, width: "426px", height: "569px" }] }}
-        theme="dark"
       />
     </PageContainer>
   )
