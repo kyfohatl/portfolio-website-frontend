@@ -11,3 +11,11 @@
   list-style-type: square;
   margin-bottom: 48px;
 }
+
+.dot-point-list {
+  margin-left: 22px;
+}
+
+.workexp-separator {
+  height: 15px;
+}
