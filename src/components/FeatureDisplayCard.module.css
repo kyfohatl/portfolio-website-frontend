@@ -44,3 +44,15 @@
   flex-direction: column;
   gap: 10px;
 }
+
+.textContainer>ul a {
+  text-decoration: none;
+}
+
+.textContainer>ul a:link {
+  color: var(--link-normal-color);
+}
+
+.textContainer>ul a:visited {
+  color: var(--link-visited-color);
+}
