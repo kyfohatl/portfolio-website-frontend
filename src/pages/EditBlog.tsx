@@ -5,12 +5,12 @@ import PageContainer, { PageContainerState } from "../components/PageContainer";
 
 import styles from "./EditBlog.module.css"
 import { ReactComponent as SaveIcon } from "../assets/images/saveIcon.svg"
-import { ReactComponent as HelpIcon } from "../assets/images/questionMarkIcon.svg"
 import Api, { BlogProps } from "../lib/api/Api";
 import { useParams } from "react-router-dom";
 import Saving from "../components/animation/Saving";
 import HelpDisplay from "../components/help/HelpDisplay";
 import { cardProps } from "../resources/editBlogHelpCards/cardContent";
+import QuestionMark from "../components/animation/QuestionMark";
 
 
 export default function EditBlog() {
@@ -122,7 +122,7 @@ export default function EditBlog() {
       <div className={styles.savePane}>
         <Button
           type={{ type: "button", callBack: () => setShowHelpDisplay(true) }}
-          icon={<HelpIcon width={HELP_BUTTON_SIZE} height={HELP_BUTTON_SIZE} />}
+          icon={<QuestionMark width={HELP_BUTTON_SIZE} height={HELP_BUTTON_SIZE} />}
           height={HELP_BUTTON_SIZE}
           width={HELP_BUTTON_SIZE}
           padding="0px"

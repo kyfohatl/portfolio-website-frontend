@@ -1,0 +1,62 @@
+.container {
+  --initDelay: 2s;
+  --duration1: 2s;
+  --duration2: 1.4s;
+  --duration1Plus2: calc(var(--duration1) + var(--duration2));
+  --colorChangeDelay: calc(var(--initDelay) + var(--duration1Plus2));
+  --colorChangeDuration: 3s;
+}
+
+.marker {
+  stroke-dasharray: var(--markerLength);
+  stroke-dashoffset: 0;
+  animation:
+    drawMarker var(--duration1) ease-in-out var(--initDelay) reverse backwards,
+    changeMarkerColor var(--colorChangeDuration) ease-in-out var(--colorChangeDelay) forwards;
+}
+
+.dot {
+  stroke-dasharray: var(--dotLength);
+  stroke-dashoffset: 0;
+  animation:
+    drawDot var(--duration2) ease-in-out calc(var(--initDelay) + var(--duration1)) reverse backwards,
+    changeMarkerColor var(--colorChangeDuration) ease-in-out var(--colorChangeDelay) forwards;
+}
+
+.circle {
+  animation: changeCircleColor var(--colorChangeDuration) ease-in-out var(--colorChangeDelay) forwards;
+}
+
+@keyframes drawMarker {
+  100% {
+    stroke-dashoffset: var(--markerLength);
+  }
+}
+
+@keyframes drawDot {
+  100% {
+    stroke-dashoffset: var(--dotLength);
+  }
+}
+
+@keyframes changeMarkerColor {
+  50% {
+    stroke: black;
+    stroke-width: 12;
+  }
+
+  100% {
+    stroke: white;
+    stroke-width: 5;
+  }
+}
+
+@keyframes changeCircleColor {
+  50% {
+    fill: white;
+  }
+
+  100% {
+    fill: black;
+  }
+}
