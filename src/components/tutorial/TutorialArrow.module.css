@@ -1,0 +1,15 @@
+.container {
+  position: fixed;
+  transform: rotate(var(--rotation));
+  animation: backAndForth 1s linear infinite;
+}
+
+@keyframes backAndForth {
+  50% {
+    transform: translate(var(--translateX), var(--translateY)) rotate(var(--rotation));
+  }
+
+  100% {
+    transform: translate(0, 0) rotate(var(--rotation));
+  }
+}

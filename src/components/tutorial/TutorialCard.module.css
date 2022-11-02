@@ -1,0 +1,44 @@
+.outerContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  padding: 12px;
+  width: 320px;
+  height: 198px;
+  box-sizing: border-box;
+  border-radius: 14px;
+  background-color: seashell;
+  box-shadow: 0px 0px 5px 8px rgba(255, 0, 0, 0.6);
+}
+
+.btnContainer {
+  display: flex;
+  flex-direction: row-reverse;
+  width: 100%;
+}
+
+.contentContainer {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.textContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 90px;
+}
+
+.textContainer>h3 {
+  font-size: 24px;
+  margin-bottom: 0px;
+}
+
+.textContainer>p {
+  font-size: 13px;
+  line-height: 14px;
+  margin-bottom: 0;
+}

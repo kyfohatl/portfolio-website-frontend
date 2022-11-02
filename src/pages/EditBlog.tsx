@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Editor, { TextInfo } from "../components/blog/Editor";
 import Button, { ButtonState } from "../components/Button";
 import PageContainer, { PageContainerState } from "../components/PageContainer";
@@ -11,6 +11,9 @@ import Saving from "../components/animation/Saving";
 import HelpDisplay from "../components/help/HelpDisplay";
 import { cardProps } from "../resources/editBlogHelpCards/cardContent";
 import QuestionMark from "../components/animation/QuestionMark";
+import TutorialCard from "../components/tutorial/TutorialCard";
+import HelpImage from "../assets/images/tutorial/editBlogTutorials/help.png"
+import TutorialArrow from "../components/tutorial/TutorialArrow";
 
 
 export default function EditBlog() {
@@ -22,6 +25,13 @@ export default function EditBlog() {
   const [saveButtonState, setSaveButtonState] = useState<ButtonState>({ state: "normal" })
   const [showHelpDisplay, setShowHelpDisplay] = useState(false)
   const [pageState, setPageState] = useState<PageContainerState>({ status: "normal" })
+
+  // Tutorial
+  const [showTutorial, setShowTutorial] = useState(true)
+  const [helpBtnPos, setHelpBtnPos] = useState<{ left: number, top: number }>()
+  const [tutCardPos, setTutCardPos] = useState<{ left: number, top: number }>({ left: 0, top: 0 })
+
+  const helpBtnRef = useRef<HTMLDivElement>(null)
 
   const blogIdParam = useParams().blogId
 
@@ -70,6 +80,14 @@ export default function EditBlog() {
       setSaveButtonText("Create")
     }
   }, [blogId, blog])
+
+  useEffect(() => {
+    if (showTutorial && helpBtnRef.current) {
+      const rect = helpBtnRef.current.getBoundingClientRect()
+      setHelpBtnPos({ left: rect.left, top: rect.top })
+      setTutCardPos({ left: rect.left - 500, top: rect.top + 200 })
+    }
+  }, [showTutorial])
 
   const srcDoc = `
     <!DOCTYPE html>
@@ -120,16 +138,24 @@ export default function EditBlog() {
       contentTestId="editBlogPage"
     >
       <div className={styles.savePane}>
-        <Button
-          type={{ type: "button", callBack: () => setShowHelpDisplay(true) }}
-          icon={<QuestionMark width={HELP_BUTTON_SIZE} height={HELP_BUTTON_SIZE} />}
-          height={HELP_BUTTON_SIZE}
-          width={HELP_BUTTON_SIZE}
-          padding="0px"
-          borderRadius="50px"
-          backgroundColor="transparent"
-          btnTestId="helpMenuBtn"
-        />
+        <div
+          {...(showTutorial
+            ? { style: { padding: "3px", borderStyle: "solid", borderWidth: "4px", borderColor: "red" } }
+            : {}
+          )}
+          ref={helpBtnRef}
+        >
+          <Button
+            type={{ type: "button", callBack: () => setShowHelpDisplay(true) }}
+            icon={<QuestionMark width={HELP_BUTTON_SIZE} height={HELP_BUTTON_SIZE} />}
+            height={HELP_BUTTON_SIZE}
+            width={HELP_BUTTON_SIZE}
+            padding="0px"
+            borderRadius="50px"
+            backgroundColor="transparent"
+            btnTestId="helpMenuBtn"
+          />
+        </div>
 
         <Button
           text={saveButtonText}
@@ -159,6 +185,30 @@ export default function EditBlog() {
       {showHelpDisplay
         ? <HelpDisplay cardProps={cardProps} onClose={() => setShowHelpDisplay(false)} />
         : null
+      }
+
+      {/* Logic for showing the tutorial popups */}
+      {showTutorial
+        ?
+        <>
+          <TutorialCard
+            title="Tutorial"
+            notes="Click the help icon to find out more about writing blogs"
+            image={HelpImage}
+            imgAlt="Edit blog help"
+            pos={{ left: tutCardPos.left + "px", top: tutCardPos.top + "px" }}
+            onClose={() => setShowTutorial(false)}
+          />
+          <TutorialArrow
+            rotation={235}
+            width="50px"
+            height="200px"
+            left={tutCardPos.left + 500 + "px"}
+            top={tutCardPos.top - 200 + "px"}
+          />
+        </>
+        :
+        {}
       }
     </PageContainer>
   )
