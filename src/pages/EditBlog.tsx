@@ -11,9 +11,8 @@ import Saving from "../components/animation/Saving";
 import HelpDisplay from "../components/help/HelpDisplay";
 import { cardProps } from "../resources/editBlogHelpCards/cardContent";
 import QuestionMark from "../components/animation/QuestionMark";
-import TutorialCard from "../components/tutorial/TutorialCard";
 import HelpImage from "../assets/images/tutorial/editBlogTutorials/help.png"
-import TutorialArrow from "../components/tutorial/TutorialArrow";
+import TutorialPopup from "../components/tutorial/TutorialPopup";
 
 
 export default function EditBlog() {
@@ -28,8 +27,6 @@ export default function EditBlog() {
 
   // Tutorial
   const [showTutorial, setShowTutorial] = useState(true)
-  const [helpBtnPos, setHelpBtnPos] = useState<{ left: number, top: number }>()
-  const [tutCardPos, setTutCardPos] = useState<{ left: number, top: number }>({ left: 0, top: 0 })
 
   const helpBtnRef = useRef<HTMLDivElement>(null)
 
@@ -81,14 +78,6 @@ export default function EditBlog() {
     }
   }, [blogId, blog])
 
-  useEffect(() => {
-    if (showTutorial && helpBtnRef.current) {
-      const rect = helpBtnRef.current.getBoundingClientRect()
-      setHelpBtnPos({ left: rect.left, top: rect.top })
-      setTutCardPos({ left: rect.left - 500, top: rect.top + 200 })
-    }
-  }, [showTutorial])
-
   const srcDoc = `
     <!DOCTYPE html>
     <html>
@@ -128,6 +117,12 @@ export default function EditBlog() {
     }
   }, [html, css, blogId])
 
+  // Opens the help display
+  const onClickHelpBtn = useCallback(() => {
+    setShowTutorial(false)
+    setShowHelpDisplay(true)
+  }, [])
+
   const HELP_BUTTON_SIZE = "38px"
 
   return (
@@ -146,7 +141,7 @@ export default function EditBlog() {
           ref={helpBtnRef}
         >
           <Button
-            type={{ type: "button", callBack: () => setShowHelpDisplay(true) }}
+            type={{ type: "button", callBack: onClickHelpBtn }}
             icon={<QuestionMark width={HELP_BUTTON_SIZE} height={HELP_BUTTON_SIZE} />}
             height={HELP_BUTTON_SIZE}
             width={HELP_BUTTON_SIZE}
@@ -190,25 +185,19 @@ export default function EditBlog() {
       {/* Logic for showing the tutorial popups */}
       {showTutorial
         ?
-        <>
-          <TutorialCard
-            title="Tutorial"
-            notes="Click the help icon to find out more about writing blogs"
-            image={HelpImage}
-            imgAlt="Edit blog help"
-            pos={{ left: tutCardPos.left + "px", top: tutCardPos.top + "px" }}
-            onClose={() => setShowTutorial(false)}
-          />
-          <TutorialArrow
-            rotation={235}
-            width="50px"
-            height="200px"
-            left={tutCardPos.left + 500 + "px"}
-            top={tutCardPos.top - 200 + "px"}
-          />
-        </>
+        <TutorialPopup
+          target={helpBtnRef.current}
+          xOffset={200}
+          yOffset={100}
+          shouldDisplay={true}
+          title="Tutorial"
+          notes="Click the help icon to find out more about writing blogs"
+          image={HelpImage}
+          imgAlt="Edit blog help"
+          onClose={() => setShowTutorial(false)}
+        />
         :
-        {}
+        null
       }
     </PageContainer>
   )

@@ -5,8 +5,12 @@
 }
 
 @keyframes backAndForth {
-  50% {
+  25% {
     transform: translate(var(--translateX), var(--translateY)) rotate(var(--rotation));
+  }
+
+  75% {
+    transform: translate(calc(var(--translateX) * -1), calc(var(--translateY) * -1)) rotate(var(--rotation));
   }
 
   100% {

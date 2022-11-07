@@ -6,13 +6,13 @@ interface TutorialCardProps {
   notes: string,
   image: string,
   imgAlt: string,
-  pos: { left: string, top: string },
+  pos: { right: string, top: string },
   onClose: () => void
 }
 
 export default function TutorialCard({ title, notes, image, imgAlt, pos, onClose }: TutorialCardProps) {
   return (
-    <div className={styles.outerContainer} style={{ position: "fixed", left: pos.left, top: pos.top }}>
+    <div className={styles.outerContainer} style={{ position: "fixed", right: pos.right, top: pos.top }}>
       <div className={styles.btnContainer}>
         <TutorialCardCloseButton onClose={onClose} />
       </div>

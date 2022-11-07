@@ -10,7 +10,7 @@ interface TutorialArrowProps {
   height: string
 }
 
-const MOVEMENT_LENGTH = 30
+const MOVEMENT_LENGTH = 20
 
 export default function TutorialArrow({ left, top, rotation, width, height }: TutorialArrowProps) {
   const translateX = MOVEMENT_LENGTH * Math.cos(rotation)
