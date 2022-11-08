@@ -187,7 +187,7 @@ export default function EditBlog() {
         ?
         <TutorialPopup
           target={helpBtnRef.current}
-          xOffset={200}
+          xOffset={-200}
           yOffset={100}
           shouldDisplay={true}
           title="Tutorial"

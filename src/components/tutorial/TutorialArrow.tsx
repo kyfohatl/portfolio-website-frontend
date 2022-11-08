@@ -7,14 +7,19 @@ interface TutorialArrowProps {
   top: string,
   rotation: number,
   width: string,
-  height: string
+  height: string,
+  movementLength: number
 }
 
-const MOVEMENT_LENGTH = 20
+export default function TutorialArrow({ left, top, rotation, width, height, movementLength }: TutorialArrowProps) {
+  // Since the arrow svg is pointing down by default, to account for this and correct the math, we need to add 90 
+  // degrees to the rotation before calculating the translations
+  const correctedRotation = rotation + 90
+  // We then need to convert degrees to radians since that is what the JS sin and cos functions require
+  const rotationRad = correctedRotation * (Math.PI / 180)
 
-export default function TutorialArrow({ left, top, rotation, width, height }: TutorialArrowProps) {
-  const translateX = MOVEMENT_LENGTH * Math.cos(rotation)
-  const translateY = MOVEMENT_LENGTH * Math.sin(rotation)
+  const translateX = movementLength * Math.cos(rotationRad)
+  const translateY = movementLength * Math.sin(rotationRad)
 
   return (
     <div

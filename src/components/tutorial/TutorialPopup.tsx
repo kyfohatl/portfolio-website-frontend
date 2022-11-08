@@ -15,6 +15,23 @@ interface TutorialPopupProps {
   onClose: () => void
 }
 
+// Calculates the rotation angle to correctly rotate the svg arrow (which is by default pointing downwards)
+function getArrowAngle(xOffset: number, yOffset: number) {
+  // The arrow should always point AWAY from the popup. Hence the x and y values for the arrow are flipped when 
+  // calculating direction
+  const x = -xOffset
+  const y = -yOffset
+
+  const rotationRad = Math.abs(Math.atan(y / x))
+  const rotationDeg = rotationRad * (180 / Math.PI)
+
+  // Now based on the quadrant the arrow is in, the angle needs to be adjusted to correctly face the right direction
+  if (x >= 0 && y >= 0) return 270 + rotationDeg
+  if (x < 0 && y > 0) return 90 - rotationDeg
+  if (x <= 0 && y < 0) return 90 + rotationDeg
+  return 270 - rotationDeg
+}
+
 export default function TutorialPopup({
   target,
   xOffset,
@@ -44,23 +61,19 @@ export default function TutorialPopup({
   }, [target, updateTargetPos])
 
   // Find out the position of the card
-  const cardRight = (window.innerWidth - targetPos.x) + xOffset
+  const cardRight = (window.innerWidth - targetPos.x) - xOffset
   const cardTop = targetPos.y + yOffset
 
   // Find out the position of the arrow
 
-  // First get the top right position of the card
-  const cardTopRightX = targetPos.x - xOffset
-  const cardTopRightY = targetPos.y + yOffset
-
-  // Now get the dimensions of the arrow
+  // Get the dimensions of the arrow
   // The height of the arrow is 65% of the distance between card top-right and target bottom-left
   const arrowHeight = 0.65 * Math.sqrt(xOffset * xOffset + yOffset * yOffset)
   // The width of the arrow is 1/3 of its height
   const arrowWidth = arrowHeight / 3
 
   // Then find the centre of the arrow, which is at the halfway point between the card top-right and target bottom-right
-  const arrowCentreX = targetPos.x - (xOffset / 2)
+  const arrowCentreX = targetPos.x + (xOffset / 2)
   const arrowCentreY = targetPos.y + (yOffset / 2)
 
   // Using the centre find the top and left positions of the arrow
@@ -69,9 +82,7 @@ export default function TutorialPopup({
   const arrowTop = arrowCentreY - (arrowHeight / 2)
 
   // Finally find the arrow rotation, then convert to degrees and account for the arrow initially pointing downwards
-  const rotationRad = Math.atan((targetPos.y - cardTopRightY) / (targetPos.x - cardTopRightX))
-  const rotationDeg = rotationRad * (180 / Math.PI)
-  const arrowRotation = rotationDeg - 90
+  const arrowRotation = getArrowAngle(xOffset, yOffset)
 
   useEffect(updateTargetPos, [target, updateTargetPos])
 
@@ -93,6 +104,7 @@ export default function TutorialPopup({
         rotation={arrowRotation}
         width={arrowWidth + "px"}
         height={arrowHeight + "px"}
+        movementLength={20}
       />
     </>
   )
