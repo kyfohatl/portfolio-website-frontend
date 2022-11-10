@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
+import useKeyPress, { useKeyPressProps } from "../../hooks/useKeyPress"
 import throttle from "../../lib/helpers/throttle"
 import TutorialArrow from "./TutorialArrow"
 import TutorialCard from "./TutorialCard"
@@ -12,6 +13,7 @@ interface TutorialPopupProps {
   notes: string,
   image: string,
   imgAlt: string,
+  id: string,
   onClose: () => void
 }
 
@@ -41,9 +43,37 @@ export default function TutorialPopup({
   notes,
   image,
   imgAlt,
+  id,
   onClose
 }: TutorialPopupProps) {
+  const [alreadyShown, setAlreadyShown] = useState(false)
   const [targetPos, setTargetPos] = useState<{ x: number, y: number }>({ x: 0, y: 0 })
+  const [cardStats, setCardStats] = useState<{ right: number, top: number }>({ right: 0, top: 0 })
+  const [arrowStats, setArrowStats] = useState<{
+    left: number,
+    top: number,
+    rotation: number,
+    width: number,
+    height: number
+  }>({ left: 0, top: 0, rotation: 0, width: 0, height: 0 })
+
+  // Add keyboard controls
+  const keyBindings: useKeyPressProps = useMemo(() => [
+    { key: "Escape", callBack: onClose }
+  ], [onClose])
+  useKeyPress(keyBindings)
+
+  // Only display the popup if it has never been displayed to the user before
+  useEffect(() => {
+    if (!localStorage.getItem(`tutorialPopup_${id}`)) {
+      // Tutorial popup has never been shown before. Display it
+      localStorage.setItem(`tutorialPopup_${id}`, "true")
+      return
+    }
+
+    // Tutorial popup has been shown before. Do not display it again
+    setAlreadyShown(true)
+  }, [id])
 
   // Updates the position of the target
   const updateTargetPos = useMemo(() => throttle(() => {
@@ -60,33 +90,59 @@ export default function TutorialPopup({
     return () => window.removeEventListener("resize", updateTargetPos)
   }, [target, updateTargetPos])
 
-  // Find out the position of the card
-  const cardRight = (window.innerWidth - targetPos.x) - xOffset
-  const cardTop = targetPos.y + yOffset
+  // Calculate card position, arrow position, dimensions and rotation
+  useEffect(() => {
+    // Find out the position of the card
+    const cardRight = (window.innerWidth - targetPos.x) - xOffset
+    const cardTop = targetPos.y + yOffset
 
-  // Find out the position of the arrow
+    setCardStats({ right: cardRight, top: cardTop })
 
-  // Get the dimensions of the arrow
-  // The height of the arrow is 65% of the distance between card top-right and target bottom-left
-  const arrowHeight = 0.65 * Math.sqrt(xOffset * xOffset + yOffset * yOffset)
-  // The width of the arrow is 1/3 of its height
-  const arrowWidth = arrowHeight / 3
+    // Find out the position of the arrow
 
-  // Then find the centre of the arrow, which is at the halfway point between the card top-right and target bottom-right
-  const arrowCentreX = targetPos.x + (xOffset / 2)
-  const arrowCentreY = targetPos.y + (yOffset / 2)
+    // Get the dimensions of the arrow
+    // The height of the arrow is 65% of the distance between card top-right and target bottom-left
+    const arrowHeight = 0.65 * Math.sqrt(xOffset * xOffset + yOffset * yOffset)
+    // The width of the arrow is 1/3 of its height
+    const arrowWidth = arrowHeight / 3
 
-  // Using the centre find the top and left positions of the arrow
-  // By default, the arrow svg is point downwards, so the top and left will be calculated according to this
-  const arrowLeft = arrowCentreX - (arrowWidth / 2)
-  const arrowTop = arrowCentreY - (arrowHeight / 2)
+    // Then find the centre of the arrow, which is at the halfway point between the card top-right and target bottom-right
+    const arrowCentreX = targetPos.x + (xOffset / 2)
+    const arrowCentreY = targetPos.y + (yOffset / 2)
 
-  // Finally find the arrow rotation, then convert to degrees and account for the arrow initially pointing downwards
-  const arrowRotation = getArrowAngle(xOffset, yOffset)
+    // Using the centre find the top and left positions of the arrow
+    // By default, the arrow svg is point downwards, so the top and left will be calculated according to this
+    const arrowLeft = arrowCentreX - (arrowWidth / 2)
+    const arrowTop = arrowCentreY - (arrowHeight / 2)
+
+    // Finally find the arrow rotation, then convert to degrees and account for the arrow initially pointing downwards
+    const arrowRotation = getArrowAngle(xOffset, yOffset)
+
+    setArrowStats({ left: arrowLeft, top: arrowTop, rotation: arrowRotation, width: arrowWidth, height: arrowHeight })
+  }, [targetPos, xOffset, yOffset])
 
   useEffect(updateTargetPos, [target, updateTargetPos])
 
-  if (!shouldDisplay) return null
+  // Place a "target" visual on the target if the popup is to be displayed
+  useEffect(() => {
+    if (!target) return
+
+    if (shouldDisplay && !alreadyShown) {
+      target.style.padding = "3px"
+      target.style.borderStyle = "solid"
+      target.style.borderWidth = "4px"
+      target.style.borderColor = "red"
+      return
+    }
+
+    target.style.padding = "inherit"
+    target.style.borderStyle = "inherit"
+    target.style.borderWidth = "inherit"
+    target.style.borderColor = "inherit"
+  }, [target, shouldDisplay, alreadyShown])
+
+  // Do not show the tutorial if already shown, or told by the parent component not to
+  if (!shouldDisplay || alreadyShown) return null
 
   return (
     <>
@@ -95,15 +151,15 @@ export default function TutorialPopup({
         notes={notes}
         image={image}
         imgAlt={imgAlt}
-        pos={{ right: cardRight + "px", top: cardTop + "px" }}
+        pos={{ right: cardStats.right + "px", top: cardStats.top + "px" }}
         onClose={onClose}
       />
       <TutorialArrow
-        left={arrowLeft + "px"}
-        top={arrowTop + "px"}
-        rotation={arrowRotation}
-        width={arrowWidth + "px"}
-        height={arrowHeight + "px"}
+        left={arrowStats.left + "px"}
+        top={arrowStats.top + "px"}
+        rotation={arrowStats.rotation}
+        width={arrowStats.width + "px"}
+        height={arrowStats.height + "px"}
         movementLength={20}
       />
     </>

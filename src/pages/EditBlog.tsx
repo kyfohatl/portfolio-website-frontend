@@ -133,13 +133,7 @@ export default function EditBlog() {
       contentTestId="editBlogPage"
     >
       <div className={styles.savePane}>
-        <div
-          {...(showTutorial
-            ? { style: { padding: "3px", borderStyle: "solid", borderWidth: "4px", borderColor: "red" } }
-            : {}
-          )}
-          ref={helpBtnRef}
-        >
+        <div ref={helpBtnRef}>
           <Button
             type={{ type: "button", callBack: onClickHelpBtn }}
             icon={<QuestionMark width={HELP_BUTTON_SIZE} height={HELP_BUTTON_SIZE} />}
@@ -182,23 +176,18 @@ export default function EditBlog() {
         : null
       }
 
-      {/* Logic for showing the tutorial popups */}
-      {showTutorial
-        ?
-        <TutorialPopup
-          target={helpBtnRef.current}
-          xOffset={-200}
-          yOffset={100}
-          shouldDisplay={true}
-          title="Tutorial"
-          notes="Click the help icon to find out more about writing blogs"
-          image={HelpImage}
-          imgAlt="Edit blog help"
-          onClose={() => setShowTutorial(false)}
-        />
-        :
-        null
-      }
+      <TutorialPopup
+        target={helpBtnRef.current}
+        xOffset={-200}
+        yOffset={100}
+        shouldDisplay={showTutorial}
+        title="Tutorial"
+        notes="Click the help icon to find out more about writing blogs"
+        image={HelpImage}
+        imgAlt="Edit blog help"
+        id="tutorial"
+        onClose={() => setShowTutorial(false)}
+      />
     </PageContainer>
   )
 }
