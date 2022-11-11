@@ -12,7 +12,7 @@ import HelpDisplay from "../components/help/HelpDisplay";
 import { cardProps } from "../resources/editBlogHelpCards/cardContent";
 import QuestionMark from "../components/animation/QuestionMark";
 import HelpImage from "../assets/images/tutorial/editBlogTutorials/help.png"
-import TutorialPopup from "../components/tutorial/TutorialPopup";
+import TutorialSequence from "../components/tutorial/TutorialSequence";
 
 
 export default function EditBlog() {
@@ -176,17 +176,34 @@ export default function EditBlog() {
         : null
       }
 
-      <TutorialPopup
-        target={helpBtnRef.current}
-        xOffset={-200}
-        yOffset={100}
+      {/* <TutorialPopup
+        info={{
+          target: helpBtnRef.current,
+          xOffset: -200,
+          yOffset: 100,
+          title: "Tutorial",
+          notes: "Click the help icon to find out more about writing blogs",
+          image: HelpImage,
+          imgAlt: "Edit blog help"
+        }}
         shouldDisplay={showTutorial}
-        title="Tutorial"
-        notes="Click the help icon to find out more about writing blogs"
-        image={HelpImage}
-        imgAlt="Edit blog help"
         id="tutorial"
         onClose={() => setShowTutorial(false)}
+      /> */}
+      <TutorialSequence
+        popupProps={[
+          {
+            target: helpBtnRef.current,
+            xOffset: -200,
+            yOffset: 100,
+            title: "Tutorial",
+            notes: "Click the help icon to find out more about writing blogs",
+            image: HelpImage,
+            imgAlt: "Edit blog help",
+          }
+        ]}
+        displayTutes={showTutorial}
+        id="tutorial"
       />
     </PageContainer>
   )

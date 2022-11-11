@@ -4,16 +4,18 @@ import throttle from "../../lib/helpers/throttle"
 import TutorialArrow from "./TutorialArrow"
 import TutorialCard from "./TutorialCard"
 
-interface TutorialPopupProps {
+export interface TutorialPopupInfo {
   target: HTMLDivElement | null,
   xOffset: number,
   yOffset: number,
-  shouldDisplay: boolean,
   title: string,
   notes: string,
   image: string,
-  imgAlt: string,
-  id: string,
+  imgAlt: string
+}
+
+interface TutorialPopupProps {
+  info: TutorialPopupInfo,
   onClose: () => void
 }
 
@@ -35,18 +37,9 @@ function getArrowAngle(xOffset: number, yOffset: number) {
 }
 
 export default function TutorialPopup({
-  target,
-  xOffset,
-  yOffset,
-  shouldDisplay,
-  title,
-  notes,
-  image,
-  imgAlt,
-  id,
+  info,
   onClose
 }: TutorialPopupProps) {
-  const [alreadyShown, setAlreadyShown] = useState(false)
   const [targetPos, setTargetPos] = useState<{ x: number, y: number }>({ x: 0, y: 0 })
   const [cardStats, setCardStats] = useState<{ right: number, top: number }>({ right: 0, top: 0 })
   const [arrowStats, setArrowStats] = useState<{
@@ -63,38 +56,26 @@ export default function TutorialPopup({
   ], [onClose])
   useKeyPress(keyBindings)
 
-  // Only display the popup if it has never been displayed to the user before
-  useEffect(() => {
-    if (!localStorage.getItem(`tutorialPopup_${id}`)) {
-      // Tutorial popup has never been shown before. Display it
-      localStorage.setItem(`tutorialPopup_${id}`, "true")
-      return
-    }
-
-    // Tutorial popup has been shown before. Do not display it again
-    setAlreadyShown(true)
-  }, [id])
-
   // Updates the position of the target
   const updateTargetPos = useMemo(() => throttle(() => {
-    if (!target) return
+    if (!info.target) return
 
-    const rect = target.getBoundingClientRect()
+    const rect = info.target.getBoundingClientRect()
     // The target position is the bottom left corner of the target div
     setTargetPos({ x: rect.left, y: rect.top + rect.height })
-  }, 20), [target])
+  }, 20), [info.target])
 
   // Ensure popup position is changed when the window is resized
   useEffect(() => {
     window.addEventListener("resize", updateTargetPos)
     return () => window.removeEventListener("resize", updateTargetPos)
-  }, [target, updateTargetPos])
+  }, [updateTargetPos])
 
   // Calculate card position, arrow position, dimensions and rotation
   useEffect(() => {
     // Find out the position of the card
-    const cardRight = (window.innerWidth - targetPos.x) - xOffset
-    const cardTop = targetPos.y + yOffset
+    const cardRight = (window.innerWidth - targetPos.x) - info.xOffset
+    const cardTop = targetPos.y + info.yOffset
 
     setCardStats({ right: cardRight, top: cardTop })
 
@@ -102,13 +83,13 @@ export default function TutorialPopup({
 
     // Get the dimensions of the arrow
     // The height of the arrow is 65% of the distance between card top-right and target bottom-left
-    const arrowHeight = 0.65 * Math.sqrt(xOffset * xOffset + yOffset * yOffset)
+    const arrowHeight = 0.65 * Math.sqrt(info.xOffset * info.xOffset + info.yOffset * info.yOffset)
     // The width of the arrow is 1/3 of its height
     const arrowWidth = arrowHeight / 3
 
     // Then find the centre of the arrow, which is at the halfway point between the card top-right and target bottom-right
-    const arrowCentreX = targetPos.x + (xOffset / 2)
-    const arrowCentreY = targetPos.y + (yOffset / 2)
+    const arrowCentreX = targetPos.x + (info.xOffset / 2)
+    const arrowCentreY = targetPos.y + (info.yOffset / 2)
 
     // Using the centre find the top and left positions of the arrow
     // By default, the arrow svg is point downwards, so the top and left will be calculated according to this
@@ -116,41 +97,40 @@ export default function TutorialPopup({
     const arrowTop = arrowCentreY - (arrowHeight / 2)
 
     // Finally find the arrow rotation, then convert to degrees and account for the arrow initially pointing downwards
-    const arrowRotation = getArrowAngle(xOffset, yOffset)
+    const arrowRotation = getArrowAngle(info.xOffset, info.yOffset)
 
     setArrowStats({ left: arrowLeft, top: arrowTop, rotation: arrowRotation, width: arrowWidth, height: arrowHeight })
-  }, [targetPos, xOffset, yOffset])
+  }, [targetPos, info.xOffset, info.yOffset])
 
-  useEffect(updateTargetPos, [target, updateTargetPos])
+  useEffect(updateTargetPos, [updateTargetPos])
 
-  // Place a "target" visual on the target if the popup is to be displayed
+  // Place a "target" visual on the target
   useEffect(() => {
-    if (!target) return
+    if (!info.target) return
 
-    if (shouldDisplay && !alreadyShown) {
-      target.style.padding = "3px"
-      target.style.borderStyle = "solid"
-      target.style.borderWidth = "4px"
-      target.style.borderColor = "red"
-      return
+    info.target.style.padding = "3px"
+    info.target.style.borderStyle = "solid"
+    info.target.style.borderWidth = "4px"
+    info.target.style.borderColor = "red"
+
+    // Remove the visual upon unmounting
+    return () => {
+      if (info.target) {
+        info.target.style.padding = "inherit"
+        info.target.style.borderStyle = "inherit"
+        info.target.style.borderWidth = "inherit"
+        info.target.style.borderColor = "inherit"
+      }
     }
-
-    target.style.padding = "inherit"
-    target.style.borderStyle = "inherit"
-    target.style.borderWidth = "inherit"
-    target.style.borderColor = "inherit"
-  }, [target, shouldDisplay, alreadyShown])
-
-  // Do not show the tutorial if already shown, or told by the parent component not to
-  if (!shouldDisplay || alreadyShown) return null
+  }, [info.target])
 
   return (
     <>
       <TutorialCard
-        title={title}
-        notes={notes}
-        image={image}
-        imgAlt={imgAlt}
+        title={info.title}
+        notes={info.notes}
+        image={info.image}
+        imgAlt={info.imgAlt}
         pos={{ right: cardStats.right + "px", top: cardStats.top + "px" }}
         onClose={onClose}
       />
