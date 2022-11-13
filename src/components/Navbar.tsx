@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { forwardRef, useCallback, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import Api from "../lib/api/Api"
 import { hasData } from "../lib/api/helpers/auth/redirectAndClearData"
@@ -6,7 +6,7 @@ import Button, { ButtonState } from "./Button"
 
 import styles from "./Navbar.module.css"
 
-export default function Navbar() {
+const Navbar = forwardRef<HTMLLIElement>((_, ref) => {
   // Used for navigating with the react router
   const navigate = useNavigate()
 
@@ -48,10 +48,7 @@ export default function Navbar() {
         <li key="skills" className={styles.buttonNav}><Link to="/skills" className={styles.navLink}>Skills &amp; Qualifications</Link></li>
         <li key="examples" className={styles.buttonNav}><Link to="/examples" className={styles.navLink}>Examples of Work</Link></li>
         <li key="blogs" className={styles.buttonNav}><Link to="/viewblogs" className={styles.navLink}>Blogs</Link></li>
-        {hasData()
-          ? <li key="createBlog" className={styles.buttonNav}><Link to="/editblog" className={styles.navLink}>Create A New Blog</Link></li>
-          : null
-        }
+        <li key="createBlog" className={styles.buttonNav}><Link to="/editblog" className={styles.navLink}>Create A New Blog</Link></li>
       </div>
       <div className={styles.auth}>
         {hasData()
@@ -68,7 +65,7 @@ export default function Navbar() {
             />
           </li>
           : [
-            <li className={styles.buttonAuth} key="signInBtn">
+            <li ref={ref} className={styles.buttonAuth} key="signInBtn">
               <Link to="/signin" className={styles.authLink}>
                 <Button
                   text="Sign in"
@@ -100,4 +97,6 @@ export default function Navbar() {
       </div>
     </nav>
   )
-}
+})
+
+export default Navbar

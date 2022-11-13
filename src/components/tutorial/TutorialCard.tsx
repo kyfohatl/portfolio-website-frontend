@@ -6,11 +6,22 @@ interface TutorialCardProps {
   notes: string,
   image: string,
   imgAlt: string,
+  imgWidth: string,
+  imgHeight: string,
   pos: { right: string, top: string },
   onClose: () => void
 }
 
-export default function TutorialCard({ title, notes, image, imgAlt, pos, onClose }: TutorialCardProps) {
+export default function TutorialCard({
+  title,
+  notes,
+  image,
+  imgAlt,
+  imgWidth,
+  imgHeight,
+  pos,
+  onClose
+}: TutorialCardProps) {
   return (
     <div className={styles.outerContainer} style={{ position: "fixed", right: pos.right, top: pos.top }}>
       <div className={styles.btnContainer}>
@@ -22,7 +33,7 @@ export default function TutorialCard({ title, notes, image, imgAlt, pos, onClose
           <p>{notes}</p>
         </article>
         <div className={styles.imageContainer}>
-          <img src={image} width="142px" height="100px" alt={imgAlt} />
+          <img src={image} width={imgWidth} height={imgHeight} alt={imgAlt} />
         </div>
       </div>
     </div>

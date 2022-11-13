@@ -19,11 +19,11 @@
   cursor: default;
 }
 
-.button:hover {
+.activeBtn:hover {
   filter: brightness(80%);
 }
 
-.button:after {
+.activeBtn:after {
   content: "";
   position: absolute;
   width: 10px;
@@ -35,7 +35,7 @@
   transition: all 500ms;
 }
 
-.button:active:after {
+.activeBtn:active:after {
   opacity: 1;
   transform: scale(0);
   transition: 0s;

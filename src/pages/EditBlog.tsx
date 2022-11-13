@@ -12,7 +12,10 @@ import HelpDisplay from "../components/help/HelpDisplay";
 import { cardProps } from "../resources/editBlogHelpCards/cardContent";
 import QuestionMark from "../components/animation/QuestionMark";
 import HelpImage from "../assets/images/tutorial/editBlogTutorials/help.png"
+import SignInImg from "../assets/images/tutorial/editBlogTutorials/signin.png"
 import TutorialSequence from "../components/tutorial/TutorialSequence";
+import { hasData } from "../lib/api/helpers/auth/redirectAndClearData";
+import { TutorialPopupInfo } from "../components/tutorial/TutorialPopup";
 
 
 export default function EditBlog() {
@@ -27,10 +30,45 @@ export default function EditBlog() {
 
   // Tutorial
   const [showTutorial, setShowTutorial] = useState(true)
+  const [popupProps, setPopupProps] = useState<TutorialPopupInfo[]>([])
 
   const helpBtnRef = useRef<HTMLDivElement>(null)
+  const loginBtnRef = useRef<HTMLLIElement>(null)
 
   const blogIdParam = useParams().blogId
+
+  // If the user is not logged in, show additional tutorials
+  useEffect(() => {
+    const helpDisplayTute: TutorialPopupInfo = {
+      target: helpBtnRef.current,
+      xOffset: -200,
+      yOffset: 100,
+      title: "Help",
+      notes: "Click the help icon to find out more about writing blogs",
+      image: HelpImage,
+      imgAlt: "Edit blog help",
+      imgWidth: "142px",
+      imgHeight: "100px"
+    }
+
+    if (hasData()) return setPopupProps([helpDisplayTute])
+
+    // User is not signed in, show additional tutorials
+    setPopupProps([
+      helpDisplayTute,
+      {
+        target: loginBtnRef.current,
+        xOffset: -100,
+        yOffset: 200,
+        title: "Login",
+        notes: "Login or create a account to save your work",
+        image: SignInImg,
+        imgAlt: "Sign in to save",
+        imgWidth: "103px",
+        imgHeight: "110px"
+      }
+    ])
+  }, [])
 
   // Load blog content from database if editing an existing blog
   useEffect(() => {
@@ -131,6 +169,7 @@ export default function EditBlog() {
       contentBlockStyle={{ display: "flex", flexDirection: "column", maxWidth: "80vw", maxHeight: "95vh", gap: "20px" }}
       state={pageState}
       contentTestId="editBlogPage"
+      navbarLoginBtnRef={loginBtnRef}
     >
       <div className={styles.savePane}>
         <div ref={helpBtnRef}>
@@ -154,6 +193,7 @@ export default function EditBlog() {
           icon={<SaveIcon width={21} height={21} />}
           buttonState={saveButtonState}
           btnTestId="saveBtn"
+          {...(!hasData() ? { disabled: true } : {})}
         />
       </div>
       <div className={styles.topPane}>
@@ -176,32 +216,8 @@ export default function EditBlog() {
         : null
       }
 
-      {/* <TutorialPopup
-        info={{
-          target: helpBtnRef.current,
-          xOffset: -200,
-          yOffset: 100,
-          title: "Tutorial",
-          notes: "Click the help icon to find out more about writing blogs",
-          image: HelpImage,
-          imgAlt: "Edit blog help"
-        }}
-        shouldDisplay={showTutorial}
-        id="tutorial"
-        onClose={() => setShowTutorial(false)}
-      /> */}
       <TutorialSequence
-        popupProps={[
-          {
-            target: helpBtnRef.current,
-            xOffset: -200,
-            yOffset: 100,
-            title: "Tutorial",
-            notes: "Click the help icon to find out more about writing blogs",
-            image: HelpImage,
-            imgAlt: "Edit blog help",
-          }
-        ]}
+        popupProps={popupProps}
         displayTutes={showTutorial}
         id="tutorial"
       />

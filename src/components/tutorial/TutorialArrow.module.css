@@ -2,6 +2,7 @@
   position: fixed;
   transform: rotate(var(--rotation));
   animation: backAndForth 1s linear infinite;
+  z-index: 2;
 }
 
 @keyframes backAndForth {

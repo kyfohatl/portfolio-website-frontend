@@ -21,15 +21,15 @@ export default function TutorialSequence({ popupProps, displayTutes, id }: Tutor
     // We have shown all popups
     setFinishedTute(true)
     // Do not show this tutorial again
-    localStorage.setItem(`tutorial_${id}`, "true")
+    localStorage.setItem(`tutorial_${id}_shown`, "true")
   }, [curIdx, popupProps.length, id])
 
   // Only display tutorials if they have not been fully shown before
   useEffect(() => {
-    if (localStorage.getItem(`tutorial_${id}`)) setFinishedTute(true)
+    if (localStorage.getItem(`tutorial_${id}_shown`)) setFinishedTute(true)
   }, [id])
 
-  if (finishedTute || !displayTutes) return null
+  if (finishedTute || !displayTutes || popupProps.length <= 0) return null
 
   return (
     <TutorialPopup info={popupProps[curIdx]} onClose={onClose} />

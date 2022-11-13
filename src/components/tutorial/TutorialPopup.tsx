@@ -5,13 +5,15 @@ import TutorialArrow from "./TutorialArrow"
 import TutorialCard from "./TutorialCard"
 
 export interface TutorialPopupInfo {
-  target: HTMLDivElement | null,
+  target: HTMLDivElement | HTMLLIElement | null,
   xOffset: number,
   yOffset: number,
   title: string,
   notes: string,
   image: string,
-  imgAlt: string
+  imgAlt: string,
+  imgWidth: string,
+  imgHeight: string
 }
 
 interface TutorialPopupProps {
@@ -131,6 +133,8 @@ export default function TutorialPopup({
         notes={info.notes}
         image={info.image}
         imgAlt={info.imgAlt}
+        imgWidth={info.imgWidth}
+        imgHeight={info.imgHeight}
         pos={{ right: cardStats.right + "px", top: cardStats.top + "px" }}
         onClose={onClose}
       />
