@@ -13,9 +13,11 @@ import { cardProps } from "../resources/editBlogHelpCards/cardContent";
 import QuestionMark from "../components/animation/QuestionMark";
 import HelpImage from "../assets/images/tutorial/editBlogTutorials/help.png"
 import SignInImg from "../assets/images/tutorial/editBlogTutorials/signin.png"
+import HtmlImage from "../assets/images/tutorial/editBlogTutorials/html.png"
 import TutorialSequence from "../components/tutorial/TutorialSequence";
 import { hasData } from "../lib/api/helpers/auth/redirectAndClearData";
 import { TutorialPopupInfo } from "../components/tutorial/TutorialPopup";
+import Tooltip from "../components/tooltip/Tooltip";
 
 
 export default function EditBlog() {
@@ -29,11 +31,13 @@ export default function EditBlog() {
   const [pageState, setPageState] = useState<PageContainerState>({ status: "normal" })
 
   // Tutorial
-  const [showTutorial, setShowTutorial] = useState(true)
+  const [showBasicTute, setShowBasicTute] = useState(true)
+  const [showHtmlTute, setShowHtmlTute] = useState(false)
   const [popupProps, setPopupProps] = useState<TutorialPopupInfo[]>([])
 
   const helpBtnRef = useRef<HTMLDivElement>(null)
   const loginBtnRef = useRef<HTMLLIElement>(null)
+  const htmlTitleRef = useRef<HTMLDivElement>(null)
 
   const blogIdParam = useParams().blogId
 
@@ -126,6 +130,12 @@ export default function EditBlog() {
 
   // Save changes to the blog if editing an existing blog, or create a new blog
   const onClickSave = useCallback(async () => {
+    if (!html.text) {
+      // The user has not created any HTML. Do not save the blog, and show a tutorial instead
+      setShowHtmlTute(true)
+      return
+    }
+
     // Set save button state to loading
     setSaveButtonState({ state: "loading" })
 
@@ -157,7 +167,8 @@ export default function EditBlog() {
 
   // Opens the help display
   const onClickHelpBtn = useCallback(() => {
-    setShowTutorial(false)
+    setShowBasicTute(false)
+    setShowHtmlTute(false)
     setShowHelpDisplay(true)
   }, [])
 
@@ -173,31 +184,50 @@ export default function EditBlog() {
     >
       <div className={styles.savePane}>
         <div ref={helpBtnRef}>
-          <Button
-            type={{ type: "button", callBack: onClickHelpBtn }}
-            icon={<QuestionMark width={HELP_BUTTON_SIZE} height={HELP_BUTTON_SIZE} />}
-            height={HELP_BUTTON_SIZE}
-            width={HELP_BUTTON_SIZE}
-            padding="0px"
-            borderRadius="50px"
-            backgroundColor="transparent"
-            btnTestId="helpMenuBtn"
-          />
+          <Tooltip text="Help">
+            <Button
+              type={{ type: "button", callBack: onClickHelpBtn }}
+              icon={<QuestionMark width={HELP_BUTTON_SIZE} height={HELP_BUTTON_SIZE} />}
+              height={HELP_BUTTON_SIZE}
+              width={HELP_BUTTON_SIZE}
+              padding="0px"
+              borderRadius="50px"
+              backgroundColor="transparent"
+              btnTestId="helpMenuBtn"
+            />
+          </Tooltip>
         </div>
 
-        <Button
-          text={saveButtonText}
-          type={{ type: "button", callBack: onClickSave }}
-          height="40px"
-          width="100px"
-          icon={<SaveIcon width={21} height={21} />}
-          buttonState={saveButtonState}
-          btnTestId="saveBtn"
-          {...(!hasData() ? { disabled: true } : {})}
-        />
+        {/* Show the "Save" button as disabled, and display a tooltip, if the user is not signed in */}
+        {
+          hasData()
+            ?
+            <Button
+              text={saveButtonText}
+              type={{ type: "button", callBack: onClickSave }}
+              height="40px"
+              width="100px"
+              icon={<SaveIcon width={21} height={21} />}
+              buttonState={saveButtonState}
+              btnTestId="saveBtn"
+            />
+            :
+            <Tooltip text="Sign in to save your work!">
+              <Button
+                text={saveButtonText}
+                type={{ type: "button", callBack: onClickSave }}
+                height="40px"
+                width="100px"
+                icon={<SaveIcon width={21} height={21} />}
+                buttonState={saveButtonState}
+                btnTestId="saveBtn"
+                disabled={true}
+              />
+            </Tooltip>
+        }
       </div>
       <div className={styles.topPane}>
-        <Editor textInfo={html} setText={setHtml} title="HTML" />
+        <Editor textInfo={html} setText={setHtml} title="HTML" ref={htmlTitleRef} />
         <Editor textInfo={css} setText={setCss} title="CSS" />
       </div>
       <div className={styles.botPane}>
@@ -218,8 +248,26 @@ export default function EditBlog() {
 
       <TutorialSequence
         popupProps={popupProps}
-        displayTutes={showTutorial}
-        id="tutorial"
+        shouldDisplay={showBasicTute}
+        setShouldDisplay={setShowBasicTute}
+        id="basic"
+      />
+      <TutorialSequence
+        popupProps={[{
+          target: htmlTitleRef.current,
+          xOffset: 200,
+          yOffset: 150,
+          title: "Save",
+          notes: "Write some HTML before saving!",
+          image: HtmlImage,
+          imgWidth: "145px",
+          imgHeight: "57px",
+          imgAlt: "Write some HTML before saving!"
+        }]}
+        shouldDisplay={showHtmlTute}
+        setShouldDisplay={setShowHtmlTute}
+        id="HTML"
+        displayOnce={false}
       />
     </PageContainer>
   )

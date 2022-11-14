@@ -3,13 +3,21 @@ import TutorialPopup, { TutorialPopupInfo } from "./TutorialPopup"
 
 interface TutorialSequenceProps {
   popupProps: TutorialPopupInfo[],
-  displayTutes: boolean,
-  id: string
+  shouldDisplay: boolean,
+  setShouldDisplay: (newVal: boolean) => void,
+  id: string,
+  displayOnce?: boolean
 }
 
-export default function TutorialSequence({ popupProps, displayTutes, id }: TutorialSequenceProps) {
+export default function TutorialSequence({
+  popupProps,
+  shouldDisplay,
+  setShouldDisplay,
+  id,
+  displayOnce = true
+}: TutorialSequenceProps) {
   const [curIdx, setCurIdx] = useState(0)
-  const [finishedTute, setFinishedTute] = useState(false)
+  const [displayedAtLeastOnce, setDisplayedAtLeastOnce] = useState(false)
 
   const onClose = useCallback(() => {
     if (curIdx < popupProps.length - 1) {
@@ -19,17 +27,28 @@ export default function TutorialSequence({ popupProps, displayTutes, id }: Tutor
     }
 
     // We have shown all popups
-    setFinishedTute(true)
-    // Do not show this tutorial again
-    localStorage.setItem(`tutorial_${id}_shown`, "true")
-  }, [curIdx, popupProps.length, id])
+    // Do not show this tutorial again if displayOnce is true
+    if (displayOnce) {
+      localStorage.setItem(`tutorial_${id}_shown`, "true")
+      setDisplayedAtLeastOnce(true)
+    }
 
-  // Only display tutorials if they have not been fully shown before
+    // Reset the index in case the tutorial is shown again
+    setCurIdx(0)
+    // Finish tutorial
+    setShouldDisplay(false)
+  }, [curIdx, popupProps.length, setShouldDisplay, id, displayOnce])
+
+  // If set to displayOnce, only display tutorials if they have not been fully shown before
   useEffect(() => {
-    if (localStorage.getItem(`tutorial_${id}_shown`)) setFinishedTute(true)
-  }, [id])
+    if (!displayOnce) return
+    if (localStorage.getItem(`tutorial_${id}_shown`)) setDisplayedAtLeastOnce(true)
+  }, [id, displayOnce])
 
-  if (finishedTute || !displayTutes || popupProps.length <= 0) return null
+  // If the tutorial is only to be shown once, and has already been fully shown, do not show again
+  if (displayOnce && displayedAtLeastOnce) return null
+
+  if (!shouldDisplay || popupProps.length <= 0) return null
 
   return (
     <TutorialPopup info={popupProps[curIdx]} onClose={onClose} />

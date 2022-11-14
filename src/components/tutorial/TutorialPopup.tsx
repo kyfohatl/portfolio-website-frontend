@@ -5,7 +5,7 @@ import TutorialArrow from "./TutorialArrow"
 import TutorialCard from "./TutorialCard"
 
 export interface TutorialPopupInfo {
-  target: HTMLDivElement | HTMLLIElement | null,
+  target: HTMLElement | null,
   xOffset: number,
   yOffset: number,
   title: string,
@@ -114,6 +114,7 @@ export default function TutorialPopup({
     info.target.style.borderStyle = "solid"
     info.target.style.borderWidth = "4px"
     info.target.style.borderColor = "red"
+    info.target.style.borderRadius = "10px"
 
     // Remove the visual upon unmounting
     return () => {
@@ -122,6 +123,7 @@ export default function TutorialPopup({
         info.target.style.borderStyle = "inherit"
         info.target.style.borderWidth = "inherit"
         info.target.style.borderColor = "inherit"
+        info.target.style.borderRadius = "inherit"
       }
     }
   }, [info.target])

@@ -2,6 +2,7 @@ import Button from "./Button"
 import styles from "./Hero.module.css"
 
 import { ReactComponent as DownArrow } from "../assets/images/downwardPointer.svg"
+import Tooltip from "./tooltip/Tooltip"
 
 interface HeroProps {
   onExploreClick: () => void
@@ -19,15 +20,17 @@ export default function Hero({ onExploreClick }: HeroProps) {
         </p>
       </article>
       <div className={styles.buttonContainer}>
-        <Button
-          text="Explore"
-          type={{ type: "button", callBack: onExploreClick }}
-          backgroundColor="black"
-          color="white"
-          width="118px"
-          height="40px"
-          btnTestId="exploreBtn"
-        />
+        <Tooltip text="Click to start the tour!" direction="upwards">
+          <Button
+            text="Explore"
+            type={{ type: "button", callBack: onExploreClick }}
+            backgroundColor="black"
+            color="white"
+            width="118px"
+            height="40px"
+            btnTestId="exploreBtn"
+          />
+        </Tooltip>
         <DownArrow width="26px" height="26px" className={styles.arrow} />
       </div>
     </div>

@@ -9,6 +9,7 @@ import { ReactComponent as EditIcon } from "../assets/images/editIcon.svg"
 import { ReactComponent as DeleteIcon } from "../assets/images/deleteIcon.svg"
 import { BackendError } from "../lib/commonTypes";
 import Deleting from "../components/animation/Deleting";
+import Tooltip from "../components/tooltip/Tooltip";
 
 export default function ViewBlog() {
   const [blog, setBlog] = useState<BlogProps>()
@@ -114,28 +115,32 @@ export default function ViewBlog() {
       {userCanEdit
         ?
         <div className={styles.buttonContainer}>
-          <Button
-            text="Edit"
-            type={{ type: "button", callBack: onClickEdit }}
-            backgroundColor="#8B0000"
-            height="36px"
-            width="100px"
-            icon={<EditIcon width={21} height={21} />}
-            buttonState={editButtonState}
-            disabled={editButtonDisabled}
-            btnTestId="editBtn"
-          />
-          <Button
-            text="Delete"
-            type={{ type: "button", callBack: onClickDelete }}
-            backgroundColor="#4267B2"
-            height="36px"
-            width="100px"
-            icon={<DeleteIcon width={21} height={21} />}
-            buttonState={deleteButtonState}
-            disabled={deleteButtonDisabled}
-            btnTestId="deleteBtn"
-          />
+          <Tooltip text="Edit the blog">
+            <Button
+              text="Edit"
+              type={{ type: "button", callBack: onClickEdit }}
+              backgroundColor="#8B0000"
+              height="36px"
+              width="100px"
+              icon={<EditIcon width={21} height={21} />}
+              buttonState={editButtonState}
+              disabled={editButtonDisabled}
+              btnTestId="editBtn"
+            />
+          </Tooltip>
+          <Tooltip text="Permanently delete the blog">
+            <Button
+              text="Delete"
+              type={{ type: "button", callBack: onClickDelete }}
+              backgroundColor="#4267B2"
+              height="36px"
+              width="100px"
+              icon={<DeleteIcon width={21} height={21} />}
+              buttonState={deleteButtonState}
+              disabled={deleteButtonDisabled}
+              btnTestId="deleteBtn"
+            />
+          </Tooltip>
         </div>
         :
         null

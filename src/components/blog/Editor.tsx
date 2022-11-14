@@ -57,7 +57,7 @@ function getHorizontalExpansion(textArea: HTMLTextAreaElement, textAreaStyles: C
   return 0
 }
 
-export default function Editor({ textInfo, setText, title }: EditorProps) {
+const Editor = React.forwardRef<HTMLParagraphElement, EditorProps>(({ textInfo, setText, title }, ref) => {
   const [numLines, setNumLines] = useState(1)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -122,7 +122,7 @@ export default function Editor({ textInfo, setText, title }: EditorProps) {
 
   return (
     <div className={styles.outerContainer} data-testid={`${title}Editor`}>
-      <div className={styles.title}><p>{title}</p></div>
+      <div className={styles.title}><p ref={ref}>{title}</p></div>
       <div className={styles.middleContainer}>
         <div className={styles.innerContainer} ref={containerRef}>
           <LineCounter count={numLines} editorTitle={title} />
@@ -140,4 +140,6 @@ export default function Editor({ textInfo, setText, title }: EditorProps) {
       </div>
     </div>
   )
-}
+})
+
+export default Editor
