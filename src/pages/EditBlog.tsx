@@ -52,7 +52,8 @@ export default function EditBlog() {
       image: HelpImage,
       imgAlt: "Edit blog help",
       imgWidth: "142px",
-      imgHeight: "100px"
+      imgHeight: "100px",
+      cardTestId: "basicHelp"
     }
 
     if (hasData()) return setPopupProps([helpDisplayTute])
@@ -69,7 +70,8 @@ export default function EditBlog() {
         image: SignInImg,
         imgAlt: "Sign in to save",
         imgWidth: "103px",
-        imgHeight: "110px"
+        imgHeight: "110px",
+        cardTestId: "loginHelp"
       }
     ])
   }, [])
@@ -262,7 +264,8 @@ export default function EditBlog() {
           image: HtmlImage,
           imgWidth: "145px",
           imgHeight: "57px",
-          imgAlt: "Write some HTML before saving!"
+          imgAlt: "Write some HTML before saving!",
+          cardTestId: "htmlHelp"
         }]}
         shouldDisplay={showHtmlTute}
         setShouldDisplay={setShowHtmlTute}

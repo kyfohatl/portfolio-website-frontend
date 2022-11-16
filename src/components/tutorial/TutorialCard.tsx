@@ -9,7 +9,8 @@ interface TutorialCardProps {
   imgWidth: string,
   imgHeight: string,
   pos: { right: string, top: string },
-  onClose: () => void
+  onClose: () => void,
+  testId?: string
 }
 
 export default function TutorialCard({
@@ -20,10 +21,15 @@ export default function TutorialCard({
   imgWidth,
   imgHeight,
   pos,
-  onClose
+  onClose,
+  testId
 }: TutorialCardProps) {
   return (
-    <div className={styles.outerContainer} style={{ position: "fixed", right: pos.right, top: pos.top }}>
+    <div
+      className={styles.outerContainer}
+      style={{ position: "fixed", right: pos.right, top: pos.top }}
+      data-testid={testId}
+    >
       <div className={styles.btnContainer}>
         <TutorialCardCloseButton onClose={onClose} />
       </div>

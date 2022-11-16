@@ -5,7 +5,16 @@ describe("Creating a new blog", () => {
     cy.visit("/editblog")
   })
 
+  // Skips the basic tutorial popups displayed on this page
+  function skipBasicTute() {
+    cy.get('[data-testid="basicHelp"]').find("button").click()
+    cy.get('[data-testid="loginHelp"]').find("button").click()
+  }
+
   function itBehavesLikeWorkingEditorAndLineCounter(editorType: "HTML" | "CSS", txt: string, numLines: number) {
+    // Close the help popups to prevent interference
+    skipBasicTute()
+
     cy.get(`[data-testid="${editorType}Editor"]`)
       .find("textarea")
       .type(txt, { parseSpecialCharSequences: false })
@@ -108,6 +117,9 @@ describe("Creating a new blog", () => {
       const CSS = "body {background-color: blue;}\np {color: red;}"
 
       it("Displays the HTML content and applies the CSS styles", () => {
+        // Close the help popups to prevent interference
+        skipBasicTute()
+
         // Type content into the editors
         cy.get('[data-testid="HTMLEditor"]')
           .find("textarea")
@@ -157,6 +169,8 @@ describe("Creating a new blog", () => {
       cy.signIn(USERNAME, PASSWORD)
       // Navigate back to the edit blog page
       cy.visit("/editblog")
+      // Close the help popup to prevent interference
+      cy.get('[data-testid="basicHelp"]').find("button").click()
     })
 
     it("Saves the blog content to the database", () => {
@@ -181,6 +195,11 @@ describe("Editing an existing blog", () => {
   const CSS = "h1 {color: blue;}\np {color: red;}"
   let blogId: string
 
+  // Skips the basic tutorial popup displayed on this page
+  function skipBasicTute() {
+    cy.get('[data-testid="basicHelp"]').find("button").click()
+  }
+
   before(() => {
     // Clear the database
     cy.clearDb()
@@ -196,6 +215,7 @@ describe("Editing an existing blog", () => {
 
     // Create a test blog
     cy.visit("/editblog")
+    skipBasicTute()
     cy.get('[data-testid="HTMLEditor"]').find("textarea").type(HTML, { parseSpecialCharSequences: false })
     cy.get('[data-testid="CSSEditor"]').find("textarea").type(CSS, { parseSpecialCharSequences: false })
     cy.get('[data-testid="saveBtn"]').click()
@@ -207,6 +227,7 @@ describe("Editing an existing blog", () => {
   beforeEach(() => {
     cy.signIn(USERNAME, PASSWORD)
     cy.visit(`/editblog/${blogId}`)
+    skipBasicTute()
   })
 
   it("Displays the content of the blog in the editors", () => {

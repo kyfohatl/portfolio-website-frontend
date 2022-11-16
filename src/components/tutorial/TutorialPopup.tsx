@@ -13,7 +13,8 @@ export interface TutorialPopupInfo {
   image: string,
   imgAlt: string,
   imgWidth: string,
-  imgHeight: string
+  imgHeight: string,
+  cardTestId?: string
 }
 
 interface TutorialPopupProps {
@@ -139,6 +140,7 @@ export default function TutorialPopup({
         imgHeight={info.imgHeight}
         pos={{ right: cardStats.right + "px", top: cardStats.top + "px" }}
         onClose={onClose}
+        testId={info.cardTestId}
       />
       <TutorialArrow
         left={arrowStats.left + "px"}
