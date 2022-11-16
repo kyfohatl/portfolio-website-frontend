@@ -9,6 +9,11 @@ import SignUp from "../../pages/SignUp"
 import Skills from "../../pages/Skills"
 import ViewBlogs from "../../pages/ViewBlogs"
 
+// Mock the QuestionMark animation icon as it causes issues due to usage of refs
+jest.mock("../../components/animation/QuestionMark", () => {
+  return () => <div>Mocked QuestionMark!</div>
+})
+
 function MockNavbar() {
   return (
     <MemoryRouter initialEntries={["/emptyPage"]}>
@@ -119,6 +124,22 @@ describe("When the user is not signed in", () => {
       expect(blogsPage).toBeInTheDocument()
     })
   })
+
+  it("Navigates to the edit blog page when the Create Blog link is clicked", () => {
+    setup()
+    // Ensure link is present
+    const createBlogLink = screen.getByRole("link", { name: /create a new blog/i })
+    expect(createBlogLink).toBeInTheDocument()
+
+    // Click on the link
+    fireEvent.click(createBlogLink)
+
+    // Check if we have been redirected to the Edit Blog page
+    const htmlEditor = screen.getByText(/HTML/)
+    const cssEditor = screen.getByText(/CSS/)
+    expect(htmlEditor).toBeInTheDocument()
+    expect(cssEditor).toBeInTheDocument()
+  })
 })
 
 describe("When the user is signed in", () => {
@@ -141,21 +162,5 @@ describe("When the user is signed in", () => {
 
     expect(signInBtn).not.toBeInTheDocument()
     expect(signUpBtn).not.toBeInTheDocument()
-  })
-
-  it("Displays a \"Create A New Blog\" link which takes the user to the Edit Blog page", () => {
-    setup()
-    // Ensure link is present
-    const createBlogLink = screen.getByRole("link", { name: /create a new blog/i })
-    expect(createBlogLink).toBeInTheDocument()
-
-    // Click on the link
-    fireEvent.click(createBlogLink)
-
-    // Check if we have been redirected to the Edit Blog page
-    const htmlEditor = screen.getByText(/HTML/)
-    const cssEditor = screen.getByText(/CSS/)
-    expect(htmlEditor).toBeInTheDocument()
-    expect(cssEditor).toBeInTheDocument()
   })
 })
