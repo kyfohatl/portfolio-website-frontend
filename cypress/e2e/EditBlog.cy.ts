@@ -205,6 +205,8 @@ describe("Editing an existing blog", () => {
     cy.clearDb()
     // Create a test user
     cy.signUp(USERNAME, PASSWORD)
+    //Sing in
+    cy.signIn(USERNAME, PASSWORD)
 
     // Intercept save blog requests to keep track of blog id
     cy.intercept("POST", "/blog/create", (req) => {
@@ -227,7 +229,6 @@ describe("Editing an existing blog", () => {
   beforeEach(() => {
     cy.signIn(USERNAME, PASSWORD)
     cy.visit(`/editblog/${blogId}`)
-    skipBasicTute()
   })
 
   it("Displays the content of the blog in the editors", () => {

@@ -48,6 +48,7 @@ declare global {
       signUp(username: string, password: string, userIdContainer?: Updatable<string>): Chainable<void>,
       signUpTp(username: string, provider: AuthService, providerUserId: string): Chainable<void>,
       signIn(username: string, password: string): Chainable<void>,
+      signOut(): Chainable<void>,
       inputBoxShouldDisplayError(type: "Email" | "Password" | "Confirm Password", errTxt: string): Chainable<void>,
       createBlog(html: string, css: string, updatable?: Updatable<string>): Chainable<void>,
       verifyBlog(blogId: string, html: string, css: string): Chainable<void>,
@@ -120,6 +121,15 @@ Cypress.Commands.add("signIn", (username: string, password: string) => {
   cy.wait("@signIn")
 })
 
+Cypress.Commands.add("signOut", () => {
+  cy.intercept("DELETE", "/auth/users/logout").as("singOut")
+
+  // Go to the home page in case the client is on a page which does not have access to the Navbar
+  cy.visit("/")
+  cy.get('[data-testid="navbarSignOut"]').click()
+  cy.wait("@singOut")
+})
+
 // Insures that the given input box type is displaying an error with the correct error message
 Cypress.Commands.add(
   "inputBoxShouldDisplayError",
@@ -143,6 +153,7 @@ Cypress.Commands.add("createBlog", (html: string, css: string, updatable?: Updat
   }).as("createBlog")
 
   cy.visit("/editblog")
+  cy.get('[data-testid="basicHelp"]').find("button").click()
   cy.get('[data-testid="HTMLEditor"]').find("textarea").type(html, { parseSpecialCharSequences: false })
   cy.get('[data-testid="CSSEditor"]').find("textarea").type(css, { parseSpecialCharSequences: false })
   cy.get('[data-testid="saveBtn"]').click()

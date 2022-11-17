@@ -62,6 +62,7 @@ const Navbar = forwardRef<HTMLLIElement>((_, ref) => {
               marginTop="0px"
               backgroundColor="#253C78"
               buttonState={signOutState}
+              btnTestId="navbarSignOut"
             />
           </li>
           : [
