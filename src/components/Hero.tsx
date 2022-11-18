@@ -20,7 +20,7 @@ export default function Hero({ onExploreClick }: HeroProps) {
         </p>
       </article>
       <div className={styles.buttonContainer}>
-        <Tooltip text="Click to start the tour!" direction="upwards">
+        <Tooltip text="Click to start the tour!" direction="upwards" testId="exploreBtnToolTip">
           <Button
             text="Explore"
             type={{ type: "button", callBack: onExploreClick }}
