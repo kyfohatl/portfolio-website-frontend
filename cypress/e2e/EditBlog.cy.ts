@@ -1,4 +1,5 @@
 import { cardTexts } from "../../src/resources/editBlogHelpCards/cardTexts"
+import testTooltip from "../support/helpers/testTooltip"
 
 describe("Creating a new blog", () => {
   beforeEach(() => {
@@ -478,6 +479,54 @@ describe("Help display", () => {
       it("Does not change the current card", () => {
         cy.get('[data-testid="dialContainer"]').find("button").first().click().then(() => {
           itBehavesLikeShowCurrentCard(0)
+        })
+      })
+    })
+  })
+})
+
+describe("Tooltips", () => {
+  describe("The help button tooltip", () => {
+    beforeEach(() => {
+      cy.visit("/editblog")
+    })
+
+    it("Displays a tooltip", () => {
+      cy.window().then((win) => {
+        cy.get('[data-testid="helpTooltip"]').then((elem) => {
+          testTooltip(win, elem, "Help")
+        })
+      })
+    })
+  })
+
+  describe("The save button tooltip", () => {
+    describe("When signed in", () => {
+      beforeEach(() => {
+        const USERNAME = "someTooltipUsername"
+        const PASSWORD = "someTooltipPassword"
+
+        cy.clearDb()
+        cy.signUp(USERNAME, PASSWORD)
+        cy.signIn(USERNAME, PASSWORD)
+        cy.visit("/editblog")
+      })
+
+      it("Does not display the tooltip", () => {
+        cy.get('[data-testid="saveTooltip"]').should("not.exist")
+      })
+    })
+
+    describe("When not signed in", () => {
+      beforeEach(() => {
+        cy.visit("/editblog")
+      })
+
+      it("Displays a tooltip", () => {
+        cy.window().then((win) => {
+          cy.get('[data-testid="saveTooltip"]').then((elem) => {
+            testTooltip(win, elem, "Sign in to save your work!")
+          })
         })
       })
     })

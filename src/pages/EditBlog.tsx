@@ -186,7 +186,7 @@ export default function EditBlog() {
     >
       <div className={styles.savePane}>
         <div ref={helpBtnRef}>
-          <Tooltip text="Help">
+          <Tooltip text="Help" testId="helpTooltip">
             <Button
               type={{ type: "button", callBack: onClickHelpBtn }}
               icon={<QuestionMark width={HELP_BUTTON_SIZE} height={HELP_BUTTON_SIZE} />}
@@ -214,7 +214,7 @@ export default function EditBlog() {
               btnTestId="saveBtn"
             />
             :
-            <Tooltip text="Sign in to save your work!">
+            <Tooltip text="Sign in to save your work!" testId="saveTooltip">
               <Button
                 text={saveButtonText}
                 type={{ type: "button", callBack: onClickSave }}
