@@ -28,7 +28,7 @@ ReactDOM.render(
         <Route path={routes.editBlog} element={<EditBlog />} />
         <Route path={routes.editSpecificBlog} element={<EditBlog />} />
         <Route path={routes.viewBlogs} element={<ViewBlogs />} />
-        <Route path={routes.viewBlogs} element={<ViewBlog />} />
+        <Route path={routes.blog} element={<ViewBlog />} />
         <Route path={routes.facebookSignIn} element={<FacebookRedirect />} />
         <Route path={routes.googleSignIn} element={<GoogleRedirect />} />
       </Routes>
