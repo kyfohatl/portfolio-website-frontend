@@ -89,6 +89,7 @@ export default function SignUp() {
       contentStyle={{ display: "flex", flexGrow: 1, justifyContent: "center", alignItems: "center" }}
       contentBlockStyle={{ display: "flex", justifyContent: "center" }}
       state={pageState}
+      contentTestId="signUpPage"
     >
       <AuthContainer title="Sign up" onSubmit={onSubmit}>
         <InputText

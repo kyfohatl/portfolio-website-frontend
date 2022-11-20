@@ -1,7 +1,8 @@
 import { forwardRef, useCallback, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import Api from "../lib/api/Api"
 import { hasData } from "../lib/api/helpers/auth/redirectAndClearData"
+import routes from "../resources/routes/routes"
 import Button, { ButtonState } from "./Button"
 
 import styles from "./Navbar.module.css"
@@ -9,6 +10,7 @@ import styles from "./Navbar.module.css"
 const Navbar = forwardRef<HTMLLIElement>((_, ref) => {
   // Used for navigating with the react router
   const navigate = useNavigate()
+  const location = useLocation()
 
   // Button disabled states
   const [signInDisabled, setSignInDisabled] = useState(false)
@@ -19,16 +21,22 @@ const Navbar = forwardRef<HTMLLIElement>((_, ref) => {
   const [signOutState, setSignOutState] = useState<ButtonState>({ state: "normal" })
 
   const onSigInClick = useCallback(() => {
+    // If we are already on the sign in page, do nothing
+    if (location.pathname === routes.signIn) return
+
     // Disable other buttons and set loading
     setSignUpDisabled(true)
     setSignInState({ state: "loading" })
-  }, [])
+  }, [location.pathname])
 
   const onSignUpClick = useCallback(() => {
+    // If we are already on the sign up page, do nothing
+    if (location.pathname === routes.signUp) return
+
     // Disable other buttons and set loading
     setSignInDisabled(true)
     setSignUpState({ state: "loading" })
-  }, [])
+  }, [location.pathname])
 
   const onSignOutClick = useCallback(async () => {
     // Set button loading state
@@ -37,18 +45,37 @@ const Navbar = forwardRef<HTMLLIElement>((_, ref) => {
     // Sing out the user
     await Api.signOut()
     // Now navigate to the sign in page
-    navigate("/signin")
+    navigate(routes.signIn)
   }, [navigate])
 
   return (
     <nav className={styles.navbar}>
       <div className={styles.nav}>
-        <li key="logo" className={styles.logo}><Link to="/" className={styles.logoLink}>Ehsan's Portfolio</Link></li>
-        <li key="about" className={styles.buttonNav}><Link to="/about" className={styles.navLink}>About</Link></li>
-        <li key="skills" className={styles.buttonNav}><Link to="/skills" className={styles.navLink}>Skills &amp; Qualifications</Link></li>
-        <li key="examples" className={styles.buttonNav}><Link to="/examples" className={styles.navLink}>Examples of Work</Link></li>
-        <li key="blogs" className={styles.buttonNav}><Link to="/viewblogs" className={styles.navLink}>Blogs</Link></li>
-        <li key="createBlog" className={styles.buttonNav}><Link to="/editblog" className={styles.navLink}>Create A New Blog</Link></li>
+        <li key="logo" className={styles.logo}>
+          <Link to={routes.home} className={styles.logoLink} data-testid="homeNavLink">
+            Ehsan's Portfolio
+          </Link>
+        </li>
+        <li key="skills" className={styles.buttonNav}>
+          <Link to={routes.skills} className={styles.navLink} data-testid="skillsNavLink">
+            Skills &amp; Qualifications
+          </Link>
+        </li>
+        <li key="examples" className={styles.buttonNav}>
+          <Link to={routes.examples} className={styles.navLink} data-testid="examplesNavLink">
+            Examples of Work
+          </Link>
+        </li>
+        <li key="blogs" className={styles.buttonNav}>
+          <Link to={routes.viewBlogs} className={styles.navLink} data-testid="viewBlogsNavLink">
+            Blogs
+          </Link>
+        </li>
+        <li key="createBlog" className={styles.buttonNav}>
+          <Link to={routes.editBlog} className={styles.navLink} data-testid="editBlogNavLink">
+            Create A New Blog
+          </Link>
+        </li>
       </div>
       <div className={styles.auth}>
         {hasData()
@@ -67,7 +94,7 @@ const Navbar = forwardRef<HTMLLIElement>((_, ref) => {
           </li>
           : [
             <li ref={ref} className={styles.buttonAuth} key="signInBtn">
-              <Link to="/signin" className={styles.authLink}>
+              <Link to={routes.signIn} className={styles.authLink}>
                 <Button
                   text="Sign in"
                   type={{ type: "submit", callBack: onSigInClick }}
@@ -76,11 +103,12 @@ const Navbar = forwardRef<HTMLLIElement>((_, ref) => {
                   marginTop="0px"
                   disabled={signInDisabled}
                   buttonState={signInState}
+                  btnTestId="navbarSignInBtn"
                 />
               </Link>
             </li>,
             <li className={styles.buttonAuth} key="signUpBtn">
-              <Link to="/signup" className={styles.authLink}>
+              <Link to={routes.signUp} className={styles.authLink}>
                 <Button
                   text="Sign up"
                   type={{ type: "submit", callBack: onSignUpClick }}
@@ -90,6 +118,7 @@ const Navbar = forwardRef<HTMLLIElement>((_, ref) => {
                   backgroundColor="#340068"
                   disabled={signUpDisabled}
                   buttonState={signUpState}
+                  btnTestId="navbarSignUpBtn"
                 />
               </Link>
             </li>
