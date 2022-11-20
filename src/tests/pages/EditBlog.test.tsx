@@ -5,6 +5,11 @@ import Api from "../../lib/api/Api"
 import { BackendError, BackendResponse } from "../../lib/commonTypes"
 import EditBlog from "../../pages/EditBlog"
 
+// Mock the QuestionMark animated icon as we can't test the animation
+jest.mock("../../components/animation/QuestionMark", () => {
+  return () => <div>Mocked QuestionMark Animation</div>
+})
+
 const BASE_PATH = "/editblog/"
 
 function setup(initRoute: string, path: string) {
@@ -27,132 +32,166 @@ describe("When there is no blog id in the page route params", () => {
     expect(saveBtn).not.toBeInTheDocument()
   })
 
-  describe("When the \"Create/Save\" button is clicked", () => {
-    let saveBlogMock: jest.SpyInstance<
-      Promise<BackendError | { success: { id: string } }>,
-      [html: string, css: string, blogId?: string | null]
-    >
-
-    afterAll(() => {
-      // Restore the Api.saveBlog method
-      saveBlogMock.mockRestore()
-    })
-
-    function itBehavesLikeShowLoadingIndicator() {
-      it("Goes into a loading state when clicked on", async () => {
-        setup(BASE_PATH, BASE_PATH)
-        const createBtn = screen.getByRole("button", { name: /Create/ })
-        fireEvent.click(createBtn)
-
-        // Check if the loading button is present
-        const loadingBtn = screen.getByRole("button", { name: /loading/i })
-        expect(loadingBtn).toBeInTheDocument()
-
-        // Wait for the loading button to disappear which indicates that the Api.saveBlog is finished and the component
-        // can now un-mount (otherwise react will throw a warning about the state of an unmounted component being
-        // updated)
-        await waitForElementToBeRemoved(loadingBtn)
-      })
-    }
-
-    describe("When the save succeeds", () => {
-      beforeEach(() => {
-        // Mock the Api.saveBlog method
-        saveBlogMock = jest.spyOn(Api, "saveBlog").mockImplementation(async () => {
-          // Wait for a bit
-          await new Promise<void>((resolve, reject) => {
-            setTimeout(() => { resolve() }, 20)
-          })
-
-          // Then return a fake successful response
-          return { success: { id: "someBlogId" } }
-        })
-      })
-
-      itBehavesLikeShowLoadingIndicator()
-
-      it("Goes into a saving state once finished saving a blog", async () => {
-        setup(BASE_PATH, BASE_PATH)
-        const createBtn = screen.getByRole("button", { name: /Create/ })
-        fireEvent.click(createBtn)
-
-        // Wait until the loading is done and the saving animation appears
-        const savingBtn = await screen.findByTestId("savingAnimation")
-        expect(savingBtn).toBeInTheDocument()
-      })
-
-      it("Reverts back to the normal state after the saving animation, but displays \"Save\" instead of \"Create\"", async () => {
-        setup(BASE_PATH, BASE_PATH)
-        const createBtn = screen.getByRole("button", { name: /Create/ })
-        fireEvent.click(createBtn)
-
-        // Wait until loading is done
-        const savingBtnCheckmark = await screen.findByTestId("savingCheckmark")
-        expect(savingBtnCheckmark).toBeInTheDocument()
-
-        // Now trigger the onAnimationEnd
-        fireEvent.animationEnd(savingBtnCheckmark)
-
-        // Now ensure changes are correct
-        const saveBtn = screen.getByRole("button", { name: /Save/ })
-        const savingBtn = screen.queryByTestId("savingAnimation")
-        const loadingBtn = screen.queryByRole("button", { name: /loading/i })
-
-        expect(saveBtn).toBeInTheDocument()
-        expect(savingBtn).not.toBeInTheDocument()
-        expect(loadingBtn).not.toBeInTheDocument()
-        expect(createBtn).not.toBeInTheDocument()
-        expect(savingBtnCheckmark).not.toBeInTheDocument()
-      })
-    })
-
-    describe("When the save fails", () => {
-      const ERR_MESSAGE = "Some Error Occurred"
-      const ERR_CODE = 404
-      const ERR = { simpleError: ERR_MESSAGE, code: ERR_CODE }
-
-      let consoleErrMock: jest.SpyInstance<void, [message?: any, ...optionalParams: any[]]>
-      beforeEach(() => {
-        // Setup the Api.saveBlog mock
-        saveBlogMock.mockImplementation(async () => (ERR))
-        // Mock console error
-        consoleErrMock = jest.spyOn(console, "error").mockImplementation(() => { })
-      })
-
-      afterAll(() => {
-        // Restore the console error mock
-        consoleErrMock.mockRestore()
-      })
-
-      itBehavesLikeShowLoadingIndicator()
-
-      it("Displays an error on the page with the returned status code", async () => {
-        setup(BASE_PATH, BASE_PATH)
-        const createBtn = screen.getByRole("button", { name: /Create/ })
-        fireEvent.click(createBtn)
-
-        const errHeading = await screen.findByRole("heading", { name: new RegExp(`Error ${ERR_CODE}`) })
-        expect(errHeading).toBeInTheDocument()
-      })
-
-      it("Outputs the error to console error", async () => {
-        setup(BASE_PATH, BASE_PATH)
-        const createBtn = screen.getByRole("button", { name: /Create/ })
-        fireEvent.click(createBtn)
-
-        await screen.findByRole("heading", { name: new RegExp(`Error ${ERR_CODE}`) })
-        expect(consoleErrMock).toHaveBeenCalledWith(ERR)
-      })
-    })
-  })
-
-  it("Does not display any content inside the html and css editors", async () => {
+  it("Does not display any content inside the html and css editors", () => {
     setup(BASE_PATH, BASE_PATH)
     const htmlEditor = screen.getAllByRole("textbox")[0]
     const cssEditor = screen.getAllByRole("textbox")[1]
 
     expect(htmlEditor).toHaveTextContent("")
     expect(cssEditor).toHaveTextContent("")
+  })
+
+  describe("When the user is not signed in", () => {
+    beforeAll(() => {
+      // Mock the browser local storage
+      Storage.prototype.getItem = (key: string) => null
+    })
+
+    it("Disables the \"Create/Save\" button", () => {
+      setup(BASE_PATH, BASE_PATH)
+      const createBtn = screen.getByRole("button", { name: /Create/ })
+
+      expect(createBtn).toHaveAttribute("disabled")
+    })
+  })
+
+  describe("When the user is signed in", () => {
+    beforeAll(() => {
+      // Mock the browser local storage
+      Storage.prototype.getItem = (key: string) => "someFakeId"
+    })
+
+    it("Does not disable the \"Create/Save\" button", () => {
+      setup(BASE_PATH, BASE_PATH)
+      const createBtn = screen.getByRole("button", { name: /Create/ })
+
+      expect(createBtn).not.toHaveAttribute("disabled")
+    })
+
+    describe("When the \"Create/Save\" button is clicked", () => {
+      let saveBlogMock: jest.SpyInstance<
+        Promise<BackendError | { success: { id: string } }>,
+        [html: string, css: string, blogId?: string | null]
+      >
+
+      afterAll(() => {
+        // Restore the Api.saveBlog method
+        saveBlogMock.mockRestore()
+      })
+
+      function runSetupAndTypeSomeHtml() {
+        setup(BASE_PATH, BASE_PATH)
+        const htmlEditor = screen.getAllByRole("textbox")[0]
+        userEvent.type(htmlEditor, "Some Html!")
+      }
+
+      function itBehavesLikeShowLoadingIndicator() {
+        it("Goes into a loading state when clicked on", async () => {
+          runSetupAndTypeSomeHtml()
+          const createBtn = screen.getByRole("button", { name: /Create/ })
+          fireEvent.click(createBtn)
+
+          // Check if the loading button is present
+          const loadingBtn = screen.getByRole("button", { name: /loading/i })
+          expect(loadingBtn).toBeInTheDocument()
+
+          // Wait for the loading button to disappear which indicates that the Api.saveBlog is finished and the component
+          // can now un-mount (otherwise react will throw a warning about the state of an unmounted component being
+          // updated)
+          await waitForElementToBeRemoved(loadingBtn)
+        })
+      }
+
+      describe("When the save succeeds", () => {
+        beforeEach(() => {
+          // Mock the Api.saveBlog method
+          saveBlogMock = jest.spyOn(Api, "saveBlog").mockImplementation(async () => {
+            // Wait for a bit
+            await new Promise<void>((resolve, reject) => {
+              setTimeout(() => { resolve() }, 20)
+            })
+
+            // Then return a fake successful response
+            return { success: { id: "someBlogId" } }
+          })
+        })
+
+        itBehavesLikeShowLoadingIndicator()
+
+        it("Goes into a saving state once finished saving a blog", async () => {
+          runSetupAndTypeSomeHtml()
+          const createBtn = screen.getByRole("button", { name: /Create/ })
+          fireEvent.click(createBtn)
+
+          // Wait until the loading is done and the saving animation appears
+          const savingBtn = await screen.findByTestId("savingAnimation")
+          expect(savingBtn).toBeInTheDocument()
+        })
+
+        it("Reverts back to the normal state after the saving animation, but displays \"Save\" instead of \"Create\"", async () => {
+          runSetupAndTypeSomeHtml()
+          const createBtn = screen.getByRole("button", { name: /Create/ })
+          fireEvent.click(createBtn)
+
+          // Wait until loading is done
+          const savingBtnCheckmark = await screen.findByTestId("savingCheckmark")
+          expect(savingBtnCheckmark).toBeInTheDocument()
+
+          // Now trigger the onAnimationEnd
+          fireEvent.animationEnd(savingBtnCheckmark)
+
+          // Now ensure changes are correct
+          const saveBtn = screen.getByRole("button", { name: /Save/ })
+          const savingBtn = screen.queryByTestId("savingAnimation")
+          const loadingBtn = screen.queryByRole("button", { name: /loading/i })
+
+          expect(saveBtn).toBeInTheDocument()
+          expect(savingBtn).not.toBeInTheDocument()
+          expect(loadingBtn).not.toBeInTheDocument()
+          expect(createBtn).not.toBeInTheDocument()
+          expect(savingBtnCheckmark).not.toBeInTheDocument()
+        })
+      })
+
+      describe("When the save fails", () => {
+        const ERR_MESSAGE = "Some Error Occurred"
+        const ERR_CODE = 404
+        const ERR = { simpleError: ERR_MESSAGE, code: ERR_CODE }
+
+        let consoleErrMock: jest.SpyInstance<void, [message?: any, ...optionalParams: any[]]>
+        beforeEach(() => {
+          // Setup the Api.saveBlog mock
+          saveBlogMock.mockImplementation(async () => (ERR))
+          // Mock console error
+          consoleErrMock = jest.spyOn(console, "error").mockImplementation(() => { })
+        })
+
+        afterAll(() => {
+          // Restore the console error mock
+          consoleErrMock.mockRestore()
+        })
+
+        itBehavesLikeShowLoadingIndicator()
+
+        it("Displays an error on the page with the returned status code", async () => {
+          runSetupAndTypeSomeHtml()
+          const createBtn = screen.getByRole("button", { name: /Create/ })
+          fireEvent.click(createBtn)
+
+          const errHeading = await screen.findByRole("heading", { name: new RegExp(`Error ${ERR_CODE}`) })
+          expect(errHeading).toBeInTheDocument()
+        })
+
+        it("Outputs the error to console error", async () => {
+          runSetupAndTypeSomeHtml()
+          const createBtn = screen.getByRole("button", { name: /Create/ })
+          fireEvent.click(createBtn)
+
+          await screen.findByRole("heading", { name: new RegExp(`Error ${ERR_CODE}`) })
+          expect(consoleErrMock).toHaveBeenCalledWith(ERR)
+        })
+      })
+    })
   })
 })
 

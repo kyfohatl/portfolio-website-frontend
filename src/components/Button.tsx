@@ -78,7 +78,7 @@ export default function Button({
 
   let button = <button
     data-testid={btnTestId}
-    className={styles.button}
+    className={disabled ? styles.button : styles.button + " " + styles.activeBtn}
     type={type.type}
     style={buttonStyles}
     disabled={disabled}

@@ -117,6 +117,7 @@ export default function SignIn() {
       contentStyle={{ display: "flex", flexGrow: 1, justifyContent: "center", alignItems: "center" }}
       contentBlockStyle={{ display: "flex", justifyContent: "center" }}
       state={pageState}
+      contentTestId="signInPage"
     >
       <AuthContainer title="Sign In" onSubmit={onSignIn}>
         <InputText

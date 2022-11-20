@@ -1,11 +1,21 @@
 import { cardTexts } from "../../src/resources/editBlogHelpCards/cardTexts"
+import testTooltip from "../support/helpers/testTooltip"
 
 describe("Creating a new blog", () => {
   beforeEach(() => {
     cy.visit("/editblog")
   })
 
+  // Skips the basic tutorial popups displayed on this page
+  function skipBasicTute() {
+    cy.get('[data-testid="basicHelp"]').find("button").click()
+    cy.get('[data-testid="loginHelp"]').find("button").click()
+  }
+
   function itBehavesLikeWorkingEditorAndLineCounter(editorType: "HTML" | "CSS", txt: string, numLines: number) {
+    // Close the help popups to prevent interference
+    skipBasicTute()
+
     cy.get(`[data-testid="${editorType}Editor"]`)
       .find("textarea")
       .type(txt, { parseSpecialCharSequences: false })
@@ -108,6 +118,9 @@ describe("Creating a new blog", () => {
       const CSS = "body {background-color: blue;}\np {color: red;}"
 
       it("Displays the HTML content and applies the CSS styles", () => {
+        // Close the help popups to prevent interference
+        skipBasicTute()
+
         // Type content into the editors
         cy.get('[data-testid="HTMLEditor"]')
           .find("textarea")
@@ -157,6 +170,8 @@ describe("Creating a new blog", () => {
       cy.signIn(USERNAME, PASSWORD)
       // Navigate back to the edit blog page
       cy.visit("/editblog")
+      // Close the help popup to prevent interference
+      cy.get('[data-testid="basicHelp"]').find("button").click()
     })
 
     it("Saves the blog content to the database", () => {
@@ -181,11 +196,18 @@ describe("Editing an existing blog", () => {
   const CSS = "h1 {color: blue;}\np {color: red;}"
   let blogId: string
 
+  // Skips the basic tutorial popup displayed on this page
+  function skipBasicTute() {
+    cy.get('[data-testid="basicHelp"]').find("button").click()
+  }
+
   before(() => {
     // Clear the database
     cy.clearDb()
     // Create a test user
     cy.signUp(USERNAME, PASSWORD)
+    //Sing in
+    cy.signIn(USERNAME, PASSWORD)
 
     // Intercept save blog requests to keep track of blog id
     cy.intercept("POST", "/blog/create", (req) => {
@@ -196,6 +218,7 @@ describe("Editing an existing blog", () => {
 
     // Create a test blog
     cy.visit("/editblog")
+    skipBasicTute()
     cy.get('[data-testid="HTMLEditor"]').find("textarea").type(HTML, { parseSpecialCharSequences: false })
     cy.get('[data-testid="CSSEditor"]').find("textarea").type(CSS, { parseSpecialCharSequences: false })
     cy.get('[data-testid="saveBtn"]').click()
@@ -457,6 +480,303 @@ describe("Help display", () => {
         cy.get('[data-testid="dialContainer"]').find("button").first().click().then(() => {
           itBehavesLikeShowCurrentCard(0)
         })
+      })
+    })
+  })
+})
+
+describe("Tooltips", () => {
+  describe("The help button tooltip", () => {
+    beforeEach(() => {
+      cy.visit("/editblog")
+    })
+
+    it("Displays a tooltip", () => {
+      cy.window().then((win) => {
+        cy.get('[data-testid="helpTooltip"]').then((elem) => {
+          testTooltip(win, elem, "Help")
+        })
+      })
+    })
+  })
+
+  describe("The save button tooltip", () => {
+    describe("When signed in", () => {
+      beforeEach(() => {
+        const USERNAME = "someTooltipUsername"
+        const PASSWORD = "someTooltipPassword"
+
+        cy.clearDb()
+        cy.signUp(USERNAME, PASSWORD)
+        cy.signIn(USERNAME, PASSWORD)
+        cy.visit("/editblog")
+      })
+
+      it("Does not display the tooltip", () => {
+        cy.get('[data-testid="saveTooltip"]').should("not.exist")
+      })
+    })
+
+    describe("When not signed in", () => {
+      beforeEach(() => {
+        cy.visit("/editblog")
+      })
+
+      it("Displays a tooltip", () => {
+        cy.window().then((win) => {
+          cy.get('[data-testid="saveTooltip"]').then((elem) => {
+            testTooltip(win, elem, "Sign in to save your work!")
+          })
+        })
+      })
+    })
+  })
+})
+
+describe("Tutorial popups", () => {
+  const USERNAME = "somePopupUsername"
+  const PASSWORD = "somePopupPassword38923*(*($%*@"
+
+  describe("Basic tutorial", () => {
+    function signUpAndGoToEditBlogPage() {
+      cy.clearDb()
+      cy.signUp(USERNAME, PASSWORD)
+      cy.signIn(USERNAME, PASSWORD)
+      cy.visit("/editblog")
+    }
+
+    function itBehavesLikeShowBasicHelp() {
+      it("Displays a single tutorial about clicking the button, and does not display the sign in tutorial", () => {
+        cy.get('[data-testid="basicHelp"]').should("exist").find("button").click().then(() => {
+          cy.get('[data-testid="basicHelp"]').should("not.exist")
+          cy.get('[data-testid="loginHelp"]').should("not.exist")
+        })
+      })
+    }
+
+    function itBehavesLikeShowBothTutes() {
+      it("Displays two basic tutorials, one after the other", () => {
+        cy.get('[data-testid="basicHelp"]').should("exist").find("button").click().then(() => {
+          cy.get('[data-testid="basicHelp"]').should("not.exist")
+          cy.get('[data-testid="loginHelp"]').should("exist")
+        })
+      })
+    }
+
+    describe("When visiting the page for the first time", () => {
+      describe("When signed in", () => {
+        beforeEach(() => {
+          signUpAndGoToEditBlogPage()
+        })
+
+        itBehavesLikeShowBasicHelp()
+      })
+
+      describe("When not signed in", () => {
+        beforeEach(() => {
+          cy.visit("/editblog")
+        })
+
+        itBehavesLikeShowBothTutes()
+      })
+    })
+
+    describe("When visiting the page for a subsequent time, but never having completed the tutorial", () => {
+      beforeEach(() => {
+        // Go to the page
+        cy.visit("/editblog")
+        // Close one tute, but not both
+        cy.get('[data-testid="basicHelp"]').find("button").click()
+        // Now go to some other page
+        cy.visit("/")
+      })
+
+      describe("When signed in", () => {
+        beforeEach(() => {
+          signUpAndGoToEditBlogPage()
+        })
+
+        itBehavesLikeShowBasicHelp()
+      })
+
+      describe("When not signed in", () => {
+        beforeEach(() => {
+          cy.visit("/editblog")
+        })
+
+        itBehavesLikeShowBothTutes()
+      })
+    })
+
+    describe("When visiting the page for a subsequent time, and having completed the tutorial previously", () => {
+      function itBehavesLikeShowNoTutes() {
+        it("Does not display any of the basic tutorial popups", () => {
+          cy.get('[data-testid="basicHelp"]').should("not.exist")
+          cy.get('[data-testid="loginHelp"]').should("not.exist")
+        })
+      }
+
+      beforeEach(() => {
+        // Go to the page
+        cy.visit("/editblog")
+        // Close both tutes and complete the tutorial
+        cy.get('[data-testid="basicHelp"]').find("button").click().then(() => {
+          cy.get('[data-testid="loginHelp"]').find("button").click()
+          // Now go to some other page
+          cy.visit("/")
+        })
+      })
+
+      describe("When signed in", () => {
+        beforeEach(() => {
+          signUpAndGoToEditBlogPage()
+        })
+
+        itBehavesLikeShowNoTutes()
+      })
+
+      describe("When not signed in", () => {
+        beforeEach(() => {
+          cy.visit("/editblog")
+        })
+
+        itBehavesLikeShowNoTutes()
+      })
+    })
+
+    function itBehavesLikePopupsNotShowing() {
+      cy.get('[data-testid="basicHelp"]').should("not.exist")
+      cy.get('[data-testid="loginHelp"]').should("not.exist")
+    }
+
+    function itBehavesLikePopupsNeverShow() {
+      // Ensure the popups are no longer present
+      itBehavesLikePopupsNotShowing()
+      // Go to some other page and come back
+      cy.visit("/")
+      cy.visit("/editblog")
+      // Ensure that the popups are still not showing
+      itBehavesLikePopupsNotShowing()
+    }
+
+    describe("When the tutorial is showing, and the help button is clicked", () => {
+      it("Closes the tutorial", () => {
+        cy.visit("/editblog")
+
+        // Ensure the help popup is showing at first
+        cy.get('[data-testid="basicHelp"]').should("exist")
+
+        // Open the help menu an ensure the help popup is not showing
+        cy.get('[data-testid="helpMenuBtn"]').click()
+        itBehavesLikePopupsNotShowing()
+
+        // Close the help menu, and ensure that the help popup is still not showing
+        cy.get('[data-testid="helpDisplayCloseBtn"]').click()
+        itBehavesLikePopupsNotShowing()
+      })
+    })
+
+    describe("Hotkeys", () => {
+      describe("When signed in", () => {
+        beforeEach(() => {
+          signUpAndGoToEditBlogPage()
+        })
+
+        it("Closes the tutorial when the hotkey is pressed, and completes the tutorial", () => {
+          // Ensure the popup is present
+          cy.get('[data-testid="basicHelp"]').should("exist")
+          // Press the hotkey
+          cy.get("body").type("{esc}")
+          // Ensure that the popups do not show again
+          itBehavesLikePopupsNeverShow()
+        })
+      })
+
+      describe("When not signed in", () => {
+        it("Closes the first popup, then closes the second one when pressed again, and completes the tutorial", () => {
+          cy.visit("/editblog")
+
+          // Ensure the popup is present
+          cy.get('[data-testid="basicHelp"]').should("exist")
+          // Press the hotkey
+          cy.get("body").type("{esc}")
+          // Ensure the second popup is shown
+          cy.get('[data-testid="loginHelp"]').should("exist")
+          // Press the hotkey again
+          cy.get("body").type("{esc}")
+          // Ensure that the popups do not show again
+          itBehavesLikePopupsNeverShow()
+        })
+      })
+    })
+  })
+
+  describe("HTML tutorial", () => {
+    beforeEach(() => {
+      cy.clearDb()
+      cy.signUp(USERNAME, PASSWORD)
+      cy.signIn(USERNAME, PASSWORD)
+      cy.visit("/editblog")
+      // Close the basic help popup
+      cy.get('[data-testid="basicHelp"]').find("button").click()
+    })
+
+    describe("When there is content in the HTML editor", () => {
+      it("Does not display the popup", () => {
+        cy.get('[data-testid="HTMLEditor"]').find("textarea").type("someHtml!")
+        cy.get('[data-testid="saveBtn"]').click()
+        cy.get('[data-testid="htmlHelp"]').should("not.exist")
+      })
+    })
+
+    describe("When there is no content in the HTML editor", () => {
+      function itBehavesLikeShowHtmlTuteAndCloseWithHotkey() {
+        it("Displays the HTML tutorial, and closes it when the appropriate hotkey is pressed", () => {
+          // Type something into the css editor
+          cy.get('[data-testid="CSSEditor"]').type("someCSS!")
+          // Now click the save button
+          cy.get('[data-testid="saveBtn"]').click()
+          // Ensure the html popup is shown
+          cy.get('[data-testid="htmlHelp"]').should("exist")
+          // Now close the tutorial using a hotkey
+          cy.get("body").type("{esc}")
+          cy.get('[data-testid="htmlHelp"]').should("not.exist")
+        })
+      }
+
+      describe("When the user has never seen the popup before", () => {
+        itBehavesLikeShowHtmlTuteAndCloseWithHotkey()
+      })
+
+      describe("When the user has seen the popup before", () => {
+        beforeEach(() => {
+          // Trigger the popup once
+          cy.get('[data-testid="saveBtn"]').click()
+          // Close is to "complete" the html tute
+          cy.get('[data-testid="htmlHelp"]').find("button").click()
+          // Go to some other page
+          cy.visit("/")
+          // Come back to the edit blog page
+          cy.visit("/editblog")
+        })
+
+        itBehavesLikeShowHtmlTuteAndCloseWithHotkey()
+      })
+    })
+
+    describe("When the tutorial is showing and the help button is clicked", () => {
+      it("Closes the tutorial", () => {
+        // Open the html tute
+        cy.get('[data-testid="saveBtn"]').click()
+        cy.get('[data-testid="htmlHelp"]').should("exist")
+
+        // Open the help menu an ensure the popup is not showing
+        cy.get('[data-testid="helpMenuBtn"]').click()
+        cy.get('[data-testid="htmlHelp"]').should("not.exist")
+
+        // Close the help menu, and ensure that the popup is still not showing
+        cy.get('[data-testid="helpDisplayCloseBtn"]').click()
+        cy.get('[data-testid="htmlHelp"]').should("not.exist")
       })
     })
   })

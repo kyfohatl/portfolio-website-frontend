@@ -12,7 +12,8 @@ interface PageContainerProps {
   contentBlockStyle?: React.CSSProperties,
   state?: PageContainerState,
   children: React.ReactNode,
-  contentTestId?: string
+  contentTestId?: string,
+  navbarLoginBtnRef?: React.RefObject<HTMLLIElement>
 }
 
 export default function PageContainer({
@@ -21,7 +22,8 @@ export default function PageContainer({
   contentBlockStyle = {},
   state = { status: "normal" },
   children,
-  contentTestId
+  contentTestId,
+  navbarLoginBtnRef
 }: PageContainerProps) {
   if (state.status === "loading") {
     contentStyle = { alignItems: "center" }
@@ -33,7 +35,7 @@ export default function PageContainer({
 
   return (
     <div className="page-background" style={backgroundStyle}>
-      {state.status !== "loading" && <Navbar />}
+      {state.status !== "loading" && <Navbar ref={navbarLoginBtnRef} />}
       <div className="content" style={contentStyle} data-testid={contentTestId}>
         <div className="content-block" style={contentBlockStyle}>
           {

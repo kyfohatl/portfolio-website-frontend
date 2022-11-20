@@ -5,7 +5,6 @@ import Home from './pages/Home';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import About from "./pages/About";
 import Skills from "./pages/Skills";
 import Examples from "./pages/Examples"
 import SignUp from './pages/SignUp';
@@ -15,23 +14,23 @@ import ViewBlogs from './pages/ViewBlogs';
 import ViewBlog from './pages/ViewBlog';
 import FacebookRedirect from './pages/auth_redirects/FacebookRedirect';
 import GoogleRedirect from './pages/auth_redirects/GoogleRedirect';
+import routes from './resources/routes/routes';
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="about" element={<About />} />
-        <Route path="skills" element={<Skills />} />
-        <Route path="examples" element={<Examples />} />
-        <Route path="signup" element={<SignUp />} />
-        <Route path="signin" element={<SignIn />} />
-        <Route path="editblog" element={<EditBlog />} />
-        <Route path="editblog/:blogId" element={<EditBlog />} />
-        <Route path="viewblogs" element={<ViewBlogs />} />
-        <Route path="blog/:blogId" element={<ViewBlog />} />
-        <Route path="signin/facebook" element={<FacebookRedirect />} />
-        <Route path="signin/google" element={<GoogleRedirect />} />
+        <Route path={routes.home} element={<Home />} />
+        <Route path={routes.skills} element={<Skills />} />
+        <Route path={routes.examples} element={<Examples />} />
+        <Route path={routes.signUp} element={<SignUp />} />
+        <Route path={routes.signIn} element={<SignIn />} />
+        <Route path={routes.editBlog} element={<EditBlog />} />
+        <Route path={routes.editSpecificBlog} element={<EditBlog />} />
+        <Route path={routes.viewBlogs} element={<ViewBlogs />} />
+        <Route path={routes.blog} element={<ViewBlog />} />
+        <Route path={routes.facebookSignIn} element={<FacebookRedirect />} />
+        <Route path={routes.googleSignIn} element={<GoogleRedirect />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,

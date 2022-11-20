@@ -1,0 +1,74 @@
+.tooltipContainer {
+  --scale: 0;
+  --pointerSize: 10px;
+  --tooltipGap: -8px;
+  --tooltipColor: #333;
+  --textColor: white;
+
+  position: relative;
+  width: max-content;
+  height: max-content;
+}
+
+.tooltipContainer::before,
+.tooltipContainer::after {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, var(--translateY, 0)) scale(var(--scale));
+  transition: 200ms transform;
+}
+
+.tooltipContainer::before {
+  content: "";
+  border: var(--pointerSize) solid transparent;
+}
+
+.tooltipContainer::after {
+  content: attr(data-text);
+  color: var(--textColor);
+  text-align: center;
+  width: max-content;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 100%;
+  background-color: var(--tooltipColor);
+}
+
+.tooltipContainer:hover::before,
+.tooltipContainer:hover::after {
+  --scale: 1;
+}
+
+/* For a downwards (pointing up) tooltip */
+.downwards::before,
+.downwards::after {
+  bottom: var(--tooltipGap);
+}
+
+.downwards::before {
+  --translateY: var(--pointerSize);
+  transform-origin: bottom center;
+  border-bottom-color: var(--tooltipColor);
+}
+
+.downwards::after {
+  --translateY: calc(100% + var(--pointerSize));
+  transform-origin: top center;
+}
+
+/* For an upwards (pointing down) tooltip */
+.upwards::before,
+.upwards::after {
+  top: var(--tooltipGap);
+}
+
+.upwards::before {
+  --translateY: calc(-1 * var(--pointerSize));
+  transform-origin: top center;
+  border-top-color: var(--tooltipColor);
+}
+
+.upwards::after {
+  --translateY: calc(-100% - var(--pointerSize));
+  transform-origin: bottom center;
+}
