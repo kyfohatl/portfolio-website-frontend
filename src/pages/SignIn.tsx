@@ -8,6 +8,7 @@ import { ReactComponent as FacebookLogo } from "../assets/images/facebookIcon.sv
 import { ReactComponent as GoogleLogo } from "../assets/images/googleIcon.svg"
 import { useNavigate } from "react-router-dom"
 import Api from "../lib/api/Api"
+import routes from "../resources/routes/routes"
 
 export const EMAIL_ERR_MSSG = "A valid email is required!"
 export const PASS_ERR_MSSG = "A valid password is required!"
@@ -93,8 +94,6 @@ export default function SignIn() {
   }, [email, pass, navigate])
 
   const onSignInGoogle = useCallback(() => {
-
-
     // Disable other buttons and set loading
     setSignInDisabled(true)
     setSignInFacebookDisabled(true)
@@ -167,7 +166,7 @@ export default function SignIn() {
           className="auth-help"
           style={emailErrMssg || passErrMssg ? { marginTop: "8px" } : { marginTop: "12px" }}
         >
-          Don't have an account? Create one <a className="auth-help-link" href="signup">here</a>
+          Don't have an account? Create one <a className="auth-help-link" href={routes.signUp}>here</a>
         </p>
       </AuthContainer>
     </PageContainer>

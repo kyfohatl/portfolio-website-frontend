@@ -7,6 +7,8 @@ describe("Regular sign in", () => {
     cy.clearDb()
     // Create test user
     cy.signUp(USERNAME, PASSWORD)
+    // Sign out
+    cy.signOut()
   })
 
   beforeEach(() => {

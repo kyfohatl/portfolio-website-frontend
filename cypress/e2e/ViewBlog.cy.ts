@@ -19,11 +19,9 @@ describe("When viewing a blog that exists", () => {
     cy.clearDb()
     // Create test user
     cy.signUp(USERNAME, PASSWORD)
-    // Sign in
-    cy.signIn(USERNAME, PASSWORD)
     // Create test blog
     cy.createBlog(HTML, CSS, blogIdContainer)
-    // Sign out because for some reason sign in state persists (not sure why)
+    // Sign out because for some reason sign in state persists for the first test (not sure why)
     cy.signOut()
   })
 
@@ -46,6 +44,8 @@ describe("When viewing a blog that exists", () => {
     before(() => {
       // Create a second user
       cy.signUp(USERNAME2, PASSWORD2)
+      // Sign out
+      cy.signOut()
     })
 
     beforeEach(() => {
