@@ -8,9 +8,16 @@ describe("Regular sign up", () => {
       cy.clearDb()
     })
 
-    // TODO: Once sign up also signs the user in, this should be included in the test
-    it("Creates an account for the user and redirects the user to the home page", () => {
+    it("Creates an account for the user, signs the user in, and redirects the user to the home page", () => {
       cy.signUp(USERNAME, PASSWORD)
+
+      // Ensure the user is signed in
+      cy.get('[data-testid="navbarSignOut"]').should("exist")
+      cy.get('[data-testid="navbarSignInBtn"]').should("not.exist")
+      cy.get('[data-testid="navbarSignUpBtn"]').should("not.exist")
+
+      // Ensure the user is redirected to the home page
+      cy.get('[data-testid="homePage"]').should("exist")
     })
   })
 
@@ -36,6 +43,8 @@ describe("Regular sign up", () => {
         cy.clearDb()
         // Create test user
         cy.signUp(USERNAME, "someOtherPassword32847*($&")
+        // Sign out
+        cy.signOut()
       })
 
       it("Displays an error on the username field stating that the username exists", () => {

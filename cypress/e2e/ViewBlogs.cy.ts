@@ -66,6 +66,7 @@ describe("When there are blogs to show", () => {
       }
 
       cy.createMultBlogs(blogs)
+      cy.signOut()
     })
   })
 
@@ -112,7 +113,7 @@ describe("When there are no blogs to show", () => {
     cy.clearDb()
   })
 
-  it.only("Displays a message stating that there are no blogs to show", () => {
+  it("Displays a message stating that there are no blogs to show", () => {
     cy.visit("/viewblogs")
     cy.get('[data-testid="noBlogsTxt"]').should("contain.text", "No blogs to show!")
   })

@@ -72,8 +72,11 @@ export default function SignUp() {
           setPageState({ status: "Error", errorCode: "500" })
         }
       } else {
-        // TODO: sing user in at the same time
         // New user was created
+        // Store the user id
+        localStorage.setItem("userId", response.success.userId)
+
+        // TODO: Redirect to user profile/home page when that page is ready
         // Navigate to home page
         navigate("/")
       }

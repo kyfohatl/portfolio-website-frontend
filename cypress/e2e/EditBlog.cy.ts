@@ -156,6 +156,8 @@ describe("Creating a new blog", () => {
       cy.clearDb()
       // Create a test user
       cy.signUp(USERNAME, PASSWORD)
+      // Sign out
+      cy.signOut()
     })
 
     beforeEach(() => {
@@ -206,8 +208,6 @@ describe("Editing an existing blog", () => {
     cy.clearDb()
     // Create a test user
     cy.signUp(USERNAME, PASSWORD)
-    //Sing in
-    cy.signIn(USERNAME, PASSWORD)
 
     // Intercept save blog requests to keep track of blog id
     cy.intercept("POST", "/blog/create", (req) => {
@@ -225,6 +225,8 @@ describe("Editing an existing blog", () => {
 
     // Ensure the blog is created before moving on
     cy.wait("@blogCreation")
+    // Sign out
+    cy.signOut()
   })
 
   beforeEach(() => {
@@ -508,7 +510,6 @@ describe("Tooltips", () => {
 
         cy.clearDb()
         cy.signUp(USERNAME, PASSWORD)
-        cy.signIn(USERNAME, PASSWORD)
         cy.visit("/editblog")
       })
 
@@ -541,7 +542,6 @@ describe("Tutorial popups", () => {
     function signUpAndGoToEditBlogPage() {
       cy.clearDb()
       cy.signUp(USERNAME, PASSWORD)
-      cy.signIn(USERNAME, PASSWORD)
       cy.visit("/editblog")
     }
 
@@ -715,7 +715,6 @@ describe("Tutorial popups", () => {
     beforeEach(() => {
       cy.clearDb()
       cy.signUp(USERNAME, PASSWORD)
-      cy.signIn(USERNAME, PASSWORD)
       cy.visit("/editblog")
       // Close the basic help popup
       cy.get('[data-testid="basicHelp"]').find("button").click()
