@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Editor, { TextInfo } from "../components/blog/Editor";
 import Button, { ButtonState } from "../components/Button";
 import PageContainer, { PageContainerState } from "../components/PageContainer";
@@ -18,6 +18,23 @@ import TutorialSequence from "../components/tutorial/TutorialSequence";
 import { hasData } from "../lib/api/helpers/auth/redirectAndClearData";
 import { TutorialPopupInfo } from "../components/tutorial/TutorialPopup";
 import Tooltip from "../components/tooltip/Tooltip";
+
+const HTML_TITLE = "HTML"
+const CSS_TITLE = "CSS"
+
+function makeOnTextChange(
+  setter: (newVal: TextInfo) => void,
+  routeParams: string | undefined,
+  blogId: string | undefined,
+  key: string
+) {
+  return (newVal: TextInfo) => {
+    // Set the new value with the setter
+    setter(newVal)
+    // If not editing an existing blog, store unsaved changes
+    if (!routeParams && !blogId) localStorage.setItem(`unsaved_${key}_Content`, newVal.text)
+  }
+}
 
 
 export default function EditBlog() {
@@ -77,6 +94,7 @@ export default function EditBlog() {
   }, [])
 
   // Load blog content from database if editing an existing blog
+  // If creating a new blog, check for unsaved content and load that
   useEffect(() => {
     async function getBlog() {
       setPageState({ status: "loading" })
@@ -104,6 +122,14 @@ export default function EditBlog() {
           setPageState({ status: "Error", errorCode: "500" })
           return
         }
+      } else {
+        // We are creating a new blog
+        // Check if the user is already editing a blog and if so, place the content in the editors
+        const unsavedHtml = localStorage.getItem(`unsaved_${HTML_TITLE}_Content`)
+        const unsavedCss = localStorage.getItem(`unsaved_${CSS_TITLE}_Content`)
+
+        if (unsavedHtml) setHtml({ text: unsavedHtml, change: { changeType: "Other" } })
+        if (unsavedCss) setCss({ text: unsavedCss, change: { changeType: "Other" } })
       }
 
       // Blog successfully retrieved without error. Reset page state back to normal
@@ -160,6 +186,9 @@ export default function EditBlog() {
       })
       // Save the returning blog id
       setBlogId(response.success.id)
+      // If there is any content tagged as "unsaved" in local storage, clear it
+      localStorage.removeItem(`unsaved_${HTML_TITLE}_Content`)
+      localStorage.removeItem(`unsaved_${CSS_TITLE}_Content`)
     } catch (err) {
       // Something went wrong
       console.error(err)
@@ -173,6 +202,9 @@ export default function EditBlog() {
     setShowHtmlTute(false)
     setShowHelpDisplay(true)
   }, [])
+
+  const onHtmlChange = useMemo(() => makeOnTextChange(setHtml, blogIdParam, blogId, HTML_TITLE), [blogIdParam, blogId])
+  const onCssChange = useMemo(() => makeOnTextChange(setCss, blogIdParam, blogId, CSS_TITLE), [blogIdParam, blogId])
 
   const HELP_BUTTON_SIZE = "38px"
 
@@ -229,8 +261,17 @@ export default function EditBlog() {
         }
       </div>
       <div className={styles.topPane}>
-        <Editor textInfo={html} setText={setHtml} title="HTML" ref={htmlTitleRef} />
-        <Editor textInfo={css} setText={setCss} title="CSS" />
+        <Editor
+          textInfo={html}
+          setText={onHtmlChange}
+          title={HTML_TITLE}
+          ref={htmlTitleRef}
+        />
+        <Editor
+          textInfo={css}
+          setText={onCssChange}
+          title={CSS_TITLE}
+        />
       </div>
       <div className={styles.botPane}>
         <iframe
