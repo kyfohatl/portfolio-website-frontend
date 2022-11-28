@@ -338,7 +338,7 @@ describe("Unsaved work", () => {
   })
 
   afterAll(() => {
-    // Reset the Api.saveBlog mock
+    // Restore the Api.saveBlog mock
     saveBlogSpy.mockRestore()
   })
 
@@ -498,5 +498,39 @@ describe("Unsaved work", () => {
     })
   })
 
-  describe("When editing an existing blog", () => { })
+  describe("When editing an existing blog", () => {
+    const BLOG_ID = "someBlogId"
+
+    const setItemMock = jest.fn()
+    let getBlogMock: jest.SpyInstance
+
+    beforeEach(() => {
+      // Mock the Api.getBlog method
+      getBlogMock = jest.spyOn(Api, "getBlog").mockImplementation(async (blogId: string) => {
+        return { success: { blog: { id: BLOG_ID, html: "someHtml", css: "someCss" } } }
+      })
+
+      // Mock the local storage setItem method
+      Storage.prototype.setItem = setItemMock
+    })
+
+    afterAll(() => {
+      // Restore the Api.getBlog mock
+      getBlogMock.mockRestore()
+    })
+
+    it("Does not store any unsaved work", async () => {
+      setup(BASE_PATH + BLOG_ID, BASE_PATH + ":blogId")
+
+      // Before grabbing the first editor, wait for it to appear as the page will initially be loading the blog
+      const htmlTextbox = within(await screen.findByTestId("HTMLEditor")).getByRole("textbox")
+      const cssTextbox = within(screen.getByTestId("CSSEditor")).getByRole("textbox")
+
+      userEvent.type(htmlTextbox, "some more html")
+      userEvent.type(cssTextbox, "some more css")
+
+      // Ensure nothing was stored in local storage
+      expect(setItemMock).not.toHaveBeenCalled()
+    })
+  })
 })
