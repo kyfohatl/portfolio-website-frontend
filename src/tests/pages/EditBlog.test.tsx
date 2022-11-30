@@ -512,6 +512,11 @@ describe("Unsaved work", () => {
 
       // Mock the local storage setItem method
       Storage.prototype.setItem = setItemMock
+      // Mock the local storage getItem method to make it appear that we are signed in
+      Storage.prototype.getItem = (key: string) => {
+        if (key === "userId") return "someUserId"
+        return null
+      }
     })
 
     afterAll(() => {
