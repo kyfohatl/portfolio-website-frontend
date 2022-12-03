@@ -4,7 +4,7 @@ import styles from "./Deleting.module.css"
 
 export type DeletingStyleOverrides = { rubbishStyles: CSSProperties, lidStyles: CSSProperties }
 
-interface DeletingProps extends AnimationProps {
+export interface DeletingProps extends AnimationProps {
   overrides?: DeletingStyleOverrides
 }
 

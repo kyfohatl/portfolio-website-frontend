@@ -4,7 +4,7 @@ import styles from "./Saving.module.css"
 
 export type SavingStyleOverrides = { tickStyles: CSSProperties, circleStyles: CSSProperties }
 
-interface SavingProps extends AnimationProps {
+export interface SavingProps extends AnimationProps {
   overrides?: SavingStyleOverrides
 }
 
