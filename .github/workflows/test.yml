@@ -80,9 +80,9 @@ jobs:
           wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
           sudo apt-get update
           sudo apt-get install postgresql-12
-          ls -a
           sudo service postgresql start
           sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '1234pass';"
+          ls -a
           sudo -u postgres psql -f backend/setupTestDatabase.sql
       
       # Setup backend server
