@@ -24,7 +24,7 @@ interface SubmitButton {
 
 type ButtonType = CallBackButton | SubmitButton
 
-interface ButtonProps {
+export interface ButtonProps {
   text?: string,
   type: ButtonType,
   backgroundColor?: string,

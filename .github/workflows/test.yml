@@ -39,7 +39,7 @@ jobs:
   runE2eTests:
     name: Run end-to-end tests
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     # Setup required environment variables for backend
     env:

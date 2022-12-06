@@ -52,7 +52,9 @@ declare global {
       inputBoxShouldDisplayError(type: "Email" | "Password" | "Confirm Password", errTxt: string): Chainable<void>,
       createBlog(html: string, css: string, updatable?: Updatable<string>): Chainable<void>,
       verifyBlog(blogId: string, html: string, css: string): Chainable<void>,
-      createMultBlogs(blogs: TestBlogInfo[]): Chainable<void>
+      createMultBlogs(blogs: TestBlogInfo[]): Chainable<void>,
+      removeEditBlogTutorialPopupsSignedOut(): Chainable<void>,
+      removeEditBlogTutorialPopupsSignedIn(): Chainable<void>
     }
   }
 }
@@ -153,7 +155,7 @@ Cypress.Commands.add("createBlog", (html: string, css: string, updatable?: Updat
   }).as("createBlog")
 
   cy.visit("/editblog")
-  cy.get('[data-testid="basicHelp"]').find("button").click()
+  cy.removeEditBlogTutorialPopupsSignedIn()
   cy.get('[data-testid="HTMLEditor"]').find("textarea").type(html, { parseSpecialCharSequences: false })
   cy.get('[data-testid="CSSEditor"]').find("textarea").type(css, { parseSpecialCharSequences: false })
   cy.get('[data-testid="saveBtn"]').click()
@@ -175,4 +177,15 @@ Cypress.Commands.add("verifyBlog", (blogId: string, html: string, css: string) =
 // Creates all given blogs on the backend
 Cypress.Commands.add("createMultBlogs", (blogs: TestBlogInfo[]) => {
   cy.request("POST", `${Cypress.env("backendAddr")}/test/blog/createall`, { blogs })
+})
+
+// Remove all tutorial popups from the edit blog page, for use when signed out
+Cypress.Commands.add("removeEditBlogTutorialPopupsSignedOut", () => {
+  cy.get('[data-testid="basicHelp"]').find("button").click()
+  cy.get('[data-testid="loginHelp"]').find("button").click()
+})
+
+// Remove all tutorial popups from the edit blog page, for use when signed in
+Cypress.Commands.add("removeEditBlogTutorialPopupsSignedIn", () => {
+  cy.get('[data-testid="basicHelp"]').find("button").click()
 })

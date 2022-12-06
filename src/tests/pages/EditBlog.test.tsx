@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, waitForElementToBeRemoved } from "@testing-library/react"
+import { fireEvent, render, screen, waitFor, waitForElementToBeRemoved, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { MemoryRouter, Route, Routes } from "react-router-dom"
 import Api from "../../lib/api/Api"
@@ -322,5 +322,220 @@ describe("When there is an invalid blog id in the page route params", () => {
   it("Outputs the error to console error", async () => {
     setup(BASE_PATH + BLOG_ID, BASE_PATH + ":blogId")
     await waitFor(() => expect(consoleErrMock).toHaveBeenCalledWith(ERROR))
+  })
+})
+
+describe("Unsaved work", () => {
+  let saveBlogSpy: jest.SpyInstance
+
+  beforeEach(() => {
+    // Mock the Api.saveBlog method
+    saveBlogSpy = jest.spyOn(Api, "saveBlog").mockImplementation(
+      async (html: string, css: string, blogId?: string | null) => {
+        return { success: { id: "someBlogId" } }
+      }
+    )
+  })
+
+  afterAll(() => {
+    // Restore the Api.saveBlog mock
+    saveBlogSpy.mockRestore()
+  })
+
+  describe("When creating a new blog", () => {
+    function itBehavesLikeStoreUnsavedAdditions(prevHtml: string, prevCss: string) {
+      describe("When adding more unsaved content", () => {
+        const setItemMock = jest.fn()
+
+        beforeEach(() => {
+          // Mock the local storage setter
+          Storage.prototype.setItem = setItemMock
+        })
+
+        it("Saves new content to local storage", () => {
+          setup(BASE_PATH, BASE_PATH)
+
+          const htmlTextbox = within(screen.getByTestId("HTMLEditor")).getByRole("textbox")
+          const cssTextbox = within(screen.getByTestId("CSSEditor")).getByRole("textbox")
+
+          userEvent.type(htmlTextbox, "A")
+          expect(setItemMock).toHaveBeenCalledWith("unsaved_HTML_Content", prevHtml + "A")
+
+          userEvent.type(cssTextbox, "A")
+          expect(setItemMock).toHaveBeenCalledWith("unsaved_CSS_Content", prevCss + "A")
+        })
+      })
+    }
+
+    function itBehavesLikeClearStorage() {
+      describe("When adding content and then saving the work", () => {
+        const removeItemMock = jest.fn()
+
+        beforeEach(() => {
+          // Mock the local storage removeItem method
+          Storage.prototype.removeItem = removeItemMock
+        })
+
+        it("Clears stored content in local storage", async () => {
+          setup(BASE_PATH, BASE_PATH)
+          const htmlTextbox = within(screen.getByTestId("HTMLEditor")).getByRole("textbox")
+          const cssTextbox = within(screen.getByTestId("CSSEditor")).getByRole("textbox")
+          const saveBtn = screen.getByTestId("saveBtn")
+
+          userEvent.type(htmlTextbox, "A")
+          userEvent.type(cssTextbox, "A")
+          userEvent.click(saveBtn)
+
+          // Wait for the "saving" to complete
+          await screen.findByTestId("savingAnimation")
+
+          expect(removeItemMock).toHaveBeenCalledWith("unsaved_HTML_Content")
+          expect(removeItemMock).toHaveBeenCalledWith("unsaved_CSS_Content")
+        })
+      })
+    }
+
+    describe("When creating a new blog with unsaved work in local storage", () => {
+      const HTML = "some unsaved html!"
+      const CSS = "some unsaved css"
+
+      beforeEach(() => {
+        // Mock an unsaved blog in local storage
+        Storage.prototype.getItem = (key: string) => {
+          switch (key) {
+            case "userId":
+              // Return a fake user id so that the component thinks we are logged in
+              return "someUserId"
+            case "unsaved_HTML_Content":
+              return HTML
+            default:
+              return CSS
+          }
+        }
+      })
+
+      it("Fills the editors with the unsaved content", () => {
+        setup(BASE_PATH, BASE_PATH)
+        const htmlTextbox = within(screen.getByTestId("HTMLEditor")).getByRole("textbox")
+        const cssTextbox = within(screen.getByTestId("CSSEditor")).getByRole("textbox")
+
+        expect(htmlTextbox).toHaveTextContent(HTML)
+        expect(cssTextbox).toHaveTextContent(CSS)
+      })
+
+      itBehavesLikeStoreUnsavedAdditions(HTML, CSS)
+
+      itBehavesLikeClearStorage()
+    })
+
+    describe("When creating a new blog with no unsaved work in local storage", () => {
+      beforeEach(() => {
+        // Mock local storage
+        Storage.prototype.getItem = (key: string) => {
+          switch (key) {
+            case "userId":
+              // Return a fake user id so that the component thinks we are logged in
+              return "someUserId"
+            default:
+              return null
+          }
+        }
+      })
+
+      it("Does not display any content in any of the editors", () => {
+        setup(BASE_PATH, BASE_PATH)
+        const htmlTextbox = within(screen.getByTestId("HTMLEditor")).getByRole("textbox")
+        const cssTextbox = within(screen.getByTestId("CSSEditor")).getByRole("textbox")
+
+        expect(htmlTextbox).toHaveTextContent("")
+        expect(cssTextbox).toHaveTextContent("")
+      })
+
+      itBehavesLikeStoreUnsavedAdditions("", "")
+
+      itBehavesLikeClearStorage()
+    })
+
+    describe("After saving a blog", () => {
+      const HTML = "some html that is now saved"
+      const CSS = "some css that is now saved"
+      let setItemMock = jest.fn()
+
+      beforeEach(() => {
+        // Mock local storage getItem to make the component think we are logged in
+        Storage.prototype.getItem = (key: string) => {
+          if (key === "userId") return "someUserId"
+          return null
+        }
+
+        // Mock local storage setItem to keep track of what is being stored
+        Storage.prototype.setItem = setItemMock
+      })
+
+      it("Does not store any further unsaved changes", async () => {
+        setup(BASE_PATH, BASE_PATH)
+
+        const htmlTextbox = within(screen.getByTestId("HTMLEditor")).getByRole("textbox")
+        const cssTextbox = within(screen.getByTestId("CSSEditor")).getByRole("textbox")
+        const saveBtn = screen.getByTestId("saveBtn")
+
+        // Save some initial blog
+        userEvent.type(htmlTextbox, HTML)
+        userEvent.type(cssTextbox, CSS)
+        userEvent.click(saveBtn)
+
+        // Wait for saving to "finish"
+        await screen.findByTestId("savingAnimation")
+
+        // Now clear the local storage mock and type some additional changes
+        setItemMock.mockClear()
+        userEvent.type(htmlTextbox, "more html")
+        userEvent.type(cssTextbox, "more css")
+
+        // Ensure that the additional changes were not stored
+        expect(setItemMock).not.toHaveBeenCalled()
+      })
+    })
+  })
+
+  describe("When editing an existing blog", () => {
+    const BLOG_ID = "someBlogId"
+
+    const setItemMock = jest.fn()
+    let getBlogMock: jest.SpyInstance
+
+    beforeEach(() => {
+      // Mock the Api.getBlog method
+      getBlogMock = jest.spyOn(Api, "getBlog").mockImplementation(async (blogId: string) => {
+        return { success: { blog: { id: BLOG_ID, html: "someHtml", css: "someCss" } } }
+      })
+
+      // Mock the local storage setItem method
+      Storage.prototype.setItem = setItemMock
+      // Mock the local storage getItem method to make it appear that we are signed in
+      Storage.prototype.getItem = (key: string) => {
+        if (key === "userId") return "someUserId"
+        return null
+      }
+    })
+
+    afterAll(() => {
+      // Restore the Api.getBlog mock
+      getBlogMock.mockRestore()
+    })
+
+    it("Does not store any unsaved work", async () => {
+      setup(BASE_PATH + BLOG_ID, BASE_PATH + ":blogId")
+
+      // Before grabbing the first editor, wait for it to appear as the page will initially be loading the blog
+      const htmlTextbox = within(await screen.findByTestId("HTMLEditor")).getByRole("textbox")
+      const cssTextbox = within(screen.getByTestId("CSSEditor")).getByRole("textbox")
+
+      userEvent.type(htmlTextbox, "some more html")
+      userEvent.type(cssTextbox, "some more css")
+
+      // Ensure nothing was stored in local storage
+      expect(setItemMock).not.toHaveBeenCalled()
+    })
   })
 })

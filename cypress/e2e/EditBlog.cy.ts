@@ -1,3 +1,4 @@
+import Updatable from "../../src/lib/Updatable"
 import { cardTexts } from "../../src/resources/editBlogHelpCards/cardTexts"
 import testTooltip from "../support/helpers/testTooltip"
 
@@ -777,6 +778,105 @@ describe("Tutorial popups", () => {
         cy.get('[data-testid="helpDisplayCloseBtn"]').click()
         cy.get('[data-testid="htmlHelp"]').should("not.exist")
       })
+    })
+  })
+})
+
+describe("Unsaved work", () => {
+  const USERNAME = "someUnsavedUsername"
+  const PASSWORD = "somePassword374#*&^%@"
+  const HTML = "some html"
+  const CSS = "some css"
+
+  describe("When creating a new blog", () => {
+    describe("When adding some unsaved work", () => {
+      beforeEach(() => {
+        cy.visit("/editblog")
+        // Remove tutorial popups
+        cy.removeEditBlogTutorialPopupsSignedOut()
+      })
+
+      it("Stores the work, and loads it again when going back to create a new blog", () => {
+        // Add some work
+        cy.get('[data-testid="HTMLEditor"]').find("textarea").type(HTML)
+        cy.get('[data-testid="CSSEditor"]').find("textarea").type(CSS)
+
+        // Now go to some other page
+        cy.visit("/")
+
+        // Now go back to the edit blog page and see if the unsaved work is loaded in
+        cy.visit("/editblog")
+        cy.get('[data-testid="HTMLEditor"]').find("textarea").should("contain.text", HTML)
+        cy.get('[data-testid="CSSEditor"]').find("textarea").should("contain.text", CSS)
+      })
+    })
+
+    describe("When saving the work", () => {
+      beforeEach(() => {
+        cy.clearDb()
+        // Create an account to allow saving of work
+        cy.signUp(USERNAME, PASSWORD)
+      })
+
+      describe("When adding some work, then saving it", () => {
+        it("Clears any stored work, and will display blank editors when going back to create a new blog", () => {
+          // Create a blog and save it
+          cy.createBlog(HTML, CSS)
+          // Now go to another page
+          cy.visit("/")
+          // Now come back, and ensure that the editors are blank
+          cy.visit("/editblog")
+          cy.get('[data-testid="HTMLEditor"]').find("textarea").should("have.text", "")
+          cy.get('[data-testid="CSSEditor"]').find("textarea").should("have.text", "")
+        })
+      })
+
+      describe("When adding some work, saving it, then adding some more unsaved work", () => {
+        it("Does not store the additional unsaved work, and will not display it when going away and coming back to the edit blog page", () => {
+          // Create a blog and save it
+          cy.createBlog(HTML, CSS)
+          // Now add some more content, but don't save it
+          cy.get('[data-testid="HTMLEditor"]').find("textarea").type("some more html")
+          cy.get('[data-testid="CSSEditor"]').find("textarea").type("some more css")
+          // Go to some other page
+          cy.visit("/")
+          // Now come back to the edit blog page, and ensure the editors are blank
+          cy.visit("/editblog")
+          cy.get('[data-testid="HTMLEditor"]').find("textarea").should("have.text", "")
+          cy.get('[data-testid="CSSEditor"]').find("textarea").should("have.text", "")
+        })
+      })
+    })
+  })
+
+  describe("When editing an existing blog", () => {
+    const blogIdContainer = new Updatable<string>()
+
+    beforeEach(() => {
+      cy.clearDb()
+      // Create a user to allow creation of a blog
+      cy.signUp(USERNAME, PASSWORD)
+      // Create some blog
+      cy.createBlog(HTML, CSS, blogIdContainer)
+    })
+
+    it("Does not store any unsaved work, and will not load it in whether creating a new blog or when trying to edit the same blog again", () => {
+      cy.visit(`/editblog/${blogIdContainer.getContent()}`)
+
+      // Make some changes, but don't save them
+      cy.get('[data-testid="HTMLEditor"]').find("textarea").type("some additional HTML")
+      cy.get('[data-testid="CSSEditor"]').find("textarea").type("some additional CSS")
+
+      // Now go to create a new blog, and ensure that the editors are blank
+      cy.visit("/editblog")
+      cy.get('[data-testid="HTMLEditor"]').find("textarea").should("have.text", "")
+      cy.get('[data-testid="CSSEditor"]').find("textarea").should("have.text", "")
+
+      // Also go to edit our blog again, and ensure only the original blog content is there (and not any unsaved work)
+      cy.visit(`/editblog/${blogIdContainer.getContent()}`)
+      cy.get('[data-testid="HTMLEditor"]').find("textarea").should("have.text", HTML)
+      cy.get('[data-testid="CSSEditor"]').find("textarea").should("have.text", CSS)
+
     })
   })
 })
