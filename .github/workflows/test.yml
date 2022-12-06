@@ -77,13 +77,13 @@ jobs:
       - name: Setup Postgres
         run: |
           cd backend
-          ls -lha
           sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
           wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
           sudo apt-get update
           sudo apt-get install postgresql-12
           sudo service postgresql start
           sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '1234pass';"
+          ls -lha
           sudo -u postgres psql -f setupTestDatabase.sql
       
       # Setup backend server
