@@ -39,7 +39,6 @@ import GitHubLogo from "../assets/images/homePageDemos/techstackLogos/github_log
 import GithubActionsLogo from "../assets/images/homePageDemos/techstackLogos/githubActions_logo.png"
 import FigmaLogo from "../assets/images/homePageDemos/techstackLogos/figma_logo.png"
 import QuestionMark from "../components/animation/QuestionMark"
-import RepeatingAnimation from "../components/animation/repeatingAnimation/RepeatingAnimation"
 
 export default function Home() {
   // For scrolling to the first feature display card upon clicking the "Explore" button
@@ -178,24 +177,23 @@ export default function Home() {
                 width="120px"
                 height="46px"
               />
-              <RepeatingAnimation
-                animComponentProps={{
-                  component: QuestionMark,
-                  props: { width: "38px", height: "38px" },
-                  override: {
-                    circle: { animationName: "" },
-                    marker: { animationName: "" },
-                    dot: { animationName: "" }
-                  }
-                }}
-                buttonProps={{
-                  type: { type: "submit" },
-                  width: "38px",
-                  height: "38px",
-                  padding: "0px",
-                  borderRadius: "50px",
-                  backgroundColor: "transparent"
-                }}
+              <Button
+                type={{ type: "submit" }}
+                width="38px"
+                height="38px"
+                padding="0px"
+                borderRadius="50px"
+                backgroundColor="transparent"
+                disabled
+                icon={<QuestionMark
+                  width="38px"
+                  height="38px"
+                  overrides={{
+                    circle: { animationIterationCount: "infinite" },
+                    marker: { animationIterationCount: "infinite" },
+                    dot: { animationIterationCount: "infinite" }
+                  }}
+                />}
               />
               <Loading overrideStyles={{ width: "120px", height: "120px" }} />
             </div>
