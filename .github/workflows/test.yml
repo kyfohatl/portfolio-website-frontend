@@ -39,7 +39,7 @@ jobs:
   runE2eTests:
     name: Run end-to-end tests
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     # Setup required environment variables for backend
     env:
@@ -76,15 +76,10 @@ jobs:
       # Setup Postgres for backend
       - name: Setup Postgres
         run: |
-          cd backend
-          sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-          wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-          sudo apt-get update
-          sudo apt-get install postgresql-12
+          sudo apt install postgresql postgresql-contrib
           sudo service postgresql start
           sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '1234pass';"
-          ls -lha
-          sudo -u postgres psql -f setupTestDatabase.sql
+          sudo -u postgres psql -f backend/setupTestDatabase.sql
       
       # Setup backend server
       - name: Setup backend server
