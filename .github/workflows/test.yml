@@ -82,8 +82,8 @@ jobs:
           sudo apt-get install postgresql-12
           sudo service postgresql start
           sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '1234pass';"
-          ls -a
-          sudo -u postgres psql -f backend/setupTestDatabase.sql
+          sudo cd backend
+          sudo -u postgres psql -f setupTestDatabase.sql
       
       # Setup backend server
       - name: Setup backend server
