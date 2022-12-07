@@ -99,6 +99,7 @@ export default function SignIn() {
     setSignInFacebookDisabled(true)
     setSignInGoogleState({ state: "loading" })
 
+    // Redirect
     window.location.href = `${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/login/google`
   }, [])
 
@@ -108,6 +109,7 @@ export default function SignIn() {
     setSignInGoogleDisabled(true)
     setSignInFacebookState({ state: "loading" })
 
+    // Redirect
     window.location.href = `${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/login/facebook`
   }, [])
 
