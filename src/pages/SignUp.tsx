@@ -7,6 +7,8 @@ import Button, { ButtonState } from "../components/Button"
 import PageContainer, { PageContainerState } from "../components/PageContainer"
 import { useNavigate } from "react-router-dom"
 import Api from "../lib/api/Api"
+import { ReactComponent as FacebookLogo } from "../assets/images/facebookIcon.svg"
+import { ReactComponent as GoogleLogo } from "../assets/images/googleIcon.svg"
 
 export const EMAIL_ERR_MSSG = "A valid email is required!"
 export const PASS_ERR_MSSG = "A valid password is required!"
@@ -21,14 +23,20 @@ export default function SignUp() {
   const [emailErrMssg, setEmailErrMssg] = useState("")
   const [passErrMssg, setPassErrMssg] = useState("")
   const [confPassErrMssg, setConfPassErrMssg] = useState("")
-  // Button state
+  // Button disabled states
+  const [signUpDisabled, setSignUpDisabled] = useState(false)
+  const [signInGoogleDisabled, setSignInGoogleDisabled] = useState(false)
+  const [signInFacebookDisabled, setSignInFacebookDisabled] = useState(false)
+  // Button loading states
   const [signUpState, setSignUpState] = useState<ButtonState>({ state: "normal" })
+  const [signInGoogleState, setSignInGoogleState] = useState<ButtonState>({ state: "normal" })
+  const [signInFacebookState, setSignInFacebookState] = useState<ButtonState>({ state: "normal" })
   // Page state
   const [pageState, setPageState] = useState<PageContainerState>({ status: "normal" })
 
   const navigate = useNavigate()
 
-  const onSubmit = useCallback(async (event: React.FormEvent) => {
+  const onSignUp = useCallback(async (event: React.FormEvent) => {
     // Prevent default form behavior
     event.preventDefault()
 
@@ -55,6 +63,9 @@ export default function SignUp() {
     // No input errors detected
     // Set button to loading state
     setSignUpState({ state: "loading" })
+    // Disable other sign in buttons
+    setSignInFacebookDisabled(true)
+    setSignInGoogleDisabled(true)
 
     try {
       // Post new user
@@ -66,6 +77,9 @@ export default function SignUp() {
           setEmailErrMssg(response.complexError.email)
           // Set button back to normal state
           setSignUpState({ state: "normal" })
+          // Enable other sign in buttons
+          setSignInFacebookDisabled(false)
+          setSignInGoogleDisabled(false)
         } else {
           // Something went wrong
           console.error(response)
@@ -87,6 +101,26 @@ export default function SignUp() {
     }
   }, [email, pass, confPass, navigate])
 
+  const onSignInGoogle = useCallback(() => {
+    // Disable other buttons and set loading
+    setSignUpDisabled(true)
+    setSignInFacebookDisabled(true)
+    setSignInGoogleState({ state: "loading" })
+
+    // Redirect
+    window.location.href = `${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/login/google`
+  }, [])
+
+  const onSignInFacebook = useCallback(() => {
+    // Disable other buttons and set loading
+    setSignUpDisabled(true)
+    setSignInGoogleDisabled(true)
+    setSignInFacebookState({ state: "loading" })
+
+    // Redirect
+    window.location.href = `${process.env.REACT_APP_BACKEND_SERVER_ADDR}auth/login/facebook`
+  }, [])
+
   return (
     <PageContainer
       contentStyle={{ display: "flex", flexGrow: 1, justifyContent: "center", alignItems: "center" }}
@@ -94,7 +128,7 @@ export default function SignUp() {
       state={pageState}
       contentTestId="signUpPage"
     >
-      <AuthContainer title="Sign up" onSubmit={onSubmit}>
+      <AuthContainer title="Sign up" onSubmit={onSignUp} height="510px">
         <InputText
           label="Email"
           text={email}
@@ -121,7 +155,29 @@ export default function SignUp() {
           height="36px"
           text="Sign up"
           buttonState={signUpState}
+          disabled={signUpDisabled}
           btnTestId="signUpBtn"
+        />
+        <Button
+          type={{ type: "button", callBack: onSignInGoogle }}
+          width="285px"
+          height="36px"
+          text="Sign in with Google"
+          backgroundColor="#FFFFFF"
+          color="#000000"
+          icon={<GoogleLogo width={28} height={28} />}
+          buttonState={signInGoogleState}
+          disabled={signInGoogleDisabled}
+        />
+        <Button
+          type={{ type: "button", callBack: onSignInFacebook }}
+          width="285px"
+          height="36px"
+          text="Sign in with Facebook"
+          backgroundColor="#4267B2"
+          icon={<FacebookLogo width={28} height={28} />}
+          buttonState={signInFacebookState}
+          disabled={signInFacebookDisabled}
         />
         <p
           className="auth-help"
