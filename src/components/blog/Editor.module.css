@@ -50,6 +50,7 @@
   line-height: 20px;
   flex-grow: 1;
   overflow: hidden;
+  tab-size: 4;
 }
 
 .innerContainer::-webkit-scrollbar {
