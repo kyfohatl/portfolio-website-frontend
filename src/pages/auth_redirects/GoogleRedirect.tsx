@@ -20,7 +20,7 @@ export default function GoogleRedirect() {
   }, [userId, navigate])
 
   return (
-    <PageContainer state={pageState}>
+    <PageContainer title="Google Sign In" state={pageState}>
     </PageContainer>
   )
 }

@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event"
 import { MemoryRouter, Route, Routes } from "react-router-dom"
 import Api from "../../lib/api/Api"
 import { BackendError, BackendResponse } from "../../lib/commonTypes"
-import EditBlog from "../../pages/EditBlog"
+import EditBlog, { CREATE_BLOG_TITLE, EDIT_BLOG_TITLE } from "../../pages/EditBlog"
 
 // Mock the QuestionMark animated icon as we can't test the animation
 jest.mock("../../components/animation/QuestionMark", () => {
@@ -39,6 +39,37 @@ describe("When there is no blog id in the page route params", () => {
 
     expect(htmlEditor).toHaveTextContent("")
     expect(cssEditor).toHaveTextContent("")
+  })
+
+  describe("Page title", () => {
+    function itBehavesLikeShowCorrectTitle(title: string) {
+      it("Sets the page title to indicate that a new blog is being created", () => {
+        setup(BASE_PATH, BASE_PATH)
+        expect(document.title.includes(title)).toBe(true)
+      })
+    }
+
+    describe("When there is no unsaved work in local storage", () => {
+      itBehavesLikeShowCorrectTitle(CREATE_BLOG_TITLE)
+    })
+
+    describe("When there is unsaved work in local storage", () => {
+      beforeEach(() => {
+        // Mock an unsaved blog in local storage
+        Storage.prototype.getItem = (key: string) => {
+          switch (key) {
+            case "userId":
+              return "someUserId"
+            case "unsaved_HTML_Content":
+              return "some html content"
+            default:
+              return "some css content"
+          }
+        }
+      })
+
+      itBehavesLikeShowCorrectTitle(CREATE_BLOG_TITLE)
+    })
   })
 
   describe("When the user is not signed in", () => {
@@ -289,6 +320,16 @@ describe("When there is a valid blog id in the page route params", () => {
       // Wait for the loading to finish before allowing component unmount (which happens when the "Saving"
       // animation appears)
       await screen.findByTestId("savingAnimation")
+    })
+  })
+
+  describe("Page title", () => {
+    it("Sets the page title to indicate that an existing blog is being edited", async () => {
+      setup(BASE_PATH + BLOG_ID, PATH)
+      // Wait until the mock api has finished before continuing
+      await screen.findByText(HTML)
+
+      expect(document.title.includes(EDIT_BLOG_TITLE)).toBe(true)
     })
   })
 })

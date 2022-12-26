@@ -33,9 +33,17 @@ function itBehavesLikeShowNavbar(setup: () => void) {
   })
 }
 
+describe("Page title", () => {
+  it("Sets the page title to the given title", () => {
+    const TITLE = "Some Test Title"
+    render(<PageContainer title={TITLE}>{CHILDREN}</PageContainer>)
+    expect(document.title.includes(TITLE)).toBe(true)
+  })
+})
+
 describe("When the page is in the normal state", () => {
   function setup() {
-    render(<PageContainer state={{ status: "normal" }}>{CHILDREN}</PageContainer>)
+    render(<PageContainer title="" state={{ status: "normal" }}>{CHILDREN}</PageContainer>)
   }
 
   itBehavesLikeShowNavbar(setup)
@@ -63,7 +71,7 @@ describe("When the page is in the normal state", () => {
 
 describe("When the page is in the loading state", () => {
   function setup() {
-    render(<PageContainer state={{ status: "loading" }}>{CHILDREN}</PageContainer>)
+    render(<PageContainer title="" state={{ status: "loading" }}>{CHILDREN}</PageContainer>)
   }
 
   it("Displays the Loading component", () => {
@@ -86,7 +94,7 @@ describe("When the page is in the error state", () => {
   const ERROR_CODE = "403"
 
   function setup() {
-    render(<PageContainer state={{ status: "Error", errorCode: ERROR_CODE }}>{CHILDREN}</PageContainer>)
+    render(<PageContainer title="" state={{ status: "Error", errorCode: ERROR_CODE }}>{CHILDREN}</PageContainer>)
   }
 
   itBehavesLikeShowNavbar(setup)

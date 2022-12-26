@@ -3,10 +3,13 @@ import "./PageContainer.css"
 import Navbar from "./Navbar"
 import Loading from "./Loading"
 import Error from "./Error"
+import { useEffect } from "react"
+import setPageTitle from "../lib/helpers/setPageTitle"
 
 export type PageContainerState = { status: "normal" | "loading" } | { status: "Error", errorCode: string }
 
 interface PageContainerProps {
+  title: string,
   backgroundStyle?: React.CSSProperties,
   contentStyle?: React.CSSProperties,
   contentBlockStyle?: React.CSSProperties,
@@ -17,6 +20,7 @@ interface PageContainerProps {
 }
 
 export default function PageContainer({
+  title,
   backgroundStyle = {},
   contentStyle = {},
   contentBlockStyle = {},
@@ -25,6 +29,11 @@ export default function PageContainer({
   contentTestId,
   navbarLoginBtnRef
 }: PageContainerProps) {
+  // Set the page title
+  useEffect(() => {
+    setPageTitle(title)
+  }, [title])
+
   if (state.status === "loading") {
     contentStyle = { alignItems: "center" }
     contentBlockStyle = { maxHeight: "15%", maxWidth: "15%" }

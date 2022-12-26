@@ -11,6 +11,8 @@ import { BackendError } from "../lib/commonTypes";
 import Deleting from "../components/animation/Deleting";
 import Tooltip from "../components/tooltip/Tooltip";
 
+export const VIEW_BLOG_TITLE = "View A Blog"
+
 export default function ViewBlog() {
   const [blog, setBlog] = useState<BlogProps>()
   const [pageState, setPageState] = useState<PageContainerState>({ status: "normal" })
@@ -108,6 +110,7 @@ export default function ViewBlog() {
 
   return (
     <PageContainer
+      {...((blog && blog.summaryTitle) ? { title: blog.summaryTitle } : { title: VIEW_BLOG_TITLE })}
       state={pageState}
       contentStyle={{ marginTop: "42px", marginBottom: "36px" }}
       contentBlockStyle={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "14px" }}

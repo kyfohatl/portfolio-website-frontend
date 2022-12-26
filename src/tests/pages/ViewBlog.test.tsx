@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event"
 import { MemoryRouter, Route, Routes, useParams } from "react-router-dom"
 import Api, { BlogProps } from "../../lib/api/Api"
 import { BackendError, FrontendError } from "../../lib/commonTypes"
-import ViewBlog from "../../pages/ViewBlog"
+import ViewBlog, { VIEW_BLOG_TITLE } from "../../pages/ViewBlog"
 
 // Set up the Api.getBlog spy
 const getBlogMock = jest.spyOn(Api, "getBlog")
@@ -223,5 +223,47 @@ describe("When given an invalid blog id", () => {
     setup()
     const errHeading = await screen.findByRole("heading", { name: new RegExp(`Error ${ERROR.code}`) })
     expect(errHeading).toBeInTheDocument()
+  })
+})
+
+describe("Page title", () => {
+  const BLOG: BlogProps = {
+    html: "someHtml",
+    css: "someCss",
+    id: BLOG_ID,
+    userId: "someUserId",
+    creationDate: "1/1/1",
+    summaryTitle: "",
+    summaryDescription: "someSummaryDescription",
+    summaryImg: "http//:someImage",
+    tags: ["tag1", "tag2"]
+  }
+
+  beforeEach(() => {
+    getBlogMock.mockResolvedValue({ success: { blog: BLOG } })
+  })
+
+  describe("When the blog has a summary title", () => {
+    beforeEach(() => {
+      BLOG.summaryTitle = "someSummaryTitle"
+    })
+
+    it("Displays the summary title of the blog in the page title", async () => {
+      setup()
+      await screen.findByTitle("output")
+      expect(document.title.includes(BLOG.summaryTitle)).toBe(true)
+    })
+  })
+
+  describe("When the blog does not have a summary title", () => {
+    beforeEach(() => {
+      BLOG.summaryTitle = ""
+    })
+
+    it("Displays a generic page title about viewing a blog", async () => {
+      setup()
+      await screen.findByTitle("output")
+      expect(document.title.includes(VIEW_BLOG_TITLE)).toBe(true)
+    })
   })
 })

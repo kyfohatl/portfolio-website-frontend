@@ -190,6 +190,33 @@ describe("Creating a new blog", () => {
       })
     })
   })
+
+  describe("Page title", () => {
+    function itBehavesLikeShowCorrectTitle() {
+      it("Displays a page title that indicates a new blog is being created", () => {
+        cy.title().should("include", "Create A Blog")
+      })
+    }
+
+    describe("When there is no unsaved work in local storage", () => {
+      itBehavesLikeShowCorrectTitle()
+    })
+
+    describe("When there is unsaved work in local storage", () => {
+      beforeEach(() => {
+        skipBasicTute()
+        cy.get('[data-testid="HTMLEditor"]').type("some html")
+        cy.get('[data-testid="CSSEditor"]').type("some css")
+
+        // Now go to some other page and come back
+        cy.visit("/")
+        cy.visit("/editblog")
+      })
+
+      itBehavesLikeShowCorrectTitle()
+    })
+
+  })
 })
 
 describe("Editing an existing blog", () => {
@@ -254,6 +281,12 @@ describe("Editing an existing blog", () => {
 
     // Now ensure the changes are saved correctly
     cy.verifyBlog(blogId, HTML + ADDITIONAL_HTML, CSS + ADDITIONAL_CSS)
+  })
+
+  describe("Page title", () => {
+    it("Displays a page title that indicates a blog is being edited", () => {
+      cy.title().should("include", "Edit Your Blog")
+    })
   })
 })
 

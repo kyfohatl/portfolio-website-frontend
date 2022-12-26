@@ -6,7 +6,11 @@ import BlogArticle from "../components/BlogArticle"
 
 export default function Skills() {
   return (
-    <PageContainer contentStyle={{ marginTop: "42px" }} contentTestId="skillsPage">
+    <PageContainer
+      title="My Skills and Qualifications"
+      contentStyle={{ marginTop: "42px" }}
+      contentTestId="skillsPage"
+    >
       <BlogArticle title="Education">
         <p>
           Studied Computer Science (Bsc) at The University of Melbourne from 2018-2021, graduating with
