@@ -68,6 +68,7 @@ export default function Home() {
 
   return (
     <PageContainer
+      title=""
       contentBlockStyle={{ maxWidth: "100vw", display: "flex", flexDirection: "column" }}
       contentTestId="homePage"
     >

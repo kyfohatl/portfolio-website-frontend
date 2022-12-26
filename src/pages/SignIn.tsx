@@ -115,6 +115,7 @@ export default function SignIn() {
 
   return (
     <PageContainer
+      title="Sign In"
       contentStyle={{ display: "flex", flexGrow: 1, justifyContent: "center", alignItems: "center" }}
       contentBlockStyle={{ display: "flex", justifyContent: "center" }}
       state={pageState}

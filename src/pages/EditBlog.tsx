@@ -19,6 +19,9 @@ import { hasData } from "../lib/api/helpers/auth/redirectAndClearData";
 import { TutorialPopupInfo } from "../components/tutorial/TutorialPopup";
 import Tooltip from "../components/tooltip/Tooltip";
 
+export const EDIT_BLOG_TITLE = "Edit Your Blog"
+export const CREATE_BLOG_TITLE = "Create A Blog"
+
 const HTML_TITLE = "HTML"
 const CSS_TITLE = "CSS"
 
@@ -210,6 +213,7 @@ export default function EditBlog() {
 
   return (
     <PageContainer
+      {...(blogIdParam ? { title: EDIT_BLOG_TITLE } : { title: CREATE_BLOG_TITLE })}
       contentStyle={{ marginTop: "56px" }}
       contentBlockStyle={{ display: "flex", flexDirection: "column", maxWidth: "80vw", maxHeight: "95vh", gap: "20px" }}
       state={pageState}

@@ -18,7 +18,7 @@ import BlogArticle from "../components/BlogArticle"
 
 export default function Examples() {
   return (
-    <PageContainer contentStyle={{ marginTop: "42px" }} contentTestId="examplesPage">
+    <PageContainer title="Examples of My Work" contentStyle={{ marginTop: "42px" }} contentTestId="examplesPage">
       <BlogArticle title="CataLog">
         <LinkBlock
           links={[

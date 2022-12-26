@@ -36,7 +36,7 @@ export default function FacebookRedirect() {
   }, [idToken, navigate])
 
   return (
-    <PageContainer state={pageState}>
+    <PageContainer title="Facebook Sign In" state={pageState}>
     </PageContainer>
   )
 }

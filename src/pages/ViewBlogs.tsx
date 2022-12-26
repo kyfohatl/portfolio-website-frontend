@@ -120,6 +120,7 @@ export default function ViewBlogs() {
 
   return (
     <PageContainer
+      title="Latest Blogs"
       state={pageState}
       contentStyle={{ marginTop: "42px", marginBottom: "42px" }}
       contentBlockStyle={{ display: "flex", flexDirection: "column", gap: "26px", alignItems: "flex-end" }}
