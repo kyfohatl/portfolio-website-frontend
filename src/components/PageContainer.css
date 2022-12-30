@@ -3,7 +3,6 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  min-width: 100vw;
 }
 
 .content {
@@ -13,6 +12,11 @@
 }
 
 .content-block {
-  max-width: 1000px;
   flex-grow: 1;
+}
+
+@media (min-width: 1200px) {
+  .content-block {
+    max-width: 1000px;
+  }
 }
