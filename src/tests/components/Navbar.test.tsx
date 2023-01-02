@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { MemoryRouter, Route, Routes } from "react-router-dom"
-import Navbar from "../../components/Navbar"
+import Navbar from "../../components/Navbar/Navbar"
 import EditBlog from "../../pages/EditBlog"
 import Examples from "../../pages/Examples"
 import Home from "../../pages/Home"

@@ -1,17 +1,16 @@
-import { forwardRef, useCallback, useState } from "react"
-import { Link, useLocation, useNavigate } from "react-router-dom"
-import Api from "../lib/api/Api"
-import { hasData } from "../lib/api/helpers/auth/redirectAndClearData"
-import routes from "../resources/routes/routes"
-import Button, { ButtonState } from "./Button"
+import styles from "./NavLinksDesktop.module.css"
+import { hasData } from "../../../lib/api/helpers/auth/redirectAndClearData";
+import { useCallback, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import routes from "../../../resources/routes/routes";
+import Button, { ButtonState } from "../../Button";
+import Api from "../../../lib/api/Api";
 
-import styles from "./Navbar.module.css"
+interface NavLinksDesktopProps {
+  refs: { sigInRef: React.ForwardedRef<HTMLLIElement> }
+}
 
-const Navbar = forwardRef<HTMLLIElement>((_, ref) => {
-  // Used for navigating with the react router
-  const navigate = useNavigate()
-  const location = useLocation()
-
+export default function NavLinksDesktop({ refs }: NavLinksDesktopProps) {
   // Button disabled states
   const [signInDisabled, setSignInDisabled] = useState(false)
   const [signUpDisabled, setSignUpDisabled] = useState(false)
@@ -19,6 +18,20 @@ const Navbar = forwardRef<HTMLLIElement>((_, ref) => {
   const [signInState, setSignInState] = useState<ButtonState>({ state: "normal" })
   const [signUpState, setSignUpState] = useState<ButtonState>({ state: "normal" })
   const [signOutState, setSignOutState] = useState<ButtonState>({ state: "normal" })
+
+  // Used for navigating with the react router
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  const onSignOutClick = useCallback(async () => {
+    // Set button loading state
+    setSignOutState({ state: "loading" })
+
+    // Sing out the user
+    await Api.signOut()
+    // Now navigate to the sign in page
+    navigate(routes.signIn)
+  }, [navigate])
 
   const onSigInClick = useCallback(() => {
     // If we are already on the sign in page, do nothing
@@ -38,24 +51,9 @@ const Navbar = forwardRef<HTMLLIElement>((_, ref) => {
     setSignUpState({ state: "loading" })
   }, [location.pathname])
 
-  const onSignOutClick = useCallback(async () => {
-    // Set button loading state
-    setSignOutState({ state: "loading" })
-
-    // Sing out the user
-    await Api.signOut()
-    // Now navigate to the sign in page
-    navigate(routes.signIn)
-  }, [navigate])
-
   return (
-    <nav className={styles.navbar}>
+    <div className={styles.desktopNav}>
       <div className={styles.nav}>
-        <li key="logo" className={styles.logo}>
-          <Link to={routes.home} className={styles.logoLink} data-testid="homeNavLink">
-            Ehsan's Portfolio
-          </Link>
-        </li>
         <li key="skills" className={styles.buttonNav}>
           <Link to={routes.skills} className={styles.navLink} data-testid="skillsNavLink">
             Skills &amp; Qualifications
@@ -66,12 +64,12 @@ const Navbar = forwardRef<HTMLLIElement>((_, ref) => {
             Examples of Work
           </Link>
         </li>
-        <li key="blogs" className={styles.buttonNav}>
+        <li key="viewBlogs" className={styles.buttonNav}>
           <Link to={routes.viewBlogs} className={styles.navLink} data-testid="viewBlogsNavLink">
             Blogs
           </Link>
         </li>
-        <li key="createBlog" className={styles.buttonNav}>
+        <li key="editBlogs" className={styles.buttonNav}>
           <Link to={routes.editBlog} className={styles.navLink} data-testid="editBlogNavLink">
             Create A New Blog
           </Link>
@@ -93,7 +91,7 @@ const Navbar = forwardRef<HTMLLIElement>((_, ref) => {
             />
           </li>
           : [
-            <li ref={ref} className={styles.buttonAuth} key="signInBtn">
+            <li ref={refs.sigInRef} className={styles.buttonAuth} key="signInBtn">
               <Link to={routes.signIn} className={styles.authLink}>
                 <Button
                   text="Sign in"
@@ -125,8 +123,6 @@ const Navbar = forwardRef<HTMLLIElement>((_, ref) => {
           ]
         }
       </div>
-    </nav>
+    </div>
   )
-})
-
-export default Navbar
+}
