@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Editor, { TextInfo } from "../components/blog/Editor";
+import Editor from "../components/blog/Editor";
 import Button, { ButtonState } from "../components/Button";
 import PageContainer, { PageContainerState } from "../components/PageContainer";
 
@@ -18,6 +18,8 @@ import TutorialSequence from "../components/tutorial/TutorialSequence";
 import { hasData } from "../lib/api/helpers/auth/redirectAndClearData";
 import { TutorialPopupInfo } from "../components/tutorial/TutorialPopup";
 import Tooltip from "../components/tooltip/Tooltip";
+import { TextInfo } from "../components/blog/EditorBody";
+import MobileEditor from "../components/blog/mobile/MobileEditor";
 
 export const EDIT_BLOG_TITLE = "Edit Your Blog"
 export const CREATE_BLOG_TITLE = "Create A Blog"
@@ -264,17 +266,23 @@ export default function EditBlog() {
             </Tooltip>
         }
       </div>
-      <div className={styles.topPane}>
+      <div className={styles.topPaneDesktop}>
         <Editor
           textInfo={html}
           setText={onHtmlChange}
-          title={HTML_TITLE}
+          title={"html"}
           ref={htmlTitleRef}
         />
         <Editor
           textInfo={css}
           setText={onCssChange}
-          title={CSS_TITLE}
+          title={"css"}
+        />
+      </div>
+      <div className={styles.topPaneMobile}>
+        <MobileEditor
+          html={{ title: "html", textInfo: html, setText: onHtmlChange }}
+          css={{ title: "css", textInfo: css, setText: onCssChange }}
         />
       </div>
       <div className={styles.botPane}>

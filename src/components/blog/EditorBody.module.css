@@ -1,0 +1,50 @@
+.middleContainer {
+  background-color: #1D1D1D;
+  display: flex;
+  flex-grow: 1;
+  padding: 10px 7px 7px 10px;
+  border-radius: 24px;
+  overflow: auto;
+}
+
+.innerContainer {
+  display: flex;
+  flex-grow: 1;
+  background-color: #1D1D1D;
+  overflow: auto;
+  white-space: nowrap;
+}
+
+.inputField {
+  background-color: #1D1D1D;
+  color: white;
+  padding: 0px;
+  border-style: none;
+  outline: none;
+  resize: none;
+  margin-left: 16px;
+  line-height: 20px;
+  flex-grow: 1;
+  overflow: hidden;
+  tab-size: 4;
+}
+
+.innerContainer::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  border-radius: 20px;
+  background-color: #1D1D1D;
+}
+
+.innerContainer::-webkit-scrollbar-track {
+  background-color: #1D1D1D;
+}
+
+.innerContainer::-webkit-scrollbar-corner {
+  background-color: #1D1D1D;
+}
+
+.innerContainer::-webkit-scrollbar-thumb {
+  background-color: #424242;
+  border-radius: 20px;
+}
