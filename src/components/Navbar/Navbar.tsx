@@ -6,7 +6,16 @@ import NavLinksMobile from "./mobile/NavLinksMobile"
 
 import styles from "./Navbar.module.css"
 
-const Navbar = forwardRef<HTMLLIElement>((_, ref) => {
+export type NavbarComponentRefs = {
+  loginBtn?: React.RefObject<HTMLLIElement>,
+  menuBtn?: React.RefObject<HTMLButtonElement>
+}
+
+interface NavbarProps {
+  componentRefs?: NavbarComponentRefs
+}
+
+const Navbar = forwardRef<HTMLLIElement, NavbarProps>(({ componentRefs }, ref) => {
   const [navbarHeight, setNavBarHeight] = useState("0px")
   const navbarRef = useRef<HTMLElement>(null)
 
@@ -20,8 +29,11 @@ const Navbar = forwardRef<HTMLLIElement>((_, ref) => {
       <Link to={routes.home} className={styles.logoLink} data-testid="homeNavLink">
         Ehsan's Blog
       </Link>
-      <NavLinksDesktop refs={{ sigInRef: ref }} />
-      <NavLinksMobile navbarHeight={navbarHeight} />
+      <NavLinksDesktop {...(componentRefs?.loginBtn ? { refs: { sigInRef: componentRefs.loginBtn } } : {})} />
+      <NavLinksMobile
+        navbarHeight={navbarHeight}
+        {...(componentRefs?.menuBtn ? { refs: { menuBtnRef: componentRefs.menuBtn } } : {})}
+      />
     </nav>
   )
 })

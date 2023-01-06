@@ -1,6 +1,6 @@
 import "./PageContainer.css"
 
-import Navbar from "./Navbar/Navbar"
+import Navbar, { NavbarComponentRefs } from "./Navbar/Navbar"
 import Loading from "./Loading"
 import Error from "./Error"
 import { useEffect } from "react"
@@ -16,7 +16,7 @@ interface PageContainerProps {
   state?: PageContainerState,
   children: React.ReactNode,
   contentTestId?: string,
-  navbarLoginBtnRef?: React.RefObject<HTMLLIElement>
+  navbarRefs?: NavbarComponentRefs
 }
 
 export default function PageContainer({
@@ -27,7 +27,7 @@ export default function PageContainer({
   state = { status: "normal" },
   children,
   contentTestId,
-  navbarLoginBtnRef
+  navbarRefs
 }: PageContainerProps) {
   // Set the page title
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function PageContainer({
 
   return (
     <div className="page-background" style={backgroundStyle}>
-      {state.status !== "loading" && <Navbar ref={navbarLoginBtnRef} />}
+      {state.status !== "loading" && <Navbar componentRefs={navbarRefs} />}
       <div className="content" style={contentStyle} data-testid={contentTestId}>
         <div className="content-block" style={contentBlockStyle}>
           {

@@ -9,10 +9,11 @@ import routes from "../../../resources/routes/routes"
 import React, { useCallback, useState } from "react"
 
 interface NavLinksMobileProps {
-  navbarHeight: string
+  navbarHeight: string,
+  refs?: { menuBtnRef: React.ForwardedRef<HTMLButtonElement> }
 }
 
-export default function NavLinksMobile({ navbarHeight }: NavLinksMobileProps) {
+export default function NavLinksMobile({ navbarHeight, refs }: NavLinksMobileProps) {
   const [showDropdown, setShowDropdown] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [dropdownClasses, setDropdownClasses] = useState(styles.dropDown)
@@ -56,6 +57,7 @@ export default function NavLinksMobile({ navbarHeight }: NavLinksMobileProps) {
         backgroundColor="transparent"
         boxShadow="0 0 0 0"
         disabled={btnDisabled}
+        {...(refs?.menuBtnRef ? { ref: refs.menuBtnRef } : {})}
       />
       {showDropdown &&
         <ul

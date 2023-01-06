@@ -7,7 +7,7 @@ import Button, { ButtonState } from "../../Button";
 import Api from "../../../lib/api/Api";
 
 interface NavLinksDesktopProps {
-  refs: { sigInRef: React.ForwardedRef<HTMLLIElement> }
+  refs?: { sigInRef: React.ForwardedRef<HTMLLIElement> }
 }
 
 export default function NavLinksDesktop({ refs }: NavLinksDesktopProps) {
@@ -91,7 +91,7 @@ export default function NavLinksDesktop({ refs }: NavLinksDesktopProps) {
             />
           </li>
           : [
-            <li ref={refs.sigInRef} className={styles.buttonAuth} key="signInBtn">
+            <li {...(refs?.sigInRef ? { ref: refs.sigInRef } : {})} className={styles.buttonAuth} key="signInBtn">
               <Link to={routes.signIn} className={styles.authLink}>
                 <Button
                   text="Sign in"

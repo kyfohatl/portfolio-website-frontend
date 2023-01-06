@@ -13,6 +13,7 @@
 .bodyContainer {
   display: flex;
   flex-grow: 1;
+  height: 300px;
 }
 
 @media (min-width: 1100) {

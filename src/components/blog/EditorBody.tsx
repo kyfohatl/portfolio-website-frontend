@@ -73,11 +73,9 @@ export default function EditorBody({ textInfo, setText, title, containerStyleOve
     }
   }, [textInfo, inputRef])
 
-  const onTextChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    // Update the text state
-    setText({ text: e.target.value, change: { changeType: "Other" } })
+  useEffect(() => {
     // Get the new line count
-    const updatedNumLines = countNumLines(e.target.value)
+    const updatedNumLines = countNumLines(textInfo.text)
     // Now update the line counter displayed
     setNumLines(updatedNumLines)
 
@@ -104,7 +102,7 @@ export default function EditorBody({ textInfo, setText, title, containerStyleOve
         setTextAreaDimensions(expansion)
       }
     }
-  }, [inputRef, containerRef, textAreaDimensions, setText])
+  }, [textInfo.text, textAreaDimensions])
 
   // Create indentation when the Tab key is pressed
   const onTabDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -130,7 +128,7 @@ export default function EditorBody({ textInfo, setText, title, containerStyleOve
           className={styles.inputField}
           ref={inputRef}
           value={textInfo.text}
-          onChange={onTextChange}
+          onChange={(e) => setText({ text: e.target.value, change: { changeType: "Other" } })}
           onKeyDown={onTabDown}
           style={textAreaDimensions}
           wrap="off"

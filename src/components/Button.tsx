@@ -42,7 +42,7 @@ export interface ButtonProps {
   btnTestId?: string
 }
 
-export default function Button({
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   text,
   type,
   backgroundColor = "#8B0000",
@@ -58,7 +58,7 @@ export default function Button({
   borderRadius,
   boxShadow,
   btnTestId
-}: ButtonProps) {
+}, ref) => {
   let buttonStyles: React.CSSProperties = {
     fontSize: fontSize,
     width: width,
@@ -83,6 +83,7 @@ export default function Button({
     style={buttonStyles}
     disabled={disabled}
     {...(type.callBack ? { onClick: type.callBack } : {})}
+    ref={ref}
   >
     {icon}
     {text}
@@ -95,6 +96,7 @@ export default function Button({
       height={height}
       marginTop={marginTop}
       testId={btnTestId}
+      ref={ref}
     />
   } else if (buttonState.state === "animated") {
     button = <AnimatedButton
@@ -104,10 +106,13 @@ export default function Button({
       width={width}
       height={height}
       marginTop={marginTop}
+      ref={ref}
     />
   }
 
   return (
     button
   )
-}
+})
+
+export default Button
