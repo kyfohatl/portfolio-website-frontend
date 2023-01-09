@@ -8,6 +8,7 @@ import HelpDisplayPlaceholderButton from "./HelpDisplayPlaceholderButton"
 import HelpDisplaySideButton, { Direction } from "./HelpDisplaySideButton"
 import HelpDisplayCloseButton from "./HelpDisplayCloseButton"
 import useKeyPress, { useKeyPressProps } from "../../hooks/useKeyPress"
+import HelpDisplayBackground from "./HelpDisplayBackground"
 
 interface HelpDisplayProps {
   cardProps: FeatureDisplayCardProps[],
@@ -80,7 +81,7 @@ export default function HelpDisplay({ cardProps, onClose, initIdx = 0 }: HelpDis
 
   return (
     <>
-      <div data-testid="helpDisplayBackground" className={styles.background} onClick={onClose}></div>
+      <HelpDisplayBackground onClose={onClose} />
 
       <div
         className={styles.outerContainer}

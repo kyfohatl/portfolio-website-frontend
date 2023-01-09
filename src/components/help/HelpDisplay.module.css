@@ -1,14 +1,3 @@
-.background {
-  opacity: 60%;
-  background-color: #3F3F3F;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100vw;
-  z-index: 2;
-}
-
 .outerContainer {
   display: flex;
   flex-direction: column;

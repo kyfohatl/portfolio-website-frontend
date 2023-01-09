@@ -1,0 +1,13 @@
+.outerContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 26px;
+  width: 330px;
+}
+
+.cardContainer {
+  display: flex;
+  gap: 10px;
+  overflow: scroll;
+}

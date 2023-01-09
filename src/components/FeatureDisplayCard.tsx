@@ -12,7 +12,7 @@ export interface FeatureDisplayCardProps {
   notes: (string | JSX.Element)[],
   visuals: { images: imgProps[] } | { custom: JSX.Element },
   theme?: "dark" | "light",
-  dimensions?: { width: string, height: string }
+  dimensions?: { desktop: { w: string, h: string }, mobile: { w: string, h: string } }
   borderRadius?: string,
   boxShadow?: string,
   middleGap?: string,
@@ -33,7 +33,16 @@ const FeatureDisplayCard = React.forwardRef<HTMLDivElement, FeatureDisplayCardPr
   textLineSize
 }, ref) => {
   let outerContainerStyles: CSSProperties = {
-    ...(dimensions),
+    ...(
+      dimensions
+        ? {
+          "--width-desktop": dimensions.desktop.w,
+          "--height-desktop": dimensions.desktop.h,
+          "--width-mobile": dimensions.mobile.w,
+          "--height-mobile": dimensions.mobile.h
+        }
+        : {}
+    ),
     ...(borderRadius && { borderRadius: borderRadius }),
     ...(boxShadow && { boxShadow: boxShadow }),
     ...(middleGap && { gap: middleGap }),
