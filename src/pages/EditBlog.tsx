@@ -20,6 +20,7 @@ import { TutorialPopupInfo } from "../components/tutorial/TutorialPopup";
 import Tooltip from "../components/tooltip/Tooltip";
 import { TextInfo } from "../components/blog/EditorBody";
 import MobileEditor from "../components/blog/mobile/MobileEditor";
+import HelpDisplayMobile from "../components/help/mobile/HelpDisplayMobile";
 
 export const EDIT_BLOG_TITLE = "Edit Your Blog"
 export const CREATE_BLOG_TITLE = "Create A Blog"
@@ -348,7 +349,10 @@ export default function EditBlog() {
 
       {/* Logic for showing the help dialogue */}
       {showHelpDisplay
-        ? <HelpDisplay cardProps={cardProps} onClose={() => setShowHelpDisplay(false)} />
+        ? <>
+          <HelpDisplay cardProps={cardProps} onClose={() => setShowHelpDisplay(false)} />
+          <HelpDisplayMobile cardProps={cardProps} onClose={() => setShowHelpDisplay(false)} />
+        </>
         : null
       }
 

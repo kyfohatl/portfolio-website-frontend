@@ -80,7 +80,7 @@ export default function HelpDisplay({ cardProps, onClose, initIdx = 0 }: HelpDis
   const curCard = cardProps[cardIndex]
 
   return (
-    <>
+    <div className={styles.overallContainer}>
       <HelpDisplayBackground onClose={onClose} />
 
       <div
@@ -90,7 +90,7 @@ export default function HelpDisplay({ cardProps, onClose, initIdx = 0 }: HelpDis
       >
         <div
           className={styles.closeButtonContainer}
-          style={{ "--cardWidth": curCard.dimensions?.width } as React.CSSProperties}
+          style={{ "--cardWidth": curCard.dimensions?.desktop.w } as React.CSSProperties}
         >
           <HelpDisplayCloseButton onClose={onClose} />
         </div>
@@ -107,7 +107,7 @@ export default function HelpDisplay({ cardProps, onClose, initIdx = 0 }: HelpDis
             ?
             // Display a placeholder of the same size as a card, to prevent collapse of the display container
             // when animation is running
-            <div style={{ ...curCard.dimensions }}></div>
+            <div style={{ ...(curCard.dimensions ? { width: curCard.dimensions.desktop.w, height: curCard.dimensions.desktop.h } : {}) }}></div>
             :
             // If animation is not running, display the current card
             <div>
@@ -150,12 +150,12 @@ export default function HelpDisplay({ cardProps, onClose, initIdx = 0 }: HelpDis
             nextIndex={animState.nextCardInx}
             numDials={cardProps.length}
             duration={ANIMATION_DURATION}
-            helpDisplayCardHeight={curCard.dimensions?.height || "100px"}
+            helpDisplayCardHeight={curCard.dimensions?.desktop.h || "100px"}
             helpDisplayOuterContainerGap={OUTER_CONTAINER_GAP}
           />
         </>
         : null
       }
-    </>
+    </div>
   )
 }

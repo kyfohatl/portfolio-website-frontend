@@ -21,15 +21,15 @@ export default function HelpDisplayMobile({ cardProps, onClose }: HelpDisplayMob
   }, [cardProps])
 
   return (
-    <>
+    <div className={styles.outerContainer}>
       <HelpDisplayBackground onClose={onClose} />
 
-      <div className={styles.outerContainer}>
+      <div className={styles.displayContainer}>
         <HelpDisplayCloseButton onClose={onClose} />
         <div className={styles.cardContainer}>
           {cards}
         </div>
       </div>
-    </>
+    </div>
   )
 }

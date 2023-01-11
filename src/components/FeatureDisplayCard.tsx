@@ -55,7 +55,7 @@ const FeatureDisplayCard = React.forwardRef<HTMLDivElement, FeatureDisplayCardPr
   let titleStyles: CSSProperties = {}
   let noteStyles: CSSProperties = {}
   const textContainerStyles: CSSProperties = {
-    ...(textLineSize && { maxWidth: textLineSize })
+    ...(textLineSize && { "--max-text-width-desktop": textLineSize } as CSSProperties)
   }
 
   if (theme === "dark") {

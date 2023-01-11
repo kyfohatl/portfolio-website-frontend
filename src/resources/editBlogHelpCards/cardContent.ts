@@ -21,7 +21,7 @@ const CODE_IMG_HEIGHT = "312px"
 const SUMMARY_CARD_IMG_WIDTH = "330px"
 const SUMMARY_CARD_IMG_HEIGHT = "127px"
 
-const CARD_DIMENSIONS = { width: "800px", height: "600px" }
+const CARD_DIMENSIONS = { desktop: { w: "800px", h: "600px" }, mobile: { w: "300px", h: "70vh" } }
 const BORDER_RADIUS = "40px"
 const MIDDLE_GAP = "40px"
 const MAX_TEXT_WIDTH = "300px"
