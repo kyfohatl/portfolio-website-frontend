@@ -14,6 +14,7 @@ import CardImage from "../../assets/images/editBlogPageHelp/blogCardEffectImage2
 import CardTags from "../../assets/images/editBlogPageHelp/blogCardEffectTags2.png"
 
 import { cardTexts } from "./cardTexts";
+import { WithRequiredType } from "../../lib/typeHelpers/withRequiredType";
 
 const CODE_IMG_WIDTH = "330px"
 const CODE_IMG_HEIGHT = "312px"
@@ -34,7 +35,7 @@ interface createCardPropsArg {
 }
 
 function createCardProps(cardInfoList: createCardPropsArg[]) {
-  const cardProps: FeatureDisplayCardProps[] = []
+  const cardProps: WithRequiredType<FeatureDisplayCardProps, "dimensions">[] = []
   for (const cardInfo of cardInfoList) {
     cardProps.push({
       title: cardInfo.title,
@@ -55,7 +56,7 @@ function createCardProps(cardInfoList: createCardPropsArg[]) {
   return cardProps
 }
 
-export const cardProps: FeatureDisplayCardProps[] = createCardProps([
+export const cardProps: WithRequiredType<FeatureDisplayCardProps, "dimensions">[] = createCardProps([
   {
     title: cardTexts[0].title,
     notes: cardTexts[0].notes,
