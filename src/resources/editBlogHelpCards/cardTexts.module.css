@@ -1,0 +1,14 @@
+.text {
+  padding: 0;
+  margin: 0;
+  font-size: inherit;
+}
+
+.text strong {
+  font-weight: 800;
+}
+
+.text i {
+  font-weight: 400;
+  font-style: italic;
+}

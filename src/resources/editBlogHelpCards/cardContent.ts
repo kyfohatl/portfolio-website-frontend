@@ -29,7 +29,7 @@ const MAX_TEXT_WIDTH = "300px"
 
 interface createCardPropsArg {
   title: string,
-  notes: string[],
+  notes: string[] | JSX.Element[],
   codeImage: string,
   summaryCardImage: string
 }
