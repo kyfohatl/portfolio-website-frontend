@@ -1,7 +1,7 @@
 import styles from "./NavLinksDesktop.module.css"
 import { hasData } from "../../../lib/api/helpers/auth/redirectAndClearData";
 import { useCallback, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import routes from "../../../resources/routes/routes";
 import Button, { ButtonState } from "../../Button";
 import Api from "../../../lib/api/Api";
@@ -21,17 +21,14 @@ export default function NavLinksDesktop({ refs }: NavLinksDesktopProps) {
 
   // Used for navigating with the react router
   const location = useLocation()
-  const navigate = useNavigate()
 
   const onSignOutClick = useCallback(async () => {
     // Set button loading state
     setSignOutState({ state: "loading" })
 
-    // Sing out the user
+    // Sing out the user and redirect to the sign in page
     await Api.signOut()
-    // Now navigate to the sign in page
-    navigate(routes.signIn)
-  }, [navigate])
+  }, [])
 
   const onSigInClick = useCallback(() => {
     // If we are already on the sign in page, do nothing

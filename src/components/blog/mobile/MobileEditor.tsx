@@ -44,6 +44,7 @@ const MobileEditor = React.forwardRef<HTMLParagraphElement, MobileEditorProps>((
           textInfo={props[actvEditor].textInfo}
           setText={props[actvEditor].setText}
           containerStyleOverrides={{ borderRadius: "0px" }}
+          testId={"mobileEditor"}
         />
       </div>
     </div>

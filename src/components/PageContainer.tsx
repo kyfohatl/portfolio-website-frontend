@@ -1,6 +1,6 @@
 import "./PageContainer.css"
 
-import Navbar, { NavbarComponentRefs } from "./Navbar/Navbar"
+import Navbar, { NavbarComponentRefs } from "./navbar/Navbar"
 import Loading from "./Loading"
 import Error from "./Error"
 import { useEffect } from "react"

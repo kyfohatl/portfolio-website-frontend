@@ -40,7 +40,7 @@ afterAll(() => {
   server.close()
 })
 
-describe("singOut", () => {
+describe("signOut", () => {
   const ROUTE_PATH = "auth/users/logout"
 
   function itBehavesLikeRedirectAndClearData() {

@@ -17,7 +17,12 @@ const Editor = React.forwardRef<HTMLParagraphElement, EditorProps>(({
   return (
     <div className={styles.outerContainer} data-testid={`${title.toUpperCase()}Editor`}>
       <EditorTitle title={title} ref={ref} />
-      <EditorBody title={title.toUpperCase()} textInfo={textInfo} setText={setText} />
+      <EditorBody
+        title={title.toUpperCase()}
+        textInfo={textInfo}
+        setText={setText}
+        testId={"desktopEditor_" + title}
+      />
     </div>
   )
 })

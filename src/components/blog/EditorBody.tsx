@@ -13,7 +13,8 @@ interface EditorBodyProps {
   textInfo: TextInfo,
   setText: (textInfo: TextInfo) => void,
   title: string,
-  containerStyleOverrides?: CSSProperties
+  containerStyleOverrides?: CSSProperties,
+  testId?: string
 }
 
 // Returns the number of lines present in the given text
@@ -58,7 +59,7 @@ function getHorizontalExpansion(textArea: HTMLTextAreaElement, textAreaStyles: C
   return 0
 }
 
-export default function EditorBody({ textInfo, setText, title, containerStyleOverrides }: EditorBodyProps) {
+export default function EditorBody({ textInfo, setText, title, containerStyleOverrides, testId }: EditorBodyProps) {
   const [numLines, setNumLines] = useState(1)
 
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -121,7 +122,7 @@ export default function EditorBody({ textInfo, setText, title, containerStyleOve
   }, [inputRef, textInfo, setText])
 
   return (
-    <div className={styles.middleContainer} style={containerStyleOverrides}>
+    <div className={styles.middleContainer} style={containerStyleOverrides} data-testid={testId}>
       <div className={styles.innerContainer} ref={containerRef}>
         <LineCounter count={numLines} editorTitle={title} />
         <textarea

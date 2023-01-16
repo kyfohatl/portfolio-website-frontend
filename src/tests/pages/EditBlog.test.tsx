@@ -257,12 +257,15 @@ describe("When there is a valid blog id in the page route params", () => {
     expect(createBtn).not.toBeInTheDocument()
   })
 
-  it("Displays the content of the blog", async () => {
+  it("Displays the content of the blog in the editors", async () => {
     setup(BASE_PATH + BLOG_ID, PATH)
 
-    const html = await screen.findByText(HTML)
-    const css = await screen.findByText(CSS)
+    const htmlEditor = await screen.findByTestId(/desktopEditor_html/i)
+    const cssEditor = await screen.findByTestId(/desktopEditor_css/i)
     const output = await screen.findByTitle<HTMLIFrameElement>("output")
+
+    const html = within(htmlEditor).getByText(HTML)
+    const css = within(cssEditor).getByText(CSS)
 
     expect(html).toBeInTheDocument()
     expect(css).toBeInTheDocument()
@@ -327,7 +330,7 @@ describe("When there is a valid blog id in the page route params", () => {
     it("Sets the page title to indicate that an existing blog is being edited", async () => {
       setup(BASE_PATH + BLOG_ID, PATH)
       // Wait until the mock api has finished before continuing
-      await screen.findByText(HTML)
+      await screen.findAllByText(HTML)
 
       expect(document.title.includes(EDIT_BLOG_TITLE)).toBe(true)
     })

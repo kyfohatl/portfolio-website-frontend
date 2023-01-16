@@ -6,7 +6,7 @@ import { BackendError } from "../../lib/commonTypes"
 import SignIn, { EMAIL_ERR_MSSG, PASS_ERR_MSSG } from "../../pages/SignIn"
 
 // Mock the navbar
-jest.mock("../../components/Navbar", () => {
+jest.mock("../../components/navbar/Navbar", () => {
   return () => <div>Mocked Navbar!</div>
 })
 

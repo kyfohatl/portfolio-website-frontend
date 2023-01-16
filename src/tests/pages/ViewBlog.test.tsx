@@ -16,7 +16,7 @@ const getItemMock = jest.spyOn(Storage.prototype, "getItem")
 // Setup the Api.deleteBlog mock
 const deleteBlogMock = jest.spyOn(Api, "deleteBlog")
 // Mock the navbar
-jest.mock("../../components/Navbar", () => {
+jest.mock("../../components/navbar/Navbar", () => {
   return () => <div>Mocked Navbar!</div>
 })
 

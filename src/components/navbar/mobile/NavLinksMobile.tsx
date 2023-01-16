@@ -7,6 +7,8 @@ import styles from "./NavLinksMobile.module.css"
 import MobileNavLink from "./MobileNavLink"
 import routes from "../../../resources/routes/routes"
 import React, { useCallback, useState } from "react"
+import { hasData } from "../../../lib/api/helpers/auth/redirectAndClearData"
+import Api from "../../../lib/api/Api"
 
 interface NavLinksMobileProps {
   navbarHeight: string,
@@ -18,6 +20,8 @@ export default function NavLinksMobile({ navbarHeight, refs }: NavLinksMobilePro
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [dropdownClasses, setDropdownClasses] = useState(styles.dropDown)
   const [btnDisabled, setBtnDisabled] = useState(false)
+
+  const [signOutLinkIsLoading, setSignOutLinkIsLoading] = useState(false)
 
   const onMenuClick = useCallback(() => {
     // Disabled the menu button
@@ -44,13 +48,21 @@ export default function NavLinksMobile({ navbarHeight, refs }: NavLinksMobilePro
     }
   }, [dropdownOpen])
 
+  const onSignOutClick = useCallback(async (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.preventDefault()
+    setSignOutLinkIsLoading(true)
+
+    // Sign out the user and redirect to the sign in page
+    await Api.signOut()
+  }, [])
+
   return (
     <div className={styles.container}>
       <Button
         type={{ type: "button", callBack: onMenuClick }}
         icon={dropdownOpen
-          ? <CloseIcon height="36px" width="36px" stroke="black" />
-          : <MenuIcon height="36px" width="36px" />
+          ? <CloseIcon height="36px" width="36px" stroke="black" data-testid="navbarMobile_closeIcon" />
+          : <MenuIcon height="36px" width="36px" data-testid="navbarMobile_menuIcon" />
         }
         height="40px"
         width="40px"
@@ -64,13 +76,26 @@ export default function NavLinksMobile({ navbarHeight, refs }: NavLinksMobilePro
           className={dropdownClasses}
           style={{ "--navbarHeight": navbarHeight } as React.CSSProperties}
           onAnimationEnd={onDropdownAnimEnd}
+          data-testid="navbarMobile_dropdown"
         >
-          <MobileNavLink text="Sign In" linkPath={routes.signIn} />
-          <MobileNavLink text="Sign Up" linkPath={routes.signUp} />
-          <MobileNavLink text="Skills & Qualifications" linkPath={routes.skills} />
-          <MobileNavLink text="Examples of Work" linkPath={routes.examples} />
-          <MobileNavLink text="Blogs" linkPath={routes.viewBlogs} />
-          <MobileNavLink text="Create a New Blog" linkPath={routes.editBlog} />
+          {hasData()
+            ? <MobileNavLink
+              text="Sign Out"
+              linkPath={routes.home}
+              onClick={onSignOutClick}
+              isLoading={signOutLinkIsLoading}
+              key={1}
+            />
+            : [
+              <MobileNavLink key={2} text="Sign In" linkPath={routes.signIn} />,
+              <MobileNavLink key={3} text="Sign Up" linkPath={routes.signUp} />
+            ]
+          }
+
+          <MobileNavLink key={4} text="Skills & Qualifications" linkPath={routes.skills} />
+          <MobileNavLink key={5} text="Examples of Work" linkPath={routes.examples} />
+          <MobileNavLink key={6} text="Blogs" linkPath={routes.viewBlogs} />
+          <MobileNavLink key={7} text="Create a New Blog" linkPath={routes.editBlog} />
         </ul>
       }
     </div>

@@ -19,7 +19,7 @@ function setup() {
 describe("When given a title and some text", () => {
   it("Displays given title at the top of the component", () => {
     setup()
-    const title = screen.getByText(TITLE)
+    const title = screen.getByText(new RegExp(TITLE, "i"))
     expect(title).toBeInTheDocument()
   })
 
