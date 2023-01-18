@@ -19,6 +19,7 @@ const EditorTitle = React.forwardRef<HTMLParagraphElement, EditorTitleProps>(({
       className={styles.title}
       {...(onClickTitle ? { onClick: () => onClickTitle(title) } : {})}
       style={containerStyleOverrides}
+      data-testid={"editorTitle_" + title}
     >
       <p ref={ref}>{title.toUpperCase()}</p>
     </div>

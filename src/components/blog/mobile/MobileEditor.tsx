@@ -24,7 +24,7 @@ const MobileEditor = React.forwardRef<HTMLParagraphElement, MobileEditorProps>((
   }, [actvEditor])
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-testid="mobileEditorContainer">
       <div className={styles.titleContainer}>
         <EditorTitle
           title={props.html.title}

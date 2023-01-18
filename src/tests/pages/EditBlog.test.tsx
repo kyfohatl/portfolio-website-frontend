@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom"
 import Api from "../../lib/api/Api"
 import { BackendError, BackendResponse } from "../../lib/commonTypes"
 import EditBlog, { CREATE_BLOG_TITLE, EDIT_BLOG_TITLE } from "../../pages/EditBlog"
+import { checkMobileEditorForContent, checkMobileEditorForContentAsync, typeContentIntoMobileEditor } from "../components/blog/mobile/helpers/mobileEditorHelpers"
 
 // Mock the QuestionMark animated icon as we can't test the animation
 jest.mock("../../components/animation/QuestionMark", () => {
@@ -32,13 +33,18 @@ describe("When there is no blog id in the page route params", () => {
     expect(saveBtn).not.toBeInTheDocument()
   })
 
-  it("Does not display any content inside the html and css editors", () => {
+  it("Does not display any content inside the html and css desktop editors", () => {
     setup(BASE_PATH, BASE_PATH)
     const htmlEditor = screen.getAllByRole("textbox")[0]
     const cssEditor = screen.getAllByRole("textbox")[1]
 
     expect(htmlEditor).toHaveTextContent("")
     expect(cssEditor).toHaveTextContent("")
+  })
+
+  it("Does not display any content inside the mobile editor", () => {
+    setup(BASE_PATH, BASE_PATH)
+    checkMobileEditorForContent("", "both")
   })
 
   describe("Page title", () => {
@@ -257,7 +263,7 @@ describe("When there is a valid blog id in the page route params", () => {
     expect(createBtn).not.toBeInTheDocument()
   })
 
-  it("Displays the content of the blog in the editors", async () => {
+  it("Displays the content of the blog in the desktop editors", async () => {
     setup(BASE_PATH + BLOG_ID, PATH)
 
     const htmlEditor = await screen.findByTestId(/desktopEditor_html/i)
@@ -271,6 +277,12 @@ describe("When there is a valid blog id in the page route params", () => {
     expect(css).toBeInTheDocument()
     expect(output.srcdoc.includes(HTML)).toBe(true)
     expect(output.srcdoc.includes(CSS)).toBe(true)
+  })
+
+  it("Displays the content of the blog in the mobile editor", async () => {
+    setup(BASE_PATH + BLOG_ID, PATH)
+    await checkMobileEditorForContentAsync(HTML, "html")
+    await checkMobileEditorForContentAsync(CSS, "css")
   })
 
   describe("When the \"Save\" button is clicked", () => {
@@ -393,20 +405,37 @@ describe("Unsaved work", () => {
 
         beforeEach(() => {
           // Mock the local storage setter
+          setItemMock.mockClear()
           Storage.prototype.setItem = setItemMock
         })
 
-        it("Saves new content to local storage", () => {
-          setup(BASE_PATH, BASE_PATH)
+        describe("Desktop", () => {
+          it("Saves the new content to local storage", () => {
+            setup(BASE_PATH, BASE_PATH)
 
-          const htmlTextbox = within(screen.getByTestId("HTMLEditor")).getByRole("textbox")
-          const cssTextbox = within(screen.getByTestId("CSSEditor")).getByRole("textbox")
+            const htmlTextbox = within(screen.getByTestId("HTMLEditor")).getByRole("textbox")
+            const cssTextbox = within(screen.getByTestId("CSSEditor")).getByRole("textbox")
 
-          userEvent.type(htmlTextbox, "A")
-          expect(setItemMock).toHaveBeenCalledWith("unsaved_HTML_Content", prevHtml + "A")
+            userEvent.type(htmlTextbox, "A")
+            expect(setItemMock).toHaveBeenCalledWith("unsaved_HTML_Content", prevHtml + "A")
 
-          userEvent.type(cssTextbox, "A")
-          expect(setItemMock).toHaveBeenCalledWith("unsaved_CSS_Content", prevCss + "A")
+            userEvent.type(cssTextbox, "A")
+            expect(setItemMock).toHaveBeenCalledWith("unsaved_CSS_Content", prevCss + "A")
+          })
+        })
+
+        describe("Mobile", () => {
+          it("Saves the new content to local storage", () => {
+            setup(BASE_PATH, BASE_PATH)
+
+            // html
+            typeContentIntoMobileEditor("A", "html")
+            expect(setItemMock).toHaveBeenCalledWith("unsaved_HTML_Content", prevHtml + "A")
+
+            // css
+            typeContentIntoMobileEditor("A", "css")
+            expect(setItemMock).toHaveBeenCalledWith("unsaved_CSS_Content", prevCss + "A")
+          })
         })
       })
     }
@@ -458,13 +487,19 @@ describe("Unsaved work", () => {
         }
       })
 
-      it("Fills the editors with the unsaved content", () => {
+      it("Fills the desktop editors with the unsaved content", () => {
         setup(BASE_PATH, BASE_PATH)
         const htmlTextbox = within(screen.getByTestId("HTMLEditor")).getByRole("textbox")
         const cssTextbox = within(screen.getByTestId("CSSEditor")).getByRole("textbox")
 
         expect(htmlTextbox).toHaveTextContent(HTML)
         expect(cssTextbox).toHaveTextContent(CSS)
+      })
+
+      it("Fills the mobile editor with the unsaved content", () => {
+        setup(BASE_PATH, BASE_PATH)
+        checkMobileEditorForContent(HTML, "html")
+        checkMobileEditorForContent(CSS, "css")
       })
 
       itBehavesLikeStoreUnsavedAdditions(HTML, CSS)
@@ -486,13 +521,18 @@ describe("Unsaved work", () => {
         }
       })
 
-      it("Does not display any content in any of the editors", () => {
+      it("Does not display any content in any of the desktop editors", () => {
         setup(BASE_PATH, BASE_PATH)
         const htmlTextbox = within(screen.getByTestId("HTMLEditor")).getByRole("textbox")
         const cssTextbox = within(screen.getByTestId("CSSEditor")).getByRole("textbox")
 
         expect(htmlTextbox).toHaveTextContent("")
         expect(cssTextbox).toHaveTextContent("")
+      })
+
+      it("Does not display any content in the mobile editor", () => {
+        setup(BASE_PATH, BASE_PATH)
+        checkMobileEditorForContent("", "both")
       })
 
       itBehavesLikeStoreUnsavedAdditions("", "")
@@ -536,6 +576,10 @@ describe("Unsaved work", () => {
         userEvent.type(htmlTextbox, "more html")
         userEvent.type(cssTextbox, "more css")
 
+        // Do the same for the mobile editor
+        typeContentIntoMobileEditor("even more html", "html")
+        typeContentIntoMobileEditor("even more css", "css")
+
         // Ensure that the additional changes were not stored
         expect(setItemMock).not.toHaveBeenCalled()
       })
@@ -575,11 +619,93 @@ describe("Unsaved work", () => {
       const htmlTextbox = within(await screen.findByTestId("HTMLEditor")).getByRole("textbox")
       const cssTextbox = within(screen.getByTestId("CSSEditor")).getByRole("textbox")
 
+      // Type into the desktop editors
       userEvent.type(htmlTextbox, "some more html")
       userEvent.type(cssTextbox, "some more css")
 
+      // Type into the mobile editor
+      typeContentIntoMobileEditor("even more html", "html")
+      typeContentIntoMobileEditor("even more css", "css")
+
       // Ensure nothing was stored in local storage
       expect(setItemMock).not.toHaveBeenCalled()
+    })
+  })
+})
+
+describe("Mobile specific", () => {
+  describe("When creating a new blog", () => {
+    describe("When there is content in the editor", () => {
+      const HTML = "some html!"
+      const CSS = "some CSS!"
+
+      function setupContent() {
+        setup(BASE_PATH, BASE_PATH)
+        typeContentIntoMobileEditor(HTML, "html")
+        typeContentIntoMobileEditor(CSS, "css")
+      }
+
+      describe("When clicking the editor titles", () => {
+        it("Switches back and forth between displaying the HTML and CSS content", () => {
+          setupContent()
+
+          // Initially only html content should be showing
+          checkMobileEditorForContent(HTML, "html")
+          checkMobileEditorForContent(CSS, "html", true)
+
+          // Now switch to css, and ensure only css content is showing
+          checkMobileEditorForContent(CSS, "css")
+          checkMobileEditorForContent(HTML, "css", true)
+
+          // Finally, switch back to html, and ensure only html is showing
+          checkMobileEditorForContent(HTML, "html")
+          checkMobileEditorForContent(CSS, "html", true)
+        })
+      })
+
+      describe("When signed in", () => {
+        describe("When clicking the save button", () => {
+          let saveBlogMock: jest.SpyInstance<
+            Promise<BackendError | { success: { id: string } }>,
+            [html: string, css: string, blogId?: string | null]
+          >
+
+          beforeEach(() => {
+            // Mock the browser local storage to fake being signed in
+            Storage.prototype.getItem = (key: string) => {
+              if (key === "userId") return "someFakeId"
+              return null
+            }
+
+            // Spy on and mock the Api saveBlog method
+            saveBlogMock = jest.spyOn(Api, "saveBlog").mockImplementation(async () => {
+              // Wait for a short time
+              await new Promise<void>((resolve, reject) => {
+                setTimeout(() => resolve(), 20)
+              })
+
+              // Then return a fake successful response
+              return { success: { id: "someBlogId" } }
+            })
+          })
+
+          afterAll(() => {
+            saveBlogMock.mockRestore()
+          })
+
+          it("Saves the content", async () => {
+            setupContent()
+            const saveBtn = screen.getByTestId("saveBtn")
+            userEvent.click(saveBtn)
+
+            // Wait until loading is done
+            await screen.findByTestId("savingCheckmark")
+
+            // Now ensure an attempt was made to save the content
+            expect(saveBlogMock).toHaveBeenCalledWith(HTML, CSS, undefined)
+          })
+        })
+      })
     })
   })
 })
