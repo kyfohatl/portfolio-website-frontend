@@ -7,6 +7,7 @@ export default defineConfig({
     },
     baseUrl: "http://localhost:3000",
     viewportHeight: 800,
+    viewportWidth: 1500,
     env: {
       backendAddr: "http://localhost:8000"
     }

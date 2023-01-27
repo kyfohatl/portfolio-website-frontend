@@ -1,8 +1,9 @@
 import styles from "./cardTexts.module.css"
+import { titles } from "./cardTitles"
 
 export const cardTexts = [
   {
-    title: "Summarise",
+    title: titles[0],
     notes: [
       <p className={styles.text}>
         Summarise your blogs by placing <strong>Open Graph Protocol</strong> meta tags in the header of your
@@ -14,7 +15,7 @@ export const cardTexts = [
     ]
   },
   {
-    title: "Titles",
+    title: titles[1],
     notes: [
       <p className={styles.text}>Use <strong>og:title</strong> to provide a title for your summary</p>,
       <p className={styles.text}>
@@ -25,7 +26,7 @@ export const cardTexts = [
     ]
   },
   {
-    title: "Descriptions",
+    title: titles[2],
     notes: [
       <p className={styles.text}>Use <strong>og:description</strong> to provide a brief description of your blog</p>,
       <p className={styles.text}>
@@ -38,7 +39,7 @@ export const cardTexts = [
     ]
   },
   {
-    title: "Images",
+    title: titles[3],
     notes: [
       <p className={styles.text}>Use <strong>og:image</strong> to provide an image for your summary</p>,
       <p className={styles.text}>
@@ -49,7 +50,7 @@ export const cardTexts = [
     ]
   },
   {
-    title: "Tags",
+    title: titles[4],
     notes: [
       <p className={styles.text}>
         Use the <strong>keywords</strong> meta tag to provide a list of tags for your image

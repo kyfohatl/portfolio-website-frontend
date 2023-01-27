@@ -48,8 +48,7 @@ const HELP_DISPLAY_TUTE_BASE_PROPS = {
   image: HelpImage,
   imgAlt: "Edit blog help",
   imgWidth: "142px",
-  imgHeight: "100px",
-  cardTestId: "basicHelp"
+  imgHeight: "100px"
 }
 
 const LOGIN_TUTE_BASE_PROPS = {
@@ -58,8 +57,7 @@ const LOGIN_TUTE_BASE_PROPS = {
   image: SignInImg,
   imgAlt: "Sign in to save",
   imgWidth: "103px",
-  imgHeight: "110px",
-  cardTestId: "loginHelp"
+  imgHeight: "110px"
 }
 
 const HTML_TUTE_BASE_PROPS = {
@@ -68,8 +66,7 @@ const HTML_TUTE_BASE_PROPS = {
   image: HtmlImage,
   imgWidth: "145px",
   imgHeight: "57px",
-  imgAlt: "Write some HTML before saving!",
-  cardTestId: "htmlHelp"
+  imgAlt: "Write some HTML before saving!"
 }
 
 export default function EditBlog() {
@@ -105,12 +102,14 @@ export default function EditBlog() {
     const helpDisplayTute = {
       desktop: [{
         ...HELP_DISPLAY_TUTE_BASE_PROPS,
+        cardTestId: "basicHelpDesktop",
         target: helpBtnRef.current,
         xOffset: -200,
         yOffset: 100
       }],
       mobile: [{
         ...HELP_DISPLAY_TUTE_BASE_PROPS,
+        cardTestId: "basicHelpMobile",
         target: helpBtnRef.current,
         xOffset: 150,
         yOffset: 100
@@ -127,6 +126,7 @@ export default function EditBlog() {
         helpDisplayTute.desktop[0],
         {
           ...LOGIN_TUTE_BASE_PROPS,
+          cardTestId: "loginHelpDesktop",
           target: loginBtnRef.current,
           xOffset: -100,
           yOffset: 200,
@@ -136,6 +136,7 @@ export default function EditBlog() {
         helpDisplayTute.mobile[0],
         {
           ...LOGIN_TUTE_BASE_PROPS,
+          cardTestId: "loginHelpMobile",
           target: menuBtnRef.current,
           xOffset: 40,
           yOffset: 100,
@@ -367,6 +368,7 @@ export default function EditBlog() {
       <TutorialSequence
         popupProps={[{
           ...HTML_TUTE_BASE_PROPS,
+          cardTestId: "htmlHelpDesktop",
           target: desktopHtmlTitleRef.current,
           xOffset: 200,
           yOffset: 150
@@ -389,6 +391,7 @@ export default function EditBlog() {
       <TutorialSequence
         popupProps={[{
           ...HTML_TUTE_BASE_PROPS,
+          cardTestId: "htmlHelpMobile",
           target: mobileHtmlTitleRef.current,
           xOffset: 280,
           yOffset: 100

@@ -1,41 +1,68 @@
 import Updatable from "../../src/lib/Updatable"
-import { cardTexts } from "../../src/resources/editBlogHelpCards/cardTexts"
+import { titles } from "../../src/resources/editBlogHelpCards/cardTitles"
+import { MOBILE_PIXEL_WIDTH, PIXEL_HEIGHT } from "../support/constants/screenSizes"
 import testTooltip from "../support/helpers/testTooltip"
+import { EditorType } from "../../src/components/blog/EditorTitle"
+
+function checkMobileEditorFor(editor: EditorType, content: string) {
+  cy.get('[data-testid="mobileEditorContainer"]').find(`[data-testid="editorTitle_${editor}"]`).click()
+  cy.get('[data-testid="mobileEditor"]').find("textarea").should("have.text", content)
+}
 
 describe("Creating a new blog", () => {
   beforeEach(() => {
     cy.visit("/editblog")
   })
 
-  // Skips the basic tutorial popups displayed on this page
-  function skipBasicTute() {
-    cy.get('[data-testid="basicHelp"]').find("button").click()
-    cy.get('[data-testid="loginHelp"]').find("button").click()
-  }
+  function itBehavesLikeWorkingEditorAndLineCounter(
+    editorType: "HTML" | "CSS",
+    txt: string,
+    numLines: number
+  ) {
+    function testEditor(mobile: boolean) {
+      it(`Displays the content along with ${numLines} line ${numLines > 1 ? "counters" : "counter"}`, () => {
+        // Close the help popups to prevent interference
+        cy.skipEditBlogTutes()
 
-  function itBehavesLikeWorkingEditorAndLineCounter(editorType: "HTML" | "CSS", txt: string, numLines: number) {
-    // Close the help popups to prevent interference
-    skipBasicTute()
+        let containerTestId = `[data-testid="${editorType}Editor"]`
+        if (mobile) containerTestId = '[data-testid="mobileEditor"]'
 
-    cy.get(`[data-testid="${editorType}Editor"]`)
-      .find("textarea")
-      .type(txt, { parseSpecialCharSequences: false })
-      .should("have.text", txt)
-    cy.get(`[data-testid="${editorType}LineCounter"]`)
-      .find("div")
-      .should("have.length", numLines)
-      .each((counter, idx, lineCounters) => {
-        expect(counter).to.contain(`${idx + 1}`)
+        cy.get(containerTestId)
+          .find("textarea")
+          .type(txt, { parseSpecialCharSequences: false })
+          .should("have.text", txt)
+        cy.get(containerTestId)
+          .find(`[data-testid="${mobile ? editorType.toLocaleLowerCase() : editorType}LineCounter"]`)
+          .find("div")
+          .should("have.length", numLines)
+          .each((counter, idx, lineCounters) => {
+            expect(counter).to.contain(`${idx + 1}`)
+          })
       })
+    }
+
+    describe("Desktop", () => {
+      testEditor(false)
+    })
+
+    describe("Mobile", () => {
+      beforeEach(() => {
+        cy.viewport(MOBILE_PIXEL_WIDTH, PIXEL_HEIGHT)
+
+        // Switch over to the correct editor
+        cy.get('[data-testid="mobileEditorContainer"]')
+          .find(`[data-testid="editorTitle_${editorType.toLocaleLowerCase()}"]`)
+          .click()
+      })
+
+      testEditor(true)
+    })
   }
 
   describe("HTML editor", () => {
     describe("When typing 1 line of content into the editor", () => {
       const TXT = `<h1>Some Title</h1>`
-
-      it("Displays the content along with one line counter", () => {
-        itBehavesLikeWorkingEditorAndLineCounter("HTML", TXT, 1)
-      })
+      itBehavesLikeWorkingEditorAndLineCounter("HTML", TXT, 1)
     })
 
     describe("When typing 5 lines of content into the editor", () => {
@@ -46,9 +73,7 @@ describe("Creating a new blog", () => {
           <p> Here is some more content</p>
         </article>`
 
-      it("Displays all content along with 5 line counters (from 1 to 5)", () => {
-        itBehavesLikeWorkingEditorAndLineCounter("HTML", TXT, 5)
-      })
+      itBehavesLikeWorkingEditorAndLineCounter("HTML", TXT, 5)
     })
 
     describe("When typing 30 lines of content into the editor", () => {
@@ -84,19 +109,14 @@ describe("Creating a new blog", () => {
           <p>Line 27 content</p>
         </article>`
 
-      it("Displays the all content along with 30 line counters (from 1 to 30)", () => {
-        itBehavesLikeWorkingEditorAndLineCounter("HTML", TXT, 30)
-      })
+      itBehavesLikeWorkingEditorAndLineCounter("HTML", TXT, 30)
     })
   })
 
   describe("CSS editor", () => {
     describe("When typing 1 line of content into the editor", () => {
       const TXT = `p {color: red;}`
-
-      it("Displays the content along with one line counter", () => {
-        itBehavesLikeWorkingEditorAndLineCounter("CSS", TXT, 1)
-      })
+      itBehavesLikeWorkingEditorAndLineCounter("CSS", TXT, 1)
     })
 
     describe("When typing 5 lines of content into the editor", () => {
@@ -107,9 +127,7 @@ describe("Creating a new blog", () => {
         .someClass {border-radius: 5px;}
         .someOtherClass {display: flex;}`
 
-      it("Displays all content along with 5 line counters (from 1 to 5)", () => {
-        itBehavesLikeWorkingEditorAndLineCounter("CSS", TXT, 5)
-      })
+      itBehavesLikeWorkingEditorAndLineCounter("CSS", TXT, 5)
     })
   })
 
@@ -120,7 +138,7 @@ describe("Creating a new blog", () => {
 
       it("Displays the HTML content and applies the CSS styles", () => {
         // Close the help popups to prevent interference
-        skipBasicTute()
+        cy.skipEditBlogTutes()
 
         // Type content into the editors
         cy.get('[data-testid="HTMLEditor"]')
@@ -174,7 +192,7 @@ describe("Creating a new blog", () => {
       // Navigate back to the edit blog page
       cy.visit("/editblog")
       // Close the help popup to prevent interference
-      cy.get('[data-testid="basicHelp"]').find("button").click()
+      cy.skipEditBlogTutes()
     })
 
     it("Saves the blog content to the database", () => {
@@ -204,7 +222,7 @@ describe("Creating a new blog", () => {
 
     describe("When there is unsaved work in local storage", () => {
       beforeEach(() => {
-        skipBasicTute()
+        cy.skipEditBlogTutes()
         cy.get('[data-testid="HTMLEditor"]').type("some html")
         cy.get('[data-testid="CSSEditor"]').type("some css")
 
@@ -226,11 +244,6 @@ describe("Editing an existing blog", () => {
   const CSS = "h1 {color: blue;}\np {color: red;}"
   let blogId: string
 
-  // Skips the basic tutorial popup displayed on this page
-  function skipBasicTute() {
-    cy.get('[data-testid="basicHelp"]').find("button").click()
-  }
-
   before(() => {
     // Clear the database
     cy.clearDb()
@@ -246,7 +259,7 @@ describe("Editing an existing blog", () => {
 
     // Create a test blog
     cy.visit("/editblog")
-    skipBasicTute()
+    cy.skipEditBlogTutes()
     cy.get('[data-testid="HTMLEditor"]').find("textarea").type(HTML, { parseSpecialCharSequences: false })
     cy.get('[data-testid="CSSEditor"]').find("textarea").type(CSS, { parseSpecialCharSequences: false })
     cy.get('[data-testid="saveBtn"]').click()
@@ -262,9 +275,24 @@ describe("Editing an existing blog", () => {
     cy.visit(`/editblog/${blogId}`)
   })
 
-  it("Displays the content of the blog in the editors", () => {
-    cy.get('[data-testid="HTMLEditor"]').find("textarea").should("have.text", HTML)
-    cy.get('[data-testid="CSSEditor"]').find("textarea").should("have.text", CSS)
+  describe("Desktop", () => {
+    it("Displays the content of the blog in the desktop editors", () => {
+      cy.get('[data-testid="HTMLEditor"]').find("textarea").should("have.text", HTML)
+      cy.get('[data-testid="CSSEditor"]').find("textarea").should("have.text", CSS)
+      checkMobileEditorFor("html", HTML)
+      checkMobileEditorFor("css", CSS)
+    })
+  })
+
+  describe("Mobile", () => {
+    beforeEach(() => {
+      cy.viewport(MOBILE_PIXEL_WIDTH, PIXEL_HEIGHT)
+    })
+
+    it("Displays the content of the blog in the mobile editor", () => {
+      checkMobileEditorFor("html", HTML)
+      checkMobileEditorFor("css", CSS)
+    })
   })
 
   it("Saves any changes made to the blog", () => {
@@ -296,226 +324,252 @@ describe("Help display", () => {
   })
 
   describe("When the help menu is not displaying", () => {
-    it("Displays a help button that when clicked on opens the help menu", () => {
-      // Initially the help menu should not be shown
-      cy.get('[data-testid="helpDisplayOuterContainer"]').should("not.exist")
-      // Now click the help button
-      cy.get('[data-testid="helpMenuBtn"]').click().then(() => {
-        // Now the menu should be displayed
-        cy.get('[data-testid="helpDisplayOuterContainer"]').should("exist")
+    describe("Desktop", () => {
+      it("Displays a help button that when clicked on opens the desktop help menu", () => {
+        // Initially the help menu should not be shown
+        cy.get('[data-testid="helpDisplayOuterContainer"]').should("not.exist")
+        // Now click the help button
+        cy.get('[data-testid="helpMenuBtn"]').click().then(() => {
+          // Now the menu should be displayed
+          cy.get('[data-testid="helpDisplayOuterContainer"]').should("exist")
+        })
+      })
+    })
+
+    describe("Mobile", () => {
+      beforeEach(() => {
+        cy.viewport(MOBILE_PIXEL_WIDTH, PIXEL_HEIGHT)
+      })
+
+      it("Displays a help button that when clicked on opens the mobile help menu", () => {
+        // Initially the help menu should not be shown
+        cy.get('[data-testid="mobileHelpDisplayOuterContainer"]').should("not.exist")
+        // Now click the help button
+        cy.get('[data-testid="helpMenuBtn"]').click().then(() => {
+          // Now the menu should be displayed
+          cy.get('[data-testid="mobileHelpDisplayOuterContainer"]').should("exist")
+        })
       })
     })
   })
 
   describe("When the help menu is displaying", () => {
-    function waitForAnimationToFinish() {
-      // Wait for the transition to complete
-      cy.get('[data-testid="animatedDial"]').should("not.exist")
-      cy.get('[data-testid="dialPlaceholder"]').should("not.exist")
-    }
+    describe("Desktop", () => {
+      function waitForAnimationToFinish() {
+        // Wait for the transition to complete
+        cy.get('[data-testid="animatedDial"]').should("not.exist")
+        cy.get('[data-testid="dialPlaceholder"]').should("not.exist")
+      }
 
-    function itBehavesLikeShowCurrentCard(idx: number) {
-      cy.get(`[data-testid="featureDisplay_${cardTexts[idx].title}"]`).then((card) => {
-        // Check the title
-        cy.wrap(card).find("h1").should("contain.text", cardTexts[idx].title)
-        // Check the notes
-        cy.wrap(card).find("ul").then((list) => {
-          for (const note of cardTexts[idx].notes) {
-            expect(list).to.contain.text(note)
-          }
+      function itBehavesLikeShowCurrentCard(idx: number) {
+        cy.get(`[data-testid="featureDisplay_${titles[idx]}"]`).should("exist")
+      }
+
+      function itBehavesLikeActiveDialInPos(idx: number) {
+        cy.get('[data-testid="dialContainer"]')
+          .find("button")
+          .eq(idx)
+          .invoke("attr", "data-testid")
+          .should("eq", "activeDial")
+      }
+
+      function itBehavesLikeClickLeftArrow(curIdx: number) {
+        describe("When clicking the left arrow button", () => {
+          it("Brings in the previous card, and moves the bottom dial one to the left", () => {
+            cy.get('[data-testid="helpDisplaySideBtn_left"]').click()
+            waitForAnimationToFinish()
+            // Ensure the current card is displayed correctly
+            itBehavesLikeShowCurrentCard(curIdx - 1)
+            // Ensure the active dial is in the correct spot
+            itBehavesLikeActiveDialInPos(curIdx - 1)
+          })
         })
-      })
-    }
+      }
 
-    function itBehavesLikeActiveDialInPos(idx: number) {
-      cy.get('[data-testid="dialContainer"]')
-        .find("button")
-        .eq(idx)
-        .invoke("attr", "data-testid")
-        .should("eq", "activeDial")
-    }
-
-    function itBehavesLikeClickLeftArrow(curIdx: number) {
-      describe("When clicking the left arrow button", () => {
-        it("Brings in the previous card, and moves the bottom dial one to the left", () => {
-          cy.get('[data-testid="helpDisplaySideBtn_left"]').click()
-          waitForAnimationToFinish()
-          // Ensure the current card is displayed correctly
-          itBehavesLikeShowCurrentCard(curIdx - 1)
-          // Ensure the active dial is in the correct spot
-          itBehavesLikeActiveDialInPos(curIdx - 1)
+      function itBehavesLikeClickRightArrow(curIdx: number) {
+        describe("When clicking the right arrow button", () => {
+          it("Brings in the next card, and moves the bottom dial one to the right", () => {
+            cy.get('[data-testid="helpDisplaySideBtn_right"]').click()
+            waitForAnimationToFinish()
+            // Ensure the current card is displayed correctly
+            itBehavesLikeShowCurrentCard(curIdx + 1)
+            // Ensure the active dial is in the correct spot
+            itBehavesLikeActiveDialInPos(curIdx + 1)
+          })
         })
-      })
-    }
+      }
 
-    function itBehavesLikeClickRightArrow(curIdx: number) {
-      describe("When clicking the right arrow button", () => {
-        it("Brings in the next card, and moves the bottom dial one to the right", () => {
-          cy.get('[data-testid="helpDisplaySideBtn_right"]').click()
-          waitForAnimationToFinish()
-          // Ensure the current card is displayed correctly
-          itBehavesLikeShowCurrentCard(curIdx + 1)
-          // Ensure the active dial is in the correct spot
-          itBehavesLikeActiveDialInPos(curIdx + 1)
+      function itBehavesLikeClickDialToLeft(curIdx: number) {
+        describe("When clicking on a dial 2 positions to the left of the current dial", () => {
+          it("Moves the stack 2 cards back and the bottom dial moves two positions to the left", () => {
+            cy.get('[data-testid="dialContainer"]').find("button").eq(curIdx - 2).click()
+            waitForAnimationToFinish()
+            // Ensure the current card is displayed correctly
+            itBehavesLikeShowCurrentCard(curIdx - 2)
+            // Ensure the active dial is in the correct spot
+            itBehavesLikeActiveDialInPos(curIdx - 2)
+          })
         })
-      })
-    }
+      }
 
-    function itBehavesLikeClickDialToLeft(curIdx: number) {
-      describe("When clicking on a dial 2 positions to the left of the current dial", () => {
-        it("Moves the stack 2 cards back and the bottom dial moves two positions to the left", () => {
-          cy.get('[data-testid="dialContainer"]').find("button").eq(curIdx - 2).click()
-          waitForAnimationToFinish()
-          // Ensure the current card is displayed correctly
-          itBehavesLikeShowCurrentCard(curIdx - 2)
-          // Ensure the active dial is in the correct spot
-          itBehavesLikeActiveDialInPos(curIdx - 2)
+      function itBehavesLikeClickDialToRight(curIdx: number) {
+        describe("When clicking on a dial two positions to the right of the current dial", () => {
+          it("Moves the stack 2 cards forwards and the bottom dial moves two positions to the right", () => {
+            cy.get('[data-testid="dialContainer"]').find("button").eq(curIdx + 2).click()
+            waitForAnimationToFinish()
+            // Ensure the current card is displayed correctly
+            itBehavesLikeShowCurrentCard(curIdx + 2)
+            // Ensure the active dial is in the correct spot
+            itBehavesLikeActiveDialInPos(curIdx + 2)
+          })
         })
-      })
-    }
+      }
 
-    function itBehavesLikeClickDialToRight(curIdx: number) {
-      describe("When clicking on a dial two positions to the right of the current dial", () => {
-        it("Moves the stack 2 cards forwards and the bottom dial moves two positions to the right", () => {
-          cy.get('[data-testid="dialContainer"]').find("button").eq(curIdx + 2).click()
-          waitForAnimationToFinish()
-          // Ensure the current card is displayed correctly
-          itBehavesLikeShowCurrentCard(curIdx + 2)
-          // Ensure the active dial is in the correct spot
-          itBehavesLikeActiveDialInPos(curIdx + 2)
+      function itBehavesLikePressLeftArrowKey(curIdx: number) {
+        describe("When pressing the \"left arrow\" key on the keyboard", () => {
+          it("Brings in the previous card, and moves the bottom dial one to the left", () => {
+            // To use keyboard shortcuts in Cypress, we can "type" into the document body
+            cy.get("body").type("{leftArrow}")
+            waitForAnimationToFinish()
+            // Ensure that the current card is displayed correctly
+            itBehavesLikeShowCurrentCard(curIdx - 1)
+            // Ensure the active dial is in the correct spot
+            itBehavesLikeActiveDialInPos(curIdx - 1)
+          })
         })
-      })
-    }
+      }
 
-    function itBehavesLikePressLeftArrowKey(curIdx: number) {
-      describe("When pressing the \"left arrow\" key on the keyboard", () => {
-        it("Brings in the previous card, and moves the bottom dial one to the left", () => {
-          // To use keyboard shortcuts in Cypress, we can "type" into the document body
-          cy.get("body").type("{leftArrow}")
-          waitForAnimationToFinish()
-          // Ensure that the current card is displayed correctly
-          itBehavesLikeShowCurrentCard(curIdx - 1)
-          // Ensure the active dial is in the correct spot
-          itBehavesLikeActiveDialInPos(curIdx - 1)
+      function itBehavesLikePressRightArrowKey(curIdx: number) {
+        describe("When pressing the \"right arrow\" key on the keyboard", () => {
+          it("Brings in the next card, and moves the bottom dial one to the right", () => {
+            // To use keyboard shortcuts in Cypress, we can "type" into the document body
+            cy.get("body").type("{rightArrow}")
+            waitForAnimationToFinish()
+            // Ensure the current card is displayed correctly
+            itBehavesLikeShowCurrentCard(curIdx + 1)
+            // Ensure the active dial is in the correct spot
+            itBehavesLikeActiveDialInPos(curIdx + 1)
+          })
         })
-      })
-    }
+      }
 
-    function itBehavesLikePressRightArrowKey(curIdx: number) {
-      describe("When pressing the \"right arrow\" key on the keyboard", () => {
-        it("Brings in the next card, and moves the bottom dial one to the right", () => {
-          // To use keyboard shortcuts in Cypress, we can "type" into the document body
-          cy.get("body").type("{rightArrow}")
-          waitForAnimationToFinish()
-          // Ensure the current card is displayed correctly
-          itBehavesLikeShowCurrentCard(curIdx + 1)
-          // Ensure the active dial is in the correct spot
-          itBehavesLikeActiveDialInPos(curIdx + 1)
-        })
-      })
-    }
+      function itBehavesLikeCorrectLeftwardBehavior(curIdx: number) {
+        itBehavesLikeClickLeftArrow(curIdx)
+        itBehavesLikeClickDialToLeft(curIdx)
+        itBehavesLikePressLeftArrowKey(curIdx)
+      }
 
-    function itBehavesLikeCorrectLeftwardBehavior(curIdx: number) {
-      itBehavesLikeClickLeftArrow(curIdx)
-      itBehavesLikeClickDialToLeft(curIdx)
-      itBehavesLikePressLeftArrowKey(curIdx)
-    }
-
-    function itBehavesLikeCorrectRightwardBehavior(curIdx: number) {
-      itBehavesLikeClickRightArrow(curIdx)
-      itBehavesLikeClickDialToRight(curIdx)
-      itBehavesLikePressRightArrowKey(curIdx)
-    }
-
-    beforeEach(() => {
-      cy.get('[data-testid="helpMenuBtn"]').click()
-    })
-
-    describe("When the menu is displaying the first card", () => {
-      it("Displays the content of the first help card, along with only a right arrow button, and the bottom dial is at the leftmost position", () => {
-        itBehavesLikeShowCurrentCard(0)
-
-        cy.get('[data-testid="helpDisplaySideBtn_right"]').should("exist")
-        cy.get('[data-testid="helpDisplaySideBtn_left"]').should("not.exist")
-
-        itBehavesLikeActiveDialInPos(0)
-      })
-
-      itBehavesLikeCorrectRightwardBehavior(0)
-    })
-
-    describe("When the menu is displaying a middle card", () => {
-      beforeEach(() => {
-        // Click the right arrow twice to get the the middle of the help card stack
-        cy.get('[data-testid="helpDisplaySideBtn_right"]').click().then(() => {
-          cy.get('[data-testid="helpDisplaySideBtn_right"]').click()
-          waitForAnimationToFinish()
-        })
-      })
-
-      it("Displays the content of the relevant card, shows both left and right arrow buttons, and the bottom dial is in the middle position", () => {
-        itBehavesLikeShowCurrentCard(2)
-
-        cy.get('[data-testid="helpDisplaySideBtn_right"]').should("exist")
-        cy.get('[data-testid="helpDisplaySideBtn_left"]').should("exist")
-
-        itBehavesLikeActiveDialInPos(2)
-      })
-
-      itBehavesLikeCorrectRightwardBehavior(2)
-      itBehavesLikeCorrectLeftwardBehavior(2)
-    })
-
-    describe("When the help menu is displaying the final card", () => {
-      const curIdx = cardTexts.length - 1
+      function itBehavesLikeCorrectRightwardBehavior(curIdx: number) {
+        itBehavesLikeClickRightArrow(curIdx)
+        itBehavesLikeClickDialToRight(curIdx)
+        itBehavesLikePressRightArrowKey(curIdx)
+      }
 
       beforeEach(() => {
-        // Click the final dial to go to the last card
-        cy.get('[data-testid="dialContainer"]').find("button").last().click()
-        waitForAnimationToFinish()
+        cy.get('[data-testid="helpMenuBtn"]').click()
       })
 
-      it("Displays the content of the final card, along with only a right arrow button, and the bottom dial is in the final position", () => {
-        itBehavesLikeShowCurrentCard(curIdx)
-
-        cy.get('[data-testid="helpDisplaySideBtn_right"]').should("not.exist")
-        cy.get('[data-testid="helpDisplaySideBtn_left"]').should("exist")
-
-        itBehavesLikeActiveDialInPos(curIdx)
-      })
-
-      itBehavesLikeCorrectLeftwardBehavior(curIdx)
-    })
-
-    describe("When clicking away from the help menu", () => {
-      it("Closes the help menu", () => {
-        cy.get("body").click(0, 0).then(() => {
-          cy.get('[data-testid="helpDisplayOuterContainer"]').should("not.exist")
-        })
-      })
-    })
-
-    describe("When clicking on the \"X\" button", () => {
-      it("Closes the help menu", () => {
-        cy.get('[data-testid="helpDisplayCloseBtn"]').click().then(() => {
-          cy.get('[data-testid="helpDisplayOuterContainer"]').should("not.exist")
-        })
-      })
-    })
-
-    describe("When pressing the \"escape\" key", () => {
-      it("Closes the help menu", () => {
-        cy.get("body").type("{esc}").then(() => {
-          cy.get('[data-testid="helpDisplayOuterContainer"]').should("not.exist")
-        })
-      })
-    })
-
-    describe("When clicking on the currently active dial", () => {
-      it("Does not change the current card", () => {
-        cy.get('[data-testid="dialContainer"]').find("button").first().click().then(() => {
+      describe("When the menu is displaying the first card", () => {
+        it("Displays the content of the first help card, along with only a right arrow button, and the bottom dial is at the leftmost position", () => {
           itBehavesLikeShowCurrentCard(0)
+
+          cy.get('[data-testid="helpDisplaySideBtn_right"]').should("exist")
+          cy.get('[data-testid="helpDisplaySideBtn_left"]').should("not.exist")
+
+          itBehavesLikeActiveDialInPos(0)
         })
+
+        itBehavesLikeCorrectRightwardBehavior(0)
+      })
+
+      describe("When the menu is displaying a middle card", () => {
+        beforeEach(() => {
+          // Click the right arrow twice to get the the middle of the help card stack
+          cy.get('[data-testid="helpDisplaySideBtn_right"]').click().then(() => {
+            cy.get('[data-testid="helpDisplaySideBtn_right"]').click()
+            waitForAnimationToFinish()
+          })
+        })
+
+        it("Displays the content of the relevant card, shows both left and right arrow buttons, and the bottom dial is in the middle position", () => {
+          itBehavesLikeShowCurrentCard(2)
+
+          cy.get('[data-testid="helpDisplaySideBtn_right"]').should("exist")
+          cy.get('[data-testid="helpDisplaySideBtn_left"]').should("exist")
+
+          itBehavesLikeActiveDialInPos(2)
+        })
+
+        itBehavesLikeCorrectRightwardBehavior(2)
+        itBehavesLikeCorrectLeftwardBehavior(2)
+      })
+
+      describe("When the help menu is displaying the final card", () => {
+        const curIdx = titles.length - 1
+
+        beforeEach(() => {
+          // Click the final dial to go to the last card
+          cy.get('[data-testid="dialContainer"]').find("button").last().click()
+          waitForAnimationToFinish()
+        })
+
+        it("Displays the content of the final card, along with only a right arrow button, and the bottom dial is in the final position", () => {
+          itBehavesLikeShowCurrentCard(curIdx)
+
+          cy.get('[data-testid="helpDisplaySideBtn_right"]').should("not.exist")
+          cy.get('[data-testid="helpDisplaySideBtn_left"]').should("exist")
+
+          itBehavesLikeActiveDialInPos(curIdx)
+        })
+
+        itBehavesLikeCorrectLeftwardBehavior(curIdx)
+      })
+
+      describe("When clicking away from the help menu", () => {
+        it("Closes the help menu", () => {
+          cy.get("body").click(0, 0).then(() => {
+            cy.get('[data-testid="helpDisplayOuterContainer"]').should("not.exist")
+          })
+        })
+      })
+
+      describe("When clicking on the \"X\" button", () => {
+        it("Closes the help menu", () => {
+          cy.get('[data-testid="helpDisplayOuterContainer"]')
+            .find('[data-testid="helpDisplayCloseBtn"]')
+            .click()
+            .then(() => {
+              cy.get('[data-testid="helpDisplayOuterContainer"]').should("not.exist")
+            })
+        })
+      })
+
+      describe("When pressing the \"escape\" key", () => {
+        it("Closes the help menu", () => {
+          cy.get("body").type("{esc}").then(() => {
+            cy.get('[data-testid="helpDisplayOuterContainer"]').should("not.exist")
+          })
+        })
+      })
+
+      describe("When clicking on the currently active dial", () => {
+        it("Does not change the current card", () => {
+          cy.get('[data-testid="dialContainer"]').find("button").first().click().then(() => {
+            itBehavesLikeShowCurrentCard(0)
+          })
+        })
+      })
+    })
+
+    describe("Mobile", () => {
+      beforeEach(() => {
+        cy.viewport(MOBILE_PIXEL_WIDTH, PIXEL_HEIGHT)
+        cy.get('[data-testid="helpMenuBtn"]').click()
+      })
+
+      it.only("Displays a scrollable container which contains the help cards", () => {
+        // Initially the first card is displayed
+        cy.get('[data-testid="mobileHelpDisplayOuterContainer"]').find(`[data-testid="featureDisplay_${titles[0]}"]`).should("be.fullyInViewport")
       })
     })
   })
@@ -581,18 +635,18 @@ describe("Tutorial popups", () => {
 
     function itBehavesLikeShowBasicHelp() {
       it("Displays a single tutorial about clicking the button, and does not display the sign in tutorial", () => {
-        cy.get('[data-testid="basicHelp"]').should("exist").find("button").click().then(() => {
-          cy.get('[data-testid="basicHelp"]').should("not.exist")
-          cy.get('[data-testid="loginHelp"]').should("not.exist")
+        cy.get('[data-testid="basicHelpDesktop"]').should("exist").find("button").click().then(() => {
+          cy.get('[data-testid="basicHelpDesktop"]').should("not.exist")
+          cy.get('[data-testid="loginHelpDesktop"]').should("not.exist")
         })
       })
     }
 
     function itBehavesLikeShowBothTutes() {
       it("Displays two basic tutorials, one after the other", () => {
-        cy.get('[data-testid="basicHelp"]').should("exist").find("button").click().then(() => {
-          cy.get('[data-testid="basicHelp"]').should("not.exist")
-          cy.get('[data-testid="loginHelp"]').should("exist")
+        cy.get('[data-testid="basicHelpDesktop"]').should("exist").find("button").click().then(() => {
+          cy.get('[data-testid="basicHelpDesktop"]').should("not.exist")
+          cy.get('[data-testid="loginHelpDesktop"]').should("exist")
         })
       })
     }
@@ -620,7 +674,7 @@ describe("Tutorial popups", () => {
         // Go to the page
         cy.visit("/editblog")
         // Close one tute, but not both
-        cy.get('[data-testid="basicHelp"]').find("button").click()
+        cy.get('[data-testid="basicHelpDesktop"]').find("button").click()
         // Now go to some other page
         cy.visit("/")
       })
@@ -645,8 +699,8 @@ describe("Tutorial popups", () => {
     describe("When visiting the page for a subsequent time, and having completed the tutorial previously", () => {
       function itBehavesLikeShowNoTutes() {
         it("Does not display any of the basic tutorial popups", () => {
-          cy.get('[data-testid="basicHelp"]').should("not.exist")
-          cy.get('[data-testid="loginHelp"]').should("not.exist")
+          cy.get('[data-testid="basicHelpDesktop"]').should("not.exist")
+          cy.get('[data-testid="loginHelpDesktop"]').should("not.exist")
         })
       }
 
@@ -654,8 +708,8 @@ describe("Tutorial popups", () => {
         // Go to the page
         cy.visit("/editblog")
         // Close both tutes and complete the tutorial
-        cy.get('[data-testid="basicHelp"]').find("button").click().then(() => {
-          cy.get('[data-testid="loginHelp"]').find("button").click()
+        cy.get('[data-testid="basicHelpDesktop"]').find("button").click().then(() => {
+          cy.get('[data-testid="loginHelpDesktop"]').find("button").click()
           // Now go to some other page
           cy.visit("/")
         })
@@ -679,8 +733,8 @@ describe("Tutorial popups", () => {
     })
 
     function itBehavesLikePopupsNotShowing() {
-      cy.get('[data-testid="basicHelp"]').should("not.exist")
-      cy.get('[data-testid="loginHelp"]').should("not.exist")
+      cy.get('[data-testid="basicHelpDesktop"]').should("not.exist")
+      cy.get('[data-testid="loginHelpDesktop"]').should("not.exist")
     }
 
     function itBehavesLikePopupsNeverShow() {
@@ -698,14 +752,14 @@ describe("Tutorial popups", () => {
         cy.visit("/editblog")
 
         // Ensure the help popup is showing at first
-        cy.get('[data-testid="basicHelp"]').should("exist")
+        cy.get('[data-testid="basicHelpDesktop"]').should("exist")
 
         // Open the help menu an ensure the help popup is not showing
         cy.get('[data-testid="helpMenuBtn"]').click()
         itBehavesLikePopupsNotShowing()
 
         // Close the help menu, and ensure that the help popup is still not showing
-        cy.get('[data-testid="helpDisplayCloseBtn"]').click()
+        cy.get('[data-testid="helpDisplayOuterContainer"]').find('[data-testid="helpDisplayCloseBtn"]').click()
         itBehavesLikePopupsNotShowing()
       })
     })
@@ -718,7 +772,7 @@ describe("Tutorial popups", () => {
 
         it("Closes the tutorial when the hotkey is pressed, and completes the tutorial", () => {
           // Ensure the popup is present
-          cy.get('[data-testid="basicHelp"]').should("exist")
+          cy.get('[data-testid="basicHelpDesktop"]').should("exist")
           // Press the hotkey
           cy.get("body").type("{esc}")
           // Ensure that the popups do not show again
@@ -731,11 +785,11 @@ describe("Tutorial popups", () => {
           cy.visit("/editblog")
 
           // Ensure the popup is present
-          cy.get('[data-testid="basicHelp"]').should("exist")
+          cy.get('[data-testid="basicHelpDesktop"]').should("exist")
           // Press the hotkey
           cy.get("body").type("{esc}")
           // Ensure the second popup is shown
-          cy.get('[data-testid="loginHelp"]').should("exist")
+          cy.get('[data-testid="loginHelpDesktop"]').should("exist")
           // Press the hotkey again
           cy.get("body").type("{esc}")
           // Ensure that the popups do not show again
@@ -751,14 +805,14 @@ describe("Tutorial popups", () => {
       cy.signUp(USERNAME, PASSWORD)
       cy.visit("/editblog")
       // Close the basic help popup
-      cy.get('[data-testid="basicHelp"]').find("button").click()
+      cy.skipEditBlogTutes()
     })
 
     describe("When there is content in the HTML editor", () => {
       it("Does not display the popup", () => {
         cy.get('[data-testid="HTMLEditor"]').find("textarea").type("someHtml!")
         cy.get('[data-testid="saveBtn"]').click()
-        cy.get('[data-testid="htmlHelp"]').should("not.exist")
+        cy.get('[data-testid="htmlHelpDesktop"]').should("not.exist")
       })
     })
 
@@ -770,10 +824,10 @@ describe("Tutorial popups", () => {
           // Now click the save button
           cy.get('[data-testid="saveBtn"]').click()
           // Ensure the html popup is shown
-          cy.get('[data-testid="htmlHelp"]').should("exist")
+          cy.get('[data-testid="htmlHelpDesktop"]').should("exist")
           // Now close the tutorial using a hotkey
           cy.get("body").type("{esc}")
-          cy.get('[data-testid="htmlHelp"]').should("not.exist")
+          cy.get('[data-testid="htmlHelpDesktop"]').should("not.exist")
         })
       }
 
@@ -786,7 +840,7 @@ describe("Tutorial popups", () => {
           // Trigger the popup once
           cy.get('[data-testid="saveBtn"]').click()
           // Close is to "complete" the html tute
-          cy.get('[data-testid="htmlHelp"]').find("button").click()
+          cy.get('[data-testid="htmlHelpDesktop"]').find("button").click()
           // Go to some other page
           cy.visit("/")
           // Come back to the edit blog page
@@ -801,15 +855,15 @@ describe("Tutorial popups", () => {
       it("Closes the tutorial", () => {
         // Open the html tute
         cy.get('[data-testid="saveBtn"]').click()
-        cy.get('[data-testid="htmlHelp"]').should("exist")
+        cy.get('[data-testid="htmlHelpDesktop"]').should("exist")
 
         // Open the help menu an ensure the popup is not showing
         cy.get('[data-testid="helpMenuBtn"]').click()
-        cy.get('[data-testid="htmlHelp"]').should("not.exist")
+        cy.get('[data-testid="htmlHelpDesktop"]').should("not.exist")
 
         // Close the help menu, and ensure that the popup is still not showing
-        cy.get('[data-testid="helpDisplayCloseBtn"]').click()
-        cy.get('[data-testid="htmlHelp"]').should("not.exist")
+        cy.get('[data-testid="helpDisplayOuterContainer"]').find('[data-testid="helpDisplayCloseBtn"]').click()
+        cy.get('[data-testid="htmlHelpDesktop"]').should("not.exist")
       })
     })
   })
@@ -826,7 +880,7 @@ describe("Unsaved work", () => {
       beforeEach(() => {
         cy.visit("/editblog")
         // Remove tutorial popups
-        cy.removeEditBlogTutorialPopupsSignedOut()
+        cy.skipEditBlogTutes()
       })
 
       it("Stores the work, and loads it again when going back to create a new blog", () => {
@@ -913,5 +967,7 @@ describe("Unsaved work", () => {
     })
   })
 })
+
+// That both the mobile and the desktop editors share the same content
 
 export { }

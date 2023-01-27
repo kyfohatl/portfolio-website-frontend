@@ -51,7 +51,11 @@ export default function HelpDisplayMobile({ cardProps, onClose }: HelpDisplayMob
       const curScale = Math.max((-SCALING_GRADIENT * Math.abs(distToCenterXs[i]) / offScrnDist) + 1, MIN_CARD_SCALE)
 
       return (
-        <div className={styles.cardWrapper} style={{ "--curScale": curScale } as CSSProperties}>
+        <div
+          key={"cardContainer_" + i}
+          className={styles.cardWrapper}
+          style={{ "--curScale": curScale } as CSSProperties}
+        >
           <FeatureDisplayCard {...prop} boxShadow="0px 0px 6px 6px #C1C1C1" />
         </div>
       )
@@ -61,7 +65,7 @@ export default function HelpDisplayMobile({ cardProps, onClose }: HelpDisplayMob
   }, [cardProps, distToCenterXs])
 
   return (
-    <div className={styles.outerContainer}>
+    <div className={styles.outerContainer} data-testid="mobileHelpDisplayOuterContainer">
       <HelpDisplayBackground onClose={onClose} />
 
       <div className={styles.displayContainer}>
