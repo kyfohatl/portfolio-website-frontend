@@ -9,7 +9,7 @@ import styles from "./TutorialPopup.module.css"
 export type DeviceType = "mobile" | "desktop" | "all"
 
 export interface TutorialPopupInfo {
-  target: HTMLElement | null,
+  target: React.RefObject<HTMLElement>,
   xOffset: number,
   yOffset: number,
   title: string,
@@ -67,9 +67,9 @@ export default function TutorialPopup({
 
   // Updates the position of the target
   const updateTargetPos = useMemo(() => throttle(() => {
-    if (!info.target) return
+    if (!info.target.current) return
 
-    const rect = info.target.getBoundingClientRect()
+    const rect = info.target.current.getBoundingClientRect()
     // The target position is the bottom left corner of the target div
     setTargetPos({ x: rect.left, y: rect.top + rect.height })
   }, 20), [info.target])
@@ -115,14 +115,14 @@ export default function TutorialPopup({
 
   // Place a "target" visual on the target
   useEffect(() => {
-    if (!info.target) return
+    if (!info.target.current) return
 
-    info.target.classList.add(styles.target)
+    info.target.current.classList.add(styles.target)
 
     // Remove the visual upon unmounting
     return () => {
-      if (info.target) {
-        info.target.classList.remove(styles.target)
+      if (info.target.current) {
+        info.target.current.classList.remove(styles.target)
       }
     }
   }, [info.target])

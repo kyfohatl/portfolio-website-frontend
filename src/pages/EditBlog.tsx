@@ -103,14 +103,14 @@ export default function EditBlog() {
       desktop: [{
         ...HELP_DISPLAY_TUTE_BASE_PROPS,
         cardTestId: "basicHelpDesktop",
-        target: helpBtnRef.current,
+        target: helpBtnRef,
         xOffset: -200,
         yOffset: 100
       }],
       mobile: [{
         ...HELP_DISPLAY_TUTE_BASE_PROPS,
         cardTestId: "basicHelpMobile",
-        target: helpBtnRef.current,
+        target: helpBtnRef,
         xOffset: 150,
         yOffset: 100
       }]
@@ -127,7 +127,7 @@ export default function EditBlog() {
         {
           ...LOGIN_TUTE_BASE_PROPS,
           cardTestId: "loginHelpDesktop",
-          target: loginBtnRef.current,
+          target: loginBtnRef,
           xOffset: -100,
           yOffset: 200,
         }
@@ -137,7 +137,7 @@ export default function EditBlog() {
         {
           ...LOGIN_TUTE_BASE_PROPS,
           cardTestId: "loginHelpMobile",
-          target: menuBtnRef.current,
+          target: menuBtnRef,
           xOffset: 40,
           yOffset: 100,
         }
@@ -369,7 +369,7 @@ export default function EditBlog() {
         popupProps={[{
           ...HTML_TUTE_BASE_PROPS,
           cardTestId: "htmlHelpDesktop",
-          target: desktopHtmlTitleRef.current,
+          target: desktopHtmlTitleRef,
           xOffset: 200,
           yOffset: 150
         }]}
@@ -392,7 +392,7 @@ export default function EditBlog() {
         popupProps={[{
           ...HTML_TUTE_BASE_PROPS,
           cardTestId: "htmlHelpMobile",
-          target: mobileHtmlTitleRef.current,
+          target: mobileHtmlTitleRef,
           xOffset: 280,
           yOffset: 100
         }]}

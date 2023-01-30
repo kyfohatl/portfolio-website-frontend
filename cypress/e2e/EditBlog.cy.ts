@@ -1,12 +1,17 @@
 import Updatable from "../../src/lib/Updatable"
 import { titles } from "../../src/resources/editBlogHelpCards/cardTitles"
-import { MOBILE_PIXEL_WIDTH, PIXEL_HEIGHT } from "../support/constants/screenSizes"
+import { DESKTOP_PIXEL_WIDTH, MOBILE_PIXEL_WIDTH, PIXEL_HEIGHT } from "../support/constants/screenSizes"
 import testTooltip from "../support/helpers/testTooltip"
 import { EditorType } from "../../src/components/blog/EditorTitle"
 
 function checkMobileEditorFor(editor: EditorType, content: string) {
   cy.get('[data-testid="mobileEditorContainer"]').find(`[data-testid="editorTitle_${editor}"]`).click()
   cy.get('[data-testid="mobileEditor"]').find("textarea").should("have.text", content)
+}
+
+function typeIntoMobileEditor(editor: EditorType, content: string) {
+  cy.get('[data-testid="mobileEditorContainer"]').find(`[data-testid="editorTitle_${editor}"]`).click()
+  cy.get('[data-testid="mobileEditor"]').find("textarea").type(content, { parseSpecialCharSequences: false })
 }
 
 describe("Creating a new blog", () => {
@@ -273,14 +278,13 @@ describe("Editing an existing blog", () => {
   beforeEach(() => {
     cy.signIn(USERNAME, PASSWORD)
     cy.visit(`/editblog/${blogId}`)
+    cy.skipEditBlogTutes()
   })
 
   describe("Desktop", () => {
     it("Displays the content of the blog in the desktop editors", () => {
       cy.get('[data-testid="HTMLEditor"]').find("textarea").should("have.text", HTML)
       cy.get('[data-testid="CSSEditor"]').find("textarea").should("have.text", CSS)
-      checkMobileEditorFor("html", HTML)
-      checkMobileEditorFor("css", CSS)
     })
   })
 
@@ -295,20 +299,22 @@ describe("Editing an existing blog", () => {
     })
   })
 
-  it("Saves any changes made to the blog", () => {
-    const ADDITIONAL_HTML = "\n<p>And even more content!</p>"
-    const ADDITIONAL_CSS = "\nbody {background-color: yellow;}"
+  describe("Saving changes", () => {
+    it("Saves any changes made to the blog", () => {
+      const ADDITIONAL_HTML = "\n<p>And even more content!</p>"
+      const ADDITIONAL_CSS = "\nbody {background-color: yellow;}"
 
-    // Make some changes to the blog content
-    cy.get('[data-testid="HTMLEditor"]').find("textarea").type(ADDITIONAL_HTML, { parseSpecialCharSequences: false })
-    cy.get('[data-testid="CSSEditor"]').find("textarea").type(ADDITIONAL_CSS, { parseSpecialCharSequences: false })
-    cy.get('[data-testid="saveBtn"]').click()
+      // Make some changes to the blog content
+      cy.get('[data-testid="HTMLEditor"]').find("textarea").type(ADDITIONAL_HTML, { parseSpecialCharSequences: false })
+      cy.get('[data-testid="CSSEditor"]').find("textarea").type(ADDITIONAL_CSS, { parseSpecialCharSequences: false })
+      cy.get('[data-testid="saveBtn"]').click()
 
-    // Ensure saving is done
-    cy.get('[data-testid="saveBtnLoading"]').should("not.exist")
+      // Ensure saving is done
+      cy.get('[data-testid="saveBtnLoading"]').should("not.exist")
 
-    // Now ensure the changes are saved correctly
-    cy.verifyBlog(blogId, HTML + ADDITIONAL_HTML, CSS + ADDITIONAL_CSS)
+      // Now ensure the changes are saved correctly
+      cy.verifyBlog(blogId, HTML + ADDITIONAL_HTML, CSS + ADDITIONAL_CSS)
+    })
   })
 
   describe("Page title", () => {
@@ -567,9 +573,57 @@ describe("Help display", () => {
         cy.get('[data-testid="helpMenuBtn"]').click()
       })
 
-      it.only("Displays a scrollable container which contains the help cards", () => {
-        // Initially the first card is displayed
-        cy.get('[data-testid="mobileHelpDisplayOuterContainer"]').find(`[data-testid="featureDisplay_${titles[0]}"]`).should("be.fullyInViewport")
+      it("Displays a scrollable container which contains the help cards", () => {
+        function cardShouldBeInView(idx: number, win: Cypress.AUTWindow) {
+          cy.get('[data-testid="mobileHelpDisplayOuterContainer"]')
+            .find(`[data-testid="featureDisplay_${titles[idx]}"]`)
+            .should("be.inViewport", win)
+        }
+
+        function cardShouldNotBeInView(idx: number, win: Cypress.AUTWindow) {
+          cy.get('[data-testid="mobileHelpDisplayOuterContainer"]')
+            .find(`[data-testid="featureDisplay_${titles[idx]}"]`)
+            .should("not.be.inViewport", win)
+        }
+
+        cy.window().then((win) => {
+          // Initially the first card is in view
+          cardShouldBeInView(0, win)
+          // The middle card should not be in view
+          cardShouldNotBeInView(3, win)
+
+          // Now scroll the container to the middle card
+          cy.get('[data-testid="mobileHelpDisplayOuterContainer"]')
+            .find(`[data-testid="featureDisplay_${titles[3]}"]`)
+            .scrollIntoView()
+
+          // Now the first card should not be in view
+          cardShouldNotBeInView(0, win)
+          // And the middle card should be in view
+          cardShouldBeInView(3, win)
+        })
+      })
+
+      describe("When tapping away from the help menu", () => {
+        it("Closes the help menu", () => {
+          // Initially the menu is shown
+          cy.get('[data-testid="mobileHelpDisplayOuterContainer"]').should("exist")
+          // Click away
+          cy.get("body").click(0, 0)
+          // Now the menu should not be shown
+          cy.get('[data-testid="mobileHelpDisplayOuterContainer"]').should("not.exist")
+        })
+      })
+
+      describe("When tapping the \"X\" button", () => {
+        it("Closes the help menu", () => {
+          // Initially the menu is shown
+          cy.get('[data-testid="mobileHelpDisplayOuterContainer"]').should("exist")
+          // Click the X button
+          cy.get('[data-testid="mobileHelpDisplayOuterContainer"]').find('[data-testid="helpDisplayCloseBtn"]').click()
+          // Now the menu should not be shown
+          cy.get('[data-testid="mobileHelpDisplayOuterContainer"]').should("not.exist")
+        })
       })
     })
   })
@@ -883,18 +937,40 @@ describe("Unsaved work", () => {
         cy.skipEditBlogTutes()
       })
 
-      it("Stores the work, and loads it again when going back to create a new blog", () => {
-        // Add some work
-        cy.get('[data-testid="HTMLEditor"]').find("textarea").type(HTML)
-        cy.get('[data-testid="CSSEditor"]').find("textarea").type(CSS)
+      describe("Desktop", () => {
+        it("Stores the work, and loads it again when going back to create a new blog", () => {
+          // Add some work
+          cy.get('[data-testid="HTMLEditor"]').find("textarea").type(HTML)
+          cy.get('[data-testid="CSSEditor"]').find("textarea").type(CSS)
 
-        // Now go to some other page
-        cy.visit("/")
+          // Now go to some other page
+          cy.visit("/")
 
-        // Now go back to the edit blog page and see if the unsaved work is loaded in
-        cy.visit("/editblog")
-        cy.get('[data-testid="HTMLEditor"]').find("textarea").should("contain.text", HTML)
-        cy.get('[data-testid="CSSEditor"]').find("textarea").should("contain.text", CSS)
+          // Now go back to the edit blog page and see if the unsaved work is loaded in
+          cy.visit("/editblog")
+          cy.get('[data-testid="HTMLEditor"]').find("textarea").should("contain.text", HTML)
+          cy.get('[data-testid="CSSEditor"]').find("textarea").should("contain.text", CSS)
+        })
+      })
+
+      describe("Mobile", () => {
+        beforeEach(() => {
+          cy.viewport(MOBILE_PIXEL_WIDTH, PIXEL_HEIGHT)
+        })
+
+        it("Stores the work, and loads it again when going back to create a new blog", () => {
+          // Add some work
+          typeIntoMobileEditor("html", HTML)
+          typeIntoMobileEditor("css", CSS)
+
+          // Now go to some other page
+          cy.visit("/")
+
+          // Now go back to the edit blog page and see if the unsaved work is loaded in
+          cy.visit("/editblog")
+          checkMobileEditorFor("html", HTML)
+          checkMobileEditorFor("css", CSS)
+        })
       })
     })
 
@@ -906,31 +982,72 @@ describe("Unsaved work", () => {
       })
 
       describe("When adding some work, then saving it", () => {
-        it("Clears any stored work, and will display blank editors when going back to create a new blog", () => {
-          // Create a blog and save it
-          cy.createBlog(HTML, CSS)
-          // Now go to another page
-          cy.visit("/")
-          // Now come back, and ensure that the editors are blank
-          cy.visit("/editblog")
-          cy.get('[data-testid="HTMLEditor"]').find("textarea").should("have.text", "")
-          cy.get('[data-testid="CSSEditor"]').find("textarea").should("have.text", "")
+        describe("Desktop", () => {
+          it("Clears any stored work, and will display blank editors when going back to create a new blog", () => {
+            // Create a blog and save it
+            cy.createBlog(HTML, CSS)
+            // Now go to another page
+            cy.visit("/")
+            // Now come back, and ensure that the editors are blank
+            cy.visit("/editblog")
+            cy.get('[data-testid="HTMLEditor"]').find("textarea").should("have.text", "")
+            cy.get('[data-testid="CSSEditor"]').find("textarea").should("have.text", "")
+          })
+        })
+
+        describe("Mobile", () => {
+          beforeEach(() => {
+            cy.viewport(MOBILE_PIXEL_WIDTH, PIXEL_HEIGHT)
+          })
+
+          it("Clears any stored work, and will display blank editors when going back to create a new blog", () => {
+            // Create a blog and save it
+            cy.createBlog(HTML, CSS)
+            // Now go to another page
+            cy.visit("/")
+            // Now come back, and ensure that the editors are blank
+            cy.visit("/editblog")
+            checkMobileEditorFor("html", "")
+            checkMobileEditorFor("css", "")
+          })
         })
       })
 
       describe("When adding some work, saving it, then adding some more unsaved work", () => {
-        it("Does not store the additional unsaved work, and will not display it when going away and coming back to the edit blog page", () => {
-          // Create a blog and save it
-          cy.createBlog(HTML, CSS)
-          // Now add some more content, but don't save it
-          cy.get('[data-testid="HTMLEditor"]').find("textarea").type("some more html")
-          cy.get('[data-testid="CSSEditor"]').find("textarea").type("some more css")
-          // Go to some other page
-          cy.visit("/")
-          // Now come back to the edit blog page, and ensure the editors are blank
-          cy.visit("/editblog")
-          cy.get('[data-testid="HTMLEditor"]').find("textarea").should("have.text", "")
-          cy.get('[data-testid="CSSEditor"]').find("textarea").should("have.text", "")
+        describe("Desktop", () => {
+          it("Does not store the additional unsaved work, and will not display it when going away and coming back to the edit blog page", () => {
+            // Create a blog and save it
+            cy.createBlog(HTML, CSS)
+            // Now add some more content, but don't save it
+            cy.get('[data-testid="HTMLEditor"]').find("textarea").type("some more html")
+            cy.get('[data-testid="CSSEditor"]').find("textarea").type("some more css")
+            // Go to some other page
+            cy.visit("/")
+            // Now come back to the edit blog page, and ensure the editors are blank
+            cy.visit("/editblog")
+            cy.get('[data-testid="HTMLEditor"]').find("textarea").should("have.text", "")
+            cy.get('[data-testid="CSSEditor"]').find("textarea").should("have.text", "")
+          })
+        })
+
+        describe("Mobile", () => {
+          beforeEach(() => {
+            cy.viewport(MOBILE_PIXEL_WIDTH, PIXEL_HEIGHT)
+          })
+
+          it("Does not store the additional unsaved work, and will not display it when going away and coming back to the edit blog page", () => {
+            // Create a blog and save it
+            cy.createBlog(HTML, CSS)
+            // Now add some more content, but don't save it
+            typeIntoMobileEditor("html", "some more html")
+            typeIntoMobileEditor("css", "some more css")
+            // Go to some other page
+            cy.visit("/")
+            // Now come back to the edit blog page, and ensure the editors are blank
+            cy.visit("/editblog")
+            checkMobileEditorFor("html", "")
+            checkMobileEditorFor("css", "")
+          })
         })
       })
     })
@@ -947,27 +1064,98 @@ describe("Unsaved work", () => {
       cy.createBlog(HTML, CSS, blogIdContainer)
     })
 
-    it("Does not store any unsaved work, and will not load it in whether creating a new blog or when trying to edit the same blog again", () => {
-      cy.visit(`/editblog/${blogIdContainer.getContent()}`)
+    describe("Desktop", () => {
+      it("Does not store any unsaved work, and will not load it in whether creating a new blog or when trying to edit the same blog again", () => {
+        cy.visit(`/editblog/${blogIdContainer.getContent()}`)
 
-      // Make some changes, but don't save them
-      cy.get('[data-testid="HTMLEditor"]').find("textarea").type("some additional HTML")
-      cy.get('[data-testid="CSSEditor"]').find("textarea").type("some additional CSS")
+        // Make some changes, but don't save them
+        cy.get('[data-testid="HTMLEditor"]').find("textarea").type("some additional HTML")
+        cy.get('[data-testid="CSSEditor"]').find("textarea").type("some additional CSS")
 
-      // Now go to create a new blog, and ensure that the editors are blank
-      cy.visit("/editblog")
-      cy.get('[data-testid="HTMLEditor"]').find("textarea").should("have.text", "")
-      cy.get('[data-testid="CSSEditor"]').find("textarea").should("have.text", "")
+        // Now go to create a new blog, and ensure that the editors are blank
+        cy.visit("/editblog")
+        cy.get('[data-testid="HTMLEditor"]').find("textarea").should("have.text", "")
+        cy.get('[data-testid="CSSEditor"]').find("textarea").should("have.text", "")
 
-      // Also go to edit our blog again, and ensure only the original blog content is there (and not any unsaved work)
-      cy.visit(`/editblog/${blogIdContainer.getContent()}`)
-      cy.get('[data-testid="HTMLEditor"]').find("textarea").should("have.text", HTML)
-      cy.get('[data-testid="CSSEditor"]').find("textarea").should("have.text", CSS)
+        // Also go to edit our blog again, and ensure only the original blog content is there
+        // (and not any unsaved work)
+        cy.visit(`/editblog/${blogIdContainer.getContent()}`)
+        cy.get('[data-testid="HTMLEditor"]').find("textarea").should("have.text", HTML)
+        cy.get('[data-testid="CSSEditor"]').find("textarea").should("have.text", CSS)
+      })
+    })
 
+    describe("Mobile", () => {
+      beforeEach(() => {
+        cy.viewport(MOBILE_PIXEL_WIDTH, PIXEL_HEIGHT)
+      })
+
+      it("Does not store any unsaved work, and will not load it in whether creating a new blog or when trying to edit the same blog again", () => {
+        cy.visit(`/editblog/${blogIdContainer.getContent()}`)
+
+        // Make some changes, but don't save them
+        typeIntoMobileEditor("html", "some additional HTML")
+        typeIntoMobileEditor("css", "some additional CSS")
+
+        // Now go to create a new blog, and ensure that the editors are blank
+        cy.visit("/editblog")
+        checkMobileEditorFor("html", "")
+        checkMobileEditorFor("css", "")
+
+        // Also go to edit our blog again, and ensure only the original blog content is there
+        // (and not any unsaved work)
+        cy.visit(`/editblog/${blogIdContainer.getContent()}`)
+        checkMobileEditorFor("html", HTML)
+        checkMobileEditorFor("css", CSS)
+      })
     })
   })
 })
 
-// That both the mobile and the desktop editors share the same content
+describe("Responsiveness specific", () => {
+  beforeEach(() => {
+    cy.visit("/editblog")
+    cy.skipEditBlogTutes()
+  })
+
+  it("Shares content between the mobile and desktop editors, and making changes causes changes in the other", () => {
+    // Initially both mobile and desktop editors should be empty
+    cy.get('[data-testid="HTMLEditor"]').find("textarea").should("have.text", "")
+    cy.get('[data-testid="CSSEditor"]').find("textarea").should("have.text", "")
+
+    cy.viewport(MOBILE_PIXEL_WIDTH, PIXEL_HEIGHT)
+
+    checkMobileEditorFor("html", "")
+    checkMobileEditorFor("css", "")
+
+    // Type something into the html mobile editor and ensure that change is reflected in the desktop html editor
+    const HTML = "some html!"
+    typeIntoMobileEditor("html", HTML)
+
+    cy.viewport(DESKTOP_PIXEL_WIDTH, PIXEL_HEIGHT)
+    cy.get('[data-testid="HTMLEditor"]').find("textarea").should("have.text", HTML)
+
+    // Type something into the html desktop editor and ensure that change is reflected in the mobile html editor
+    const ADDITIONAL_HTML = "and some more html!"
+    cy.get('[data-testid="HTMLEditor"]').find("textarea").type(ADDITIONAL_HTML)
+
+    cy.viewport(MOBILE_PIXEL_WIDTH, PIXEL_HEIGHT)
+    checkMobileEditorFor("html", HTML + ADDITIONAL_HTML)
+
+    // Type something into the mobile css editor and ensure that change is reflected in the desktop css editor
+    const CSS = "some css!"
+    typeIntoMobileEditor("css", CSS)
+
+    cy.viewport(DESKTOP_PIXEL_WIDTH, PIXEL_HEIGHT)
+    cy.get('[data-testid="CSSEditor"]').find("textarea").should("have.text", CSS)
+
+    // Type something into the desktop css editor and ensure that change is reflected in the mobile css editor
+    const ADDITIONAL_CSS = "and some more css!"
+    cy.get('[data-testid="CSSEditor"]').find("textarea").type(ADDITIONAL_CSS)
+
+    cy.viewport(MOBILE_PIXEL_WIDTH, PIXEL_HEIGHT)
+    checkMobileEditorFor("css", CSS + ADDITIONAL_CSS)
+  })
+})
 
 export { }

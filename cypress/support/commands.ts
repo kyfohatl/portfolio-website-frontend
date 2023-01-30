@@ -39,7 +39,7 @@
 import '@testing-library/cypress/add-commands'
 import { AuthService } from '../../src/lib/commonTypes'
 import Updatable from "../../src/lib/Updatable"
-import { DESKTOP_PIXEL_WIDTH } from './constants/screenSizes'
+import isDesktopEnv from './helpers/predicates/isDesktopEnv'
 
 declare global {
   namespace Cypress {
@@ -156,9 +156,23 @@ Cypress.Commands.add("createBlog", (html: string, css: string, updatable?: Updat
 
   cy.visit("/editblog")
   cy.skipEditBlogTutes()
-  cy.get('[data-testid="HTMLEditor"]').find("textarea").type(html, { parseSpecialCharSequences: false })
-  cy.get('[data-testid="CSSEditor"]').find("textarea").type(css, { parseSpecialCharSequences: false })
-  cy.get('[data-testid="saveBtn"]').click()
+
+  cy.window().then((win) => {
+    if (isDesktopEnv(win)) {
+      // We are in a desktop environment
+      cy.get('[data-testid="HTMLEditor"]').find("textarea").type(html, { parseSpecialCharSequences: false })
+      cy.get('[data-testid="CSSEditor"]').find("textarea").type(css, { parseSpecialCharSequences: false })
+      cy.get('[data-testid="saveBtn"]').click()
+      return
+    }
+
+    // We are in a mobile environment
+    cy.get('[data-testid="mobileEditorContainer"]').find('[data-testid="editorTitle_html"]').click()
+    cy.get('[data-testid="mobileEditor"]').find("textarea").type(html, { parseSpecialCharSequences: false })
+    cy.get('[data-testid="mobileEditorContainer"]').find('[data-testid="editorTitle_css"]').click()
+    cy.get('[data-testid="mobileEditor"]').find("textarea").type(css, { parseSpecialCharSequences: false })
+    cy.get('[data-testid="saveBtn"]').click()
+  })
 
   cy.wait("@createBlog")
 })
@@ -184,13 +198,12 @@ Cypress.Commands.add("skipEditBlogTutes", () => {
   // We will use localStorage as a source of truth for whether popups showing or if we are logged in
   // This is because throughout the execution of this command localStorage should be stable, as opposed
   // to the DOM which is subject to asynchronous change
-  const shownBasicTute = localStorage.getItem("tutorial_basic_shown")
+  cy.window().then((win) => {
+    if (!localStorage.getItem("tutorial_basic_shown")) {
+      // Basic tute has not been shown, thus we must close the popups
+      const userId = localStorage.getItem("userId")
 
-  if (!shownBasicTute) {
-    // Basic tute has not been shown, thus we must close the popups
-    const userId = localStorage.getItem("userId")
-    cy.window().then((win) => {
-      if (win.innerWidth >= DESKTOP_PIXEL_WIDTH) {
+      if (isDesktopEnv(win)) {
         // We are in a desktop environment
         cy.get('[data-testid="basicHelpDesktop"]').find("button").click()
 
@@ -209,6 +222,6 @@ Cypress.Commands.add("skipEditBlogTutes", () => {
         // We are not signed in. Also close the login tutorial
         cy.get('[data-testid="loginHelpMobile"]').find("button").click()
       }
-    })
-  }
+    }
+  })
 })
