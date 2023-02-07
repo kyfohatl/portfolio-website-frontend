@@ -17,6 +17,7 @@ export interface FeatureDisplayCardProps {
   boxShadow?: string,
   middleGap?: string,
   textLineSize?: string,
+  noteListStyle?: "default" | "borders"
 }
 
 // Uses Ref Forwarding to provide a ref access to the outer container div of this component to the parent
@@ -30,7 +31,8 @@ const FeatureDisplayCard = React.forwardRef<HTMLDivElement, FeatureDisplayCardPr
   borderRadius,
   boxShadow,
   middleGap,
-  textLineSize
+  textLineSize,
+  noteListStyle = "default"
 }, ref) => {
   let outerContainerStyles: CSSProperties = {
     ...(
@@ -52,8 +54,39 @@ const FeatureDisplayCard = React.forwardRef<HTMLDivElement, FeatureDisplayCardPr
         : { "--link-normal-color": "blue", "--link-visited-color": "purple" }
     )
   }
-  let titleStyles: CSSProperties = {}
-  let noteStyles: CSSProperties = {}
+
+  let listStyles: CSSProperties = {
+    ...(
+      noteListStyle === "borders"
+        ? {
+          listStyle: "none"
+        }
+        : {}
+    )
+  }
+
+  let titleStyles: CSSProperties = {
+    ...(
+      noteListStyle === "borders"
+        ? {
+          border: "solid 3px",
+          borderColor: "transparent transparent #bebebe transparent"
+        }
+        : {}
+    )
+  }
+
+  let noteStyles: CSSProperties = {
+    ...(
+      noteListStyle === "borders"
+        ? {
+          border: "solid 3px",
+          borderColor: "transparent transparent #bebebe transparent"
+        }
+        : {}
+    )
+  }
+
   const textContainerStyles: CSSProperties = {
     ...(textLineSize && { "--max-text-width-desktop": textLineSize } as CSSProperties)
   }
@@ -83,7 +116,7 @@ const FeatureDisplayCard = React.forwardRef<HTMLDivElement, FeatureDisplayCardPr
     >
       <article className={styles.textContainer} style={textContainerStyles}>
         <h1 style={titleStyles}>{title}</h1>
-        <ul>
+        <ul style={listStyles}>
           {notesList}
         </ul>
       </article>

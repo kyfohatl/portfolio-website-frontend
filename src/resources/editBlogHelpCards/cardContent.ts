@@ -49,7 +49,8 @@ function createCardProps(cardInfoList: createCardPropsArg[]) {
       dimensions: CARD_DIMENSIONS,
       borderRadius: BORDER_RADIUS,
       middleGap: MIDDLE_GAP,
-      textLineSize: MAX_TEXT_WIDTH
+      textLineSize: MAX_TEXT_WIDTH,
+      noteListStyle: "borders"
     })
   }
 

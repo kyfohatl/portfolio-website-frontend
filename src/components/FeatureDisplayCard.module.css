@@ -22,13 +22,11 @@
   font-size: 36px;
   color: black;
   box-sizing: border-box;
-  border: solid 3px;
-  border-color: transparent transparent #bebebe transparent;
   padding-bottom: 10px;
 }
 
 .textContainer>ul {
-  list-style: none;
+  list-style: disc;
   margin-left: 20px;
   display: flex;
   flex-direction: column;
@@ -42,8 +40,6 @@
   color: black;
   line-height: 30px;
   box-sizing: border-box;
-  border: solid 3px;
-  border-color: transparent transparent #bebebe transparent;
 }
 
 .imageContainer {
