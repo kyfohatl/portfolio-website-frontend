@@ -42,10 +42,14 @@
   box-sizing: border-box;
 }
 
-.imageContainer {
+.imageContainerBase {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.imgContainerMobile {
+  display: none;
 }
 
 .textContainer>ul a {
@@ -63,12 +67,16 @@
 @media (max-width: 1100px) {
   .outerContainer {
     width: var(--width-mobile, 100%);
-    height: var(--height-mobile, 100vh);
+    height: var(--height-mobile, min-content);
     min-width: var(--width-mobile, 100%);
     padding: 30px;
+    flex-direction: column;
+    gap: 50px;
+    overflow-x: hidden;
+    overflow-y: scroll;
   }
 
-  .imageContainer {
+  .imgContainerDesktop {
     display: none;
   }
 
