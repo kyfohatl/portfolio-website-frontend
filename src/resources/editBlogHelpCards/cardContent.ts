@@ -30,8 +30,8 @@ const MAX_TEXT_WIDTH = "300px"
 interface createCardPropsArg {
   title: string,
   notes: string[] | JSX.Element[],
-  codeImage: string,
-  summaryCardImage: string
+  codeImageDesktop: string,
+  summaryCardImageDesktop: string
 }
 
 function createCardProps(cardInfoList: createCardPropsArg[]) {
@@ -41,10 +41,13 @@ function createCardProps(cardInfoList: createCardPropsArg[]) {
       title: cardInfo.title,
       notes: cardInfo.notes,
       visuals: {
-        images: [
-          { imgLink: cardInfo.codeImage, width: CODE_IMG_WIDTH, height: CODE_IMG_HEIGHT },
-          { imgLink: cardInfo.summaryCardImage, width: SUMMARY_CARD_IMG_WIDTH, height: SUMMARY_CARD_IMG_HEIGHT }
-        ]
+        desktop: {
+          images: [
+            { imgLink: cardInfo.codeImageDesktop, width: CODE_IMG_WIDTH, height: CODE_IMG_HEIGHT },
+            { imgLink: cardInfo.summaryCardImageDesktop, width: SUMMARY_CARD_IMG_WIDTH, height: SUMMARY_CARD_IMG_HEIGHT }
+          ]
+        },
+        mobile: {}
       },
       dimensions: CARD_DIMENSIONS,
       borderRadius: BORDER_RADIUS,
@@ -61,31 +64,31 @@ export const cardProps: WithRequiredType<FeatureDisplayCardProps, "dimensions">[
   {
     title: cardTexts[0].title,
     notes: cardTexts[0].notes,
-    codeImage: CodeBase,
-    summaryCardImage: CardBase
+    codeImageDesktop: CodeBase,
+    summaryCardImageDesktop: CardBase
   },
   {
     title: cardTexts[1].title,
     notes: cardTexts[1].notes,
-    codeImage: CodeTitle,
-    summaryCardImage: CardTitle
+    codeImageDesktop: CodeTitle,
+    summaryCardImageDesktop: CardTitle
   },
   {
     title: cardTexts[2].title,
     notes: cardTexts[2].notes,
-    codeImage: CodeDescription,
-    summaryCardImage: CardDescription
+    codeImageDesktop: CodeDescription,
+    summaryCardImageDesktop: CardDescription
   },
   {
     title: cardTexts[3].title,
     notes: cardTexts[3].notes,
-    codeImage: CodeImage,
-    summaryCardImage: CardImage
+    codeImageDesktop: CodeImage,
+    summaryCardImageDesktop: CardImage
   },
   {
     title: cardTexts[4].title,
     notes: cardTexts[4].notes,
-    codeImage: CodeTags,
-    summaryCardImage: CardTags
+    codeImageDesktop: CodeTags,
+    summaryCardImageDesktop: CardTags
   }
 ])
