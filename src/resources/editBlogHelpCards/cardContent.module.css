@@ -1,0 +1,10 @@
+.mobileImgContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.mobileImg {
+  box-shadow: #bababa 0px 0px 4px 3px;
+}

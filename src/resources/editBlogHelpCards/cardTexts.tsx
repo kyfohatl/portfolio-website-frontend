@@ -1,7 +1,13 @@
 import styles from "./cardTexts.module.css"
 import { titles } from "./cardTitles"
 
-export const cardTexts = [
+interface CardTexts {
+  title: string,
+  notes: JSX.Element[],
+  code: string
+}
+
+export const cardTexts: CardTexts[] = [
   {
     title: titles[0],
     notes: [
@@ -12,7 +18,8 @@ export const cardTexts = [
       <p className={styles.text}>
         Blog summaries will be displayed on the blogs page, enticing viewers to click on your blog
       </p>
-    ]
+    ],
+    code: '<meta property="og:title"/>\n<meta property="og:description"/>\n<meta property="og:image"/>\n<meta name="keywords"/>'
   },
   {
     title: titles[1],
@@ -23,7 +30,8 @@ export const cardTexts = [
         by <strong>content="<i>[the title of your blog]</i>"</strong>
       </p>,
       <p className={styles.text}>This title will be displayed at the top of your blog summary</p>
-    ]
+    ],
+    code: '<meta\n\tproperty="og:title"\n\tcontent="Sample Summary Title"\n/>'
   },
   {
     title: titles[2],
@@ -36,7 +44,8 @@ export const cardTexts = [
       <p className={styles.text}>
         This description will be displayed on you blog summary and entice viewers to read your blog
       </p>
-    ]
+    ],
+    code: '<meta\n\tproperty="og:description"\n\tcontent="This is a sample description"\n/>'
   },
   {
     title: titles[3],
@@ -47,7 +56,8 @@ export const cardTexts = [
         by <strong>content="<i>[link to the image]</i>"</strong>
       </p>,
       <p className={styles.text}>This will help grab the viewers attention as they scroll through the blogs</p>
-    ]
+    ],
+    code: '<meta\n\tproperty="og:image"\n\tcontent="https://someImageAddress.com"\n/>'
   },
   {
     title: titles[4],
@@ -63,6 +73,7 @@ export const cardTexts = [
         Tags will give viewers a general idea of the topics covered by your blog, and will be used in the future for
         search and sorting purposes
       </p>
-    ]
+    ],
+    code: '<meta\n\tname="keywords"\n\tcontent="Tutorial, Sample, Display"\n/>'
   }
 ]

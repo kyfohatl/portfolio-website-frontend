@@ -1,7 +1,7 @@
 .outerContainer {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   gap: 140px;
   background-color: seashell;
   width: var(--width-desktop, 100%);
@@ -50,6 +50,13 @@
 
 .imgContainerMobile {
   display: none;
+  width: 100%;
+
+  /* Due to a bug with flexbox justify-content and overflowing content, we need to use "margin-bottom: auto" on the 
+    bottom flex child instead of the "justify-content: center" on the parent. This bug can be fixed with 
+    "justify-content: center safe" bug current browser support is poor, so it is not used.
+    Note that this is only relevant in mobile view where the "justify-content" property is set back to "flex-start" */
+  margin-bottom: auto;
 }
 
 .textContainer>ul a {
@@ -69,19 +76,29 @@
     width: var(--width-mobile, 100%);
     height: var(--height-mobile, min-content);
     min-width: var(--width-mobile, 100%);
-    padding: 30px;
+    padding: 40px 30px;
     flex-direction: column;
     gap: 50px;
     overflow-x: hidden;
     overflow-y: scroll;
+    justify-content: flex-start;
   }
 
   .imgContainerDesktop {
     display: none;
   }
 
+  .imgContainerMobile {
+    display: flex;
+  }
+
   .textContainer {
     max-width: none;
+
+    /* Due to a bug with flexbox justify-content and overflowing content, we need to use "margin-top: auto" on the top
+    flex child instead of the "justify-content: center" on the parent. This bug can be fixed with 
+    "justify-content: center safe" bug current browser support is poor, so it is not used */
+    margin-top: auto;
   }
 
   .textContainer>ul {
