@@ -3,36 +3,48 @@ import "./PageContainer.css"
 import Navbar, { NavbarComponentRefs } from "./navbar/Navbar"
 import Loading from "./Loading"
 import Error from "./Error"
-import { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import setPageTitle from "../lib/helpers/setPageTitle"
 
 export type PageContainerState = { status: "normal" | "loading" } | { status: "Error", errorCode: string }
+type PageContainerStyles = { desktop: React.CSSProperties, mobile: React.CSSProperties }
 
 interface PageContainerProps {
   title: string,
-  backgroundStyle?: React.CSSProperties,
-  contentStyle?: React.CSSProperties,
-  contentBlockStyle?: React.CSSProperties,
+  backgroundStyle?: PageContainerStyles,
+  contentStyle?: PageContainerStyles,
+  contentBlockStyle?: PageContainerStyles,
   state?: PageContainerState,
   children: React.ReactNode,
   contentTestId?: string,
   navbarRefs?: NavbarComponentRefs
 }
 
+const mql = window.matchMedia("(max-width: 1100px)")
+
 export default function PageContainer({
   title,
-  backgroundStyle = {},
-  contentStyle = {},
-  contentBlockStyle = {},
+  backgroundStyle = { desktop: {}, mobile: {} },
+  contentStyle = { desktop: {}, mobile: {} },
+  contentBlockStyle = { desktop: {}, mobile: {} },
   state = { status: "normal" },
   children,
   contentTestId,
   navbarRefs
 }: PageContainerProps) {
+  const [bckgStyleOverrides, setBckgStyleOverrides] = useState<React.CSSProperties>({})
+  const [contentStyleOverrides, setContentStyleOverrides] = useState<React.CSSProperties>({})
+  const [contentBlockStyleOverrides, setContentBlockStyleOverrides] = useState<React.CSSProperties>({})
+
   // Set the page title
   useEffect(() => {
     setPageTitle(title)
   }, [title])
+
+  // Set the correct styles initially, based on screen media query
+  useEffect(() => {
+    // run func
+  }, [])
 
   if (state.status === "loading") {
     contentStyle = { alignItems: "center" }

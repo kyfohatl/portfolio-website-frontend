@@ -1,6 +1,13 @@
 import "./Home.css"
 import PageContainer from "../components/PageContainer"
 import FeatureDisplayCard from "../components/FeatureDisplayCard"
+import Hero from "../components/Hero"
+import { useCallback, useRef, useState } from "react"
+import Deleting, { DeletingStyleOverrides } from "../components/animation/Deleting"
+import Saving, { SavingStyleOverrides } from "../components/animation/Saving"
+import Button from "../components/Button"
+import Loading from "../components/Loading"
+import { CodeBlock, dracula } from "react-code-blocks"
 
 // Images
 import CreateBlogImg from "../assets/images/homePageDemos/create_blog.png"
@@ -10,16 +17,14 @@ import EditBlogImg from "../assets/images/homePageDemos/edit_blog.png"
 import ViewBlogsImg from "../assets/images/homePageDemos/view_blogs_removedBg.png"
 import SignUpImg from "../assets/images/homePageDemos/sign_up.png"
 import ThirdPartyLoginImg from "../assets/images/homePageDemos/google_facebook_removedBg.png"
-import Hero from "../components/Hero"
-import { useCallback, useRef, useState } from "react"
-import Deleting, { DeletingStyleOverrides } from "../components/animation/Deleting"
-import Saving, { SavingStyleOverrides } from "../components/animation/Saving"
-import Button from "../components/Button"
-import Loading from "../components/Loading"
 import FigmaDesignImg from "../assets/images/homePageDemos/figma_designs.png"
 import FrontendTestImg from "../assets/images/homePageDemos/frontendTesting.png"
 import GithubActionsImg from "../assets/images/homePageDemos/githubActions.png"
 import UpcomingCodeImg from "../assets/images/homePageDemos/upcoming_features.jpg"
+
+// Mobile images
+import CreateBlogMobileImg from "../assets/images/homePageDemos/mobile/createBlog.png"
+import MobileCardBase from "../assets/images/editBlogPageHelp/mobile/summaryBase.png"
 
 // Logos
 import ReactLogo from "../assets/images/homePageDemos/techstackLogos/react_logo.png"
@@ -39,6 +44,8 @@ import GitHubLogo from "../assets/images/homePageDemos/techstackLogos/github_log
 import GithubActionsLogo from "../assets/images/homePageDemos/techstackLogos/githubActions_logo.png"
 import FigmaLogo from "../assets/images/homePageDemos/techstackLogos/figma_logo.png"
 import QuestionMark from "../components/animation/QuestionMark"
+
+const MOB_IMG_WIDTH = "90%"
 
 export default function Home() {
   // For scrolling to the first feature display card upon clicking the "Explore" button
@@ -81,7 +88,10 @@ export default function Home() {
           "VSCode-style editor with line numbering, custom built from scratch without the use of any frameworks. Basic syntax highlighting is planned for a future version",
           "Sign in required to create and edit blogs"
         ]}
-        visuals={{ images: [{ imgLink: CreateBlogImg, width: "594px", height: "526px" }] }}
+        visuals={{
+          desktop: { images: [{ imgLink: CreateBlogImg, width: "594px", height: "526px" }] },
+          mobile: { images: [{ imgLink: CreateBlogMobileImg, width: MOB_IMG_WIDTH }] }
+        }}
         ref={firstFeatureRef}
       />
       <FeatureDisplayCard
@@ -93,10 +103,29 @@ export default function Home() {
           "Use the “keywords” meta tag to add tags to your blog, which will be displayed on the summary card"
         ]}
         visuals={{
-          images: [
-            { imgLink: SummaryImg, width: "593px", height: "492px" },
-            { imgLink: SummaryCardImg, width: "593px", height: "119px" }
-          ]
+          desktop: {
+            images: [
+              { imgLink: SummaryImg, width: "593px", height: "492px" },
+              { imgLink: SummaryCardImg, width: "593px", height: "119px" }
+            ]
+          },
+          mobile: {
+            custom: <>
+              <CodeBlock
+                language="html"
+                showLineNumbers={true}
+                text='<meta property="og:title"/>\n<meta property="og:description"/>\n<meta property="og:image"/>\n<meta name="keywords"/>'
+                theme={dracula}
+                customStyle={{
+                  borderRadius: "10px",
+                  fontWeight: "600",
+                  boxShadow: "0px 0px 4px 3px #bababa",
+                  width: "100%"
+                }}
+              />
+              <img src={MobileCardBase} alt="summary card" width={MOB_IMG_WIDTH} />
+            </>
+          }
         }}
         theme="dark"
       />

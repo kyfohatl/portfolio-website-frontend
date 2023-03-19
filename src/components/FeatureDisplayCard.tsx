@@ -3,8 +3,8 @@ import styles from "./FeatureDisplayCard.module.css"
 
 interface imgProps {
   imgLink: string,
-  height: string,
-  width: string
+  height?: string,
+  width?: string
 }
 
 type CardVisuals = { images: imgProps[] } | { custom: JSX.Element }

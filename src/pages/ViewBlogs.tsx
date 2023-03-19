@@ -8,6 +8,7 @@ import Api, { BlogProps } from "../lib/api/Api"
 import styles from "./ViewBlogs.module.css"
 
 import { ReactComponent as CreateIcon } from "../assets/images/createIcon.svg"
+import { ReactComponent as PenIcon } from "../assets/images/penIcon.svg"
 import { useNavigate } from "react-router-dom"
 import { hasData } from "../lib/api/helpers/auth/redirectAndClearData"
 import { NUM_ADDITIONAL_BLOGS, NUM_INIT_BLOGS } from "../resources/ViewBlogsConstants"
@@ -128,17 +129,31 @@ export default function ViewBlogs() {
     >
       {hasData()
         ?
-        <Button
-          text="Create a new blog"
-          type={{ type: "button", callBack: onClickCreate }}
-          backgroundColor="#8B0000"
-          color="#FFFFFF"
-          icon={<CreateIcon width={21} height={21} />}
-          width="158px"
-          height="40px"
-          buttonState={createButtonState}
-          btnTestId="createBlogBtn"
-        />
+        <>
+          <div className={styles.desktopCreateBtn}>
+            <Button
+              text="Create a new blog"
+              type={{ type: "button", callBack: onClickCreate }}
+              backgroundColor="#8B0000"
+              color="#FFFFFF"
+              icon={<CreateIcon width={21} height={21} />}
+              width="158px"
+              height="40px"
+              buttonState={createButtonState}
+              btnTestId="createBlogBtn"
+            />
+          </div>
+          <div className={styles.mobileCreateBtn}>
+            <Button
+              type={{ type: "button", callBack: onClickCreate }}
+              backgroundColor="#8B0000"
+              icon={<PenIcon width={20} height={20} stroke="#FFFFFF" strokeWidth={3} />}
+              width="38px"
+              height="38px"
+              buttonState={createButtonState}
+            />
+          </div>
+        </>
         :
         null
       }

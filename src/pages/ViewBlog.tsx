@@ -117,34 +117,60 @@ export default function ViewBlog() {
     >
       {userCanEdit
         ?
-        <div className={styles.buttonContainer}>
-          <Tooltip text="Edit the blog">
-            <Button
-              text="Edit"
-              type={{ type: "button", callBack: onClickEdit }}
-              backgroundColor="#8B0000"
-              height="36px"
-              width="100px"
-              icon={<EditIcon width={21} height={21} />}
-              buttonState={editButtonState}
-              disabled={editButtonDisabled}
-              btnTestId="editBtn"
-            />
-          </Tooltip>
-          <Tooltip text="Permanently delete the blog">
-            <Button
-              text="Delete"
-              type={{ type: "button", callBack: onClickDelete }}
-              backgroundColor="#4267B2"
-              height="36px"
-              width="100px"
-              icon={<DeleteIcon width={21} height={21} />}
-              buttonState={deleteButtonState}
-              disabled={deleteButtonDisabled}
-              btnTestId="deleteBtn"
-            />
-          </Tooltip>
-        </div>
+        <>
+          <div className={styles.buttonContainerDesktop}>
+            <Tooltip text="Edit the blog">
+              <Button
+                text="Edit"
+                type={{ type: "button", callBack: onClickEdit }}
+                backgroundColor="#8B0000"
+                height="36px"
+                width="100px"
+                icon={<EditIcon width={21} height={21} />}
+                buttonState={editButtonState}
+                disabled={editButtonDisabled}
+                btnTestId="editBtn"
+              />
+            </Tooltip>
+            <Tooltip text="Permanently delete the blog">
+              <Button
+                text="Delete"
+                type={{ type: "button", callBack: onClickDelete }}
+                backgroundColor="#4267B2"
+                height="36px"
+                width="100px"
+                icon={<DeleteIcon width={21} height={21} />}
+                buttonState={deleteButtonState}
+                disabled={deleteButtonDisabled}
+                btnTestId="deleteBtn"
+              />
+            </Tooltip>
+          </div>
+          <div className={styles.buttonContainerMobile}>
+            <Tooltip text="Edit the blog">
+              <Button
+                type={{ type: "button", callBack: onClickEdit }}
+                backgroundColor="#8B0000"
+                height="42px"
+                width="42px"
+                icon={<EditIcon width={26} height={26} />}
+                buttonState={editButtonState}
+                disabled={editButtonDisabled}
+              />
+            </Tooltip>
+            <Tooltip text="Permanently delete the blog">
+              <Button
+                type={{ type: "button", callBack: onClickDelete }}
+                backgroundColor="#4267B2"
+                height="42px"
+                width="42px"
+                icon={<DeleteIcon width={26} height={26} />}
+                buttonState={deleteButtonState}
+                disabled={deleteButtonDisabled}
+              />
+            </Tooltip>
+          </div>
+        </>
         :
         null
       }
