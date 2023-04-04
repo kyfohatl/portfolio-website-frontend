@@ -264,12 +264,14 @@ export default function EditBlog() {
     <PageContainer
       {...(blogIdParam ? { title: EDIT_BLOG_TITLE } : { title: CREATE_BLOG_TITLE })}
       contentBlockStyle={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        "--maxWidthDesktop": "80vw",
-        "--gapDesktop": "20px"
-      } as CSSProperties}
+        unified: {
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          "--maxWidthDesktop": "80vw",
+          "--gapDesktop": "20px"
+        } as CSSProperties
+      }}
       state={pageState}
       contentTestId="editBlogPage"
       navbarRefs={{ loginBtn: loginBtnRef, menuBtn: menuBtnRef }}

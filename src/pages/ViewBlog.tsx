@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Button, { ButtonState } from "../components/Button";
-import PageContainer, { PageContainerState } from "../components/PageContainer";
+import PageContainer, { PageContainerState, PageContainerStyles } from "../components/PageContainer";
 import Api, { BlogProps } from "../lib/api/Api";
 import styles from "./ViewBlog.module.css"
 
@@ -12,6 +12,14 @@ import Deleting from "../components/animation/Deleting";
 import Tooltip from "../components/tooltip/Tooltip";
 
 export const VIEW_BLOG_TITLE = "View A Blog"
+
+const CONTENT_BLOCK_STYLES: PageContainerStyles = {
+  unified: { display: "flex", flexDirection: "column", justifyContent: "center", gap: "14px" }
+}
+const CONTENT_STYLES: PageContainerStyles = {
+  desktop: { marginTop: "42px", marginBottom: "36px" },
+  mobile: { marginTop: "12px" }
+}
 
 export default function ViewBlog() {
   const [blog, setBlog] = useState<BlogProps>()
@@ -112,8 +120,8 @@ export default function ViewBlog() {
     <PageContainer
       {...((blog && blog.summaryTitle) ? { title: blog.summaryTitle } : { title: VIEW_BLOG_TITLE })}
       state={pageState}
-      contentStyle={{ marginTop: "42px", marginBottom: "36px" }}
-      contentBlockStyle={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "14px" }}
+      contentStyle={CONTENT_STYLES}
+      contentBlockStyle={CONTENT_BLOCK_STYLES}
     >
       {userCanEdit
         ?

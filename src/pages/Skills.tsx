@@ -8,7 +8,7 @@ export default function Skills() {
   return (
     <PageContainer
       title="My Skills and Qualifications"
-      contentStyle={{ marginTop: "42px" }}
+      contentStyle={{ unified: { marginTop: "42px" } }}
       contentTestId="skillsPage"
     >
       <BlogArticle title="Education">

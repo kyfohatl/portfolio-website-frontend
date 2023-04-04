@@ -76,7 +76,7 @@ export default function Home() {
   return (
     <PageContainer
       title=""
-      contentBlockStyle={{ maxWidth: "100vw", display: "flex", flexDirection: "column" }}
+      contentBlockStyle={{ unified: { maxWidth: "100vw", display: "flex", flexDirection: "column" } }}
       contentTestId="homePage"
     >
       <Hero onExploreClick={onExploreClick} />

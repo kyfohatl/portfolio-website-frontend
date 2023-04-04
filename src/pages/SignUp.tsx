@@ -124,8 +124,8 @@ export default function SignUp() {
   return (
     <PageContainer
       title="Sign Up"
-      contentStyle={{ display: "flex", flexGrow: 1, justifyContent: "center", alignItems: "center" }}
-      contentBlockStyle={{ display: "flex", justifyContent: "center" }}
+      contentStyle={{ unified: { display: "flex", flexGrow: 1, justifyContent: "center", alignItems: "center" } }}
+      contentBlockStyle={{ unified: { display: "flex", justifyContent: "center" } }}
       state={pageState}
       contentTestId="signUpPage"
     >

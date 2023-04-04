@@ -18,6 +18,18 @@ function getScrollPercentage() {
   return de.scrollTop / (de.scrollHeight - de.clientHeight)
 }
 
+const CONTENT_BLOCK_STYLES_BASE: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-end"
+}
+const CONTENT_BLOCK_STYLES = {
+  desktop: { ...CONTENT_BLOCK_STYLES_BASE, gap: "26px" },
+  mobile: { ...CONTENT_BLOCK_STYLES_BASE, gap: "12px" }
+}
+
+const CONTENT_STYLES = { desktop: { marginTop: "42px", marginBottom: "42px" }, mobile: { margin: "12px 0 12px 0" } }
+
 export default function ViewBlogs() {
   const [cards, setCards] = useState<JSX.Element[]>([])
   const [pageState, setPageState] = useState<PageContainerState>({ status: "normal" })
@@ -123,8 +135,8 @@ export default function ViewBlogs() {
     <PageContainer
       title="Latest Blogs"
       state={pageState}
-      contentStyle={{ marginTop: "42px", marginBottom: "42px" }}
-      contentBlockStyle={{ display: "flex", flexDirection: "column", gap: "26px", alignItems: "flex-end" }}
+      contentStyle={CONTENT_STYLES}
+      contentBlockStyle={CONTENT_BLOCK_STYLES}
       contentTestId="viewBlogsPage"
     >
       {hasData()
