@@ -24,7 +24,12 @@ import UpcomingCodeImg from "../assets/images/homePageDemos/upcoming_features.jp
 
 // Mobile images
 import CreateBlogMobileImg from "../assets/images/homePageDemos/mobile/createBlog.png"
-import MobileCardBase from "../assets/images/editBlogPageHelp/mobile/summaryBase.png"
+import SummaryMobileImg from "../assets/images/homePageDemos/mobile/summariseBlog.png"
+import EditBlogMobileImg from "../assets/images/homePageDemos/mobile/editBlog.png"
+import ViewBlogsMobileImg from "../assets/images/homePageDemos/mobile/viewBlogs.png"
+import SignUpMobileImg from "../assets/images/homePageDemos/mobile/signUp.png"
+import ThirdPartyLoginMobileImg from "../assets/images/homePageDemos/mobile/signIn.png"
+import FigmaDesignMobileImg from "../assets/images/homePageDemos/mobile/figma.png"
 
 // Logos
 import ReactLogo from "../assets/images/homePageDemos/techstackLogos/react_logo.png"
@@ -80,7 +85,7 @@ export default function Home() {
       contentTestId="homePage"
     >
       <Hero onExploreClick={onExploreClick} />
-      <FeatureDisplayCard
+      {/* <FeatureDisplayCard
         title="Create Your Own Blogs"
         notes={[
           "Write static blogs using the editors, and customize them to your heart's content using the power of HTML and CSS",
@@ -123,7 +128,7 @@ export default function Home() {
                   width: "100%"
                 }}
               />
-              <img src={MobileCardBase} alt="summary card" width={MOB_IMG_WIDTH} />
+              <img src={SummaryMobileImg} alt="summary card" width={MOB_IMG_WIDTH} />
             </>
           }
         }}
@@ -135,7 +140,10 @@ export default function Home() {
           "Edit or delete any of the blogs that you created at any time by clicking on the “Edit” and “Delete” buttons",
           "Clicking “Edit” will open the blog's HTML and CSS in the website's blog editor tool"
         ]}
-        visuals={{ images: [{ imgLink: EditBlogImg, width: "593px", height: "691px" }] }}
+        visuals={{
+          desktop: { images: [{ imgLink: EditBlogImg, width: "593px", height: "691px" }] },
+          mobile: { images: [{ imgLink: EditBlogMobileImg, width: MOB_IMG_WIDTH }] }
+        }}
       />
       <FeatureDisplayCard
         title="Read Blogs"
@@ -146,7 +154,10 @@ export default function Home() {
           "Additional blogs are loaded automatically as you scroll towards the bottom of the page",
           "Upcoming features: Search and sort"
         ]}
-        visuals={{ images: [{ imgLink: ViewBlogsImg, width: "593px", height: "690px" }] }}
+        visuals={{
+          desktop: { images: [{ imgLink: ViewBlogsImg, width: "593px", height: "690px" }] },
+          mobile: { images: [{ imgLink: ViewBlogsMobileImg, width: MOB_IMG_WIDTH }] }
+        }}
         theme="dark"
       />
       <FeatureDisplayCard
@@ -157,7 +168,10 @@ export default function Home() {
           "Uses HTTP-only cookies to store tokens safely (instead of browser local storage), preventing an XSS attacker from stealing them",
           "Automatic extension of sessions using refresh tokens"
         ]}
-        visuals={{ images: [{ imgLink: SignUpImg, width: "480px", height: "491px" }] }}
+        visuals={{
+          desktop: { images: [{ imgLink: SignUpImg, width: "480px", height: "491px" }] },
+          mobile: { images: [{ imgLink: SignUpMobileImg, width: MOB_IMG_WIDTH }] }
+        }}
       />
       <FeatureDisplayCard
         title="Google and Facebook Login"
@@ -166,7 +180,10 @@ export default function Home() {
           "After the first third party sign in, an account is created for the user on the backend automatically. Subsequent third party logins will invoke the user account",
           "Only requests an id_token, and not an OAuth2.0 access code. This ensures that only the bare minimum required information is given to this website's system (mainly email and user id)"
         ]}
-        visuals={{ images: [{ imgLink: ThirdPartyLoginImg, width: "480px", height: "504px" }] }}
+        visuals={{
+          desktop: { images: [{ imgLink: ThirdPartyLoginImg, width: "480px", height: "504px" }] },
+          mobile: { images: [{ imgLink: ThirdPartyLoginMobileImg, width: MOB_IMG_WIDTH }] }
+        }}
         theme="dark"
       />
       <FeatureDisplayCard
@@ -176,8 +193,8 @@ export default function Home() {
           "Even more animations are in development"
         ]}
         visuals={{
-          custom:
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
+          desktop: {
+            custom: <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
               <Button
                 text="Deleting"
                 type={{ type: "submit" }}
@@ -227,6 +244,10 @@ export default function Home() {
               />
               <Loading overrideStyles={{ width: "120px", height: "120px" }} />
             </div>
+          },
+          mobile: {
+            custom: <div>Nothing for now!</div>
+          }
         }}
       />
       <FeatureDisplayCard
@@ -235,7 +256,10 @@ export default function Home() {
           <div>All pages were first designed in <a href="https://www.figma.com/">Figma</a> and then built from the design</div>,
           "Building pages from designs enforced good consistency of theme and colors throughout the website"
         ]}
-        visuals={{ images: [{ imgLink: FigmaDesignImg, width: "593px", height: "439px" }] }}
+        visuals={{
+          desktop: { images: [{ imgLink: FigmaDesignImg, width: "593px", height: "439px" }] },
+          mobile: { images: [{ imgLink: FigmaDesignMobileImg, width: MOB_IMG_WIDTH }] }
+        }}
         theme="dark"
       />
       <FeatureDisplayCard
@@ -247,7 +271,10 @@ export default function Home() {
           "Unit tests take full advantage of Jest's powerful mocking and spying systems to properly isolate subject components",
           <div>Frontend tests use the <a href="https://mswjs.io/">Mock Service Worker</a> library to mock API requests. This allows interception of requests at the network level, and hence makes tests independent of the request library used, in turn making tests more resilient to changes</div>
         ]}
-        visuals={{ images: [{ imgLink: FrontendTestImg, width: "520px", height: "321px" }] }}
+        visuals={{
+          desktop: { images: [{ imgLink: FrontendTestImg, width: "520px", height: "321px" }] },
+          mobile: { images: [{ imgLink: FrontendTestImg, width: MOB_IMG_WIDTH }] }
+        }}
       />
       <FeatureDisplayCard
         title="End-to-End Testing"
@@ -256,10 +283,14 @@ export default function Home() {
           <div>Tests make strict adherence to good end-to-end testing practices as <a href="https://docs.cypress.io/guides/references/best-practices">recommended by Cypress</a>, avoiding anti-patterns and following common design principles, to ensure resilience</div>
         ]}
         visuals={{
-          custom:
-            <video loop autoPlay muted width="597px" height="335px">
+          desktop: {
+            custom: <video loop autoPlay muted width="597px" height="335px">
               <source src={process.env.PUBLIC_URL + "/assets/cypressViewBlog.mp4"} type="video/mp4" />
             </video>
+          },
+          mobile: {
+            custom: <div>Nothing for now!</div>
+          }
         }}
         theme="dark"
       />
@@ -270,7 +301,10 @@ export default function Home() {
           "All unit, integration and end-to-end tests are run automatically upon any commit to the code, or any merging of branches, to minimize the chance of bugs being introduced",
           <div>An example of one of the CI flows used for this app can be viewed <a href="https://github.com/kyfohatl/portfolio-website-frontend/blob/main/.github/workflows/test.yml">here</a></div>
         ]}
-        visuals={{ images: [{ imgLink: GithubActionsImg, width: "600px", height: "391px" }] }}
+        visuals={{
+          desktop: { images: [{ imgLink: GithubActionsImg, width: "600px", height: "391px" }] },
+          mobile: { images: [{ imgLink: GithubActionsImg, width: MOB_IMG_WIDTH }] }
+        }}
       />
       <FeatureDisplayCard
         title="Upcoming Features"
@@ -282,7 +316,10 @@ export default function Home() {
           "Additional features for blogs, such as liking and sharing",
           "And more!"
         ]}
-        visuals={{ images: [{ imgLink: UpcomingCodeImg, width: "426px", height: "569px" }] }}
+        visuals={{
+          desktop: { images: [{ imgLink: UpcomingCodeImg, width: "426px", height: "569px" }] },
+          mobile: { images: [{ imgLink: UpcomingCodeImg, width: MOB_IMG_WIDTH }] }
+        }}
         theme="dark"
       />
       <FeatureDisplayCard
@@ -300,8 +337,8 @@ export default function Home() {
           "Figma for designs"
         ]}
         visuals={{
-          custom:
-            <div
+          desktop: {
+            custom: <div
               style={{
                 display: "flex",
                 flexWrap: "wrap",
@@ -327,8 +364,12 @@ export default function Home() {
               <img alt="Github Actions Logo" src={GithubActionsLogo} width="77px" height="77px" />
               <img alt="Figma Logo" src={FigmaLogo} width="56px" height="84px" />
             </div>
+          },
+          mobile: {
+            custom: <div>Nothing here yet!</div>
+          }
         }}
-      />
+      /> */}
     </PageContainer>
   )
 }
