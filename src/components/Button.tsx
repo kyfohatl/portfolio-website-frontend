@@ -32,6 +32,7 @@ export interface ButtonProps {
   color?: string,
   width?: string,
   height?: string,
+  maxWidth?: string,
   marginTop?: string,
   padding?: string,
   icon?: React.ReactNode,
@@ -50,6 +51,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   color = "#FFFFFF",
   width = "100px",
   height = "100px",
+  maxWidth,
   marginTop = "0px",
   padding,
   icon,
@@ -63,6 +65,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
     fontSize: fontSize,
     width: width,
     height: height,
+    maxWidth: maxWidth,
     marginTop: marginTop,
     ...(padding && { padding: padding }),
     ...(borderRadius && { borderRadius: borderRadius }),
@@ -94,6 +97,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
       fontSize={fontSize}
       width={width}
       height={height}
+      maxWidth={maxWidth}
       marginTop={marginTop}
       testId={btnTestId}
       ref={ref}
@@ -105,6 +109,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
       fontSize={fontSize}
       width={width}
       height={height}
+      maxWidth={maxWidth}
       marginTop={marginTop}
       ref={ref}
     />

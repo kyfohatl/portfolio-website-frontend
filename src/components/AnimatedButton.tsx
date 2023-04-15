@@ -9,6 +9,7 @@ export interface AnimatedButtonProps {
   fontSize?: string,
   width?: string,
   height?: string,
+  maxWidth?: string,
   marginTop?: string
 }
 
@@ -18,12 +19,14 @@ const AnimatedButton = React.forwardRef<HTMLButtonElement, AnimatedButtonProps>(
   fontSize = "14px",
   width = "100px",
   height = "100px",
+  maxWidth,
   marginTop = "0px"
 }, ref) => {
   const buttonStyles: CSSProperties = {
     fontSize: fontSize,
     width: width,
     height: height,
+    maxWidth: maxWidth,
     marginTop: marginTop
   }
 

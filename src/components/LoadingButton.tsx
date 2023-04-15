@@ -5,6 +5,7 @@ interface LoadingButtonProps {
   fontSize?: string,
   width?: string,
   height?: string,
+  maxWidth?: string,
   marginTop?: string,
   testId?: string
 }
@@ -13,6 +14,7 @@ const LoadingButton = React.forwardRef<HTMLButtonElement, LoadingButtonProps>(({
   fontSize = "14px",
   width = "150px",
   height = "100px",
+  maxWidth,
   marginTop = "10px",
   testId
 }, ref) => {
@@ -37,6 +39,7 @@ const LoadingButton = React.forwardRef<HTMLButtonElement, LoadingButtonProps>(({
         fontSize: fontSize,
         width: width,
         height: height,
+        maxWidth: maxWidth,
         marginTop: marginTop,
         "--indicatorSize": indicatorSize
       } as React.CSSProperties}

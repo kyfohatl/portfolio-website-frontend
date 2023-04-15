@@ -14,6 +14,9 @@ export const EMAIL_ERR_MSSG = "A valid email is required!"
 export const PASS_ERR_MSSG = "A valid password is required!"
 export const CONF_PASS_ERR_MSSG = "Passwords must match!"
 
+const BTN_WIDTH = "70%"
+const BTN_MAX_WIDTH = "285px"
+
 export default function SignUp() {
   // User inputs
   const [email, setEmail] = useState("")
@@ -152,7 +155,8 @@ export default function SignUp() {
         />
         <Button
           type={{ type: "submit" }}
-          width="285px"
+          width={BTN_WIDTH}
+          maxWidth={BTN_MAX_WIDTH}
           height="36px"
           text="Sign up"
           buttonState={signUpState}
@@ -161,7 +165,8 @@ export default function SignUp() {
         />
         <Button
           type={{ type: "button", callBack: onSignInGoogle }}
-          width="285px"
+          width={BTN_WIDTH}
+          maxWidth={BTN_MAX_WIDTH}
           height="36px"
           text="Sign in with Google"
           backgroundColor="#FFFFFF"
@@ -172,7 +177,8 @@ export default function SignUp() {
         />
         <Button
           type={{ type: "button", callBack: onSignInFacebook }}
-          width="285px"
+          width={BTN_WIDTH}
+          maxWidth={BTN_MAX_WIDTH}
           height="36px"
           text="Sign in with Facebook"
           backgroundColor="#4267B2"
