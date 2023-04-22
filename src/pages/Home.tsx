@@ -85,7 +85,7 @@ export default function Home() {
       contentTestId="homePage"
     >
       <Hero onExploreClick={onExploreClick} />
-      {/* <FeatureDisplayCard
+      <FeatureDisplayCard
         title="Create Your Own Blogs"
         notes={[
           "Write static blogs using the editors, and customize them to your heart's content using the power of HTML and CSS",
@@ -128,7 +128,7 @@ export default function Home() {
                   width: "100%"
                 }}
               />
-              <img src={SummaryMobileImg} alt="summary card" width={MOB_IMG_WIDTH} />
+              <img src={SummaryMobileImg} alt="summary card" width={MOB_IMG_WIDTH} style={{ margin: "0 auto" }} />
             </>
           }
         }}
@@ -224,7 +224,7 @@ export default function Home() {
                 width="120px"
                 height="46px"
               />
-              <Button
+              {/* <Button
                 type={{ type: "submit" }}
                 width="38px"
                 height="38px"
@@ -241,7 +241,7 @@ export default function Home() {
                     dot: { animationIterationCount: "infinite" }
                   }}
                 />}
-              />
+              /> */}
               <Loading overrideStyles={{ width: "120px", height: "120px" }} />
             </div>
           },
@@ -369,7 +369,7 @@ export default function Home() {
             custom: <div>Nothing here yet!</div>
           }
         }}
-      /> */}
+      />
     </PageContainer>
   )
 }

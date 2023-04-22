@@ -25,9 +25,16 @@ export interface FeatureDisplayCardProps {
 function createImgList(visuals: CardVisuals) {
   let imgList: JSX.Element[] = []
   if ("images" in visuals) {
-    imgList = visuals.images.map(
-      (image, index) => <img key={index} alt="None" src={image.imgLink} width={image.width} height={image.height} />
-    )
+    imgList = visuals.images.map((image, index) => {
+      return <img
+        key={index}
+        alt="None"
+        src={image.imgLink}
+        width={image.width}
+        height={image.height}
+        className={styles.imageMargins}
+      />
+    })
   }
 
   return imgList

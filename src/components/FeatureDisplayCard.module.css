@@ -71,6 +71,10 @@
   color: var(--link-visited-color);
 }
 
+.imageMargins {
+  margin: 0 auto;
+}
+
 @media (max-width: 1100px) {
   .outerContainer {
     width: var(--width-mobile, 100%);

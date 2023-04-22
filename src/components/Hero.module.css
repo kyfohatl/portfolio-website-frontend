@@ -21,14 +21,14 @@
   font-family: inherit;
   color: inherit;
   font-weight: 800;
-  font-size: 36px;
+  font-size: 24px;
 }
 
 .textContainer>p {
   font-family: inherit;
   color: inherit;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .buttonContainer {
@@ -61,5 +61,14 @@
 
   100% {
     transform: translateY(0px);
+  }
+}
+
+@media (max-width: 1100px) {
+  .outerContainer {
+    flex-direction: column;
+    gap: 40px;
+    height: min-content;
+    padding: 68px 8%;
   }
 }
