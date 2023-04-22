@@ -1,19 +1,23 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
-function useElementVisibility(ref: React.RefObject<HTMLElement>) {
+export function useElementVisibility(ref: React.RefObject<HTMLElement>) {
+  const [isVisible, setIsVisible] = useState(false)
+
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting) {
-        console.log("Is VISIBLE!!!")
-      }
-    })
+      setIsVisible(entries[0].isIntersecting)
+    }, {threshold: 0.1})
 
-    if (ref.current) observer.observe(ref.current)
+    const current = ref.current
+
+    if (current) observer.observe(current)
 
     return () => {
-      if (ref.current) observer.unobserve(ref.current)
+      if (current) observer.unobserve(current)
     }
   }, [ref])
+
+  return isVisible
 }
 
 const abc = "https://www.phind.com/search?cache=2e4f7b2a-3061-44e0-8560-1ef80ee0af3c"
