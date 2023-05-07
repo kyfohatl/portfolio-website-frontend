@@ -75,7 +75,8 @@ function createCardProps(cardInfoList: createCardPropsArg[]) {
                 borderRadius: "10px",
                 fontWeight: "600",
                 boxShadow: "0px 0px 4px 3px #bababa",
-                width: "100%"
+                width: "100%",
+                tabSize: "4"
               }}
             />
             {

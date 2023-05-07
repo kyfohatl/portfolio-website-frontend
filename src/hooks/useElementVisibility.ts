@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react"
 
-export function useElementVisibility(ref: React.RefObject<HTMLElement>) {
+// Keeps track of whether an element represented by the given ref is visible on the screen or not
+export function useElementVisibility(ref: React.RefObject<HTMLElement | SVGElement>) {
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
       setIsVisible(entries[0].isIntersecting)
-    }, {threshold: 0.1})
+    }, { threshold: 0.1 })
 
     const current = ref.current
 
     if (current) observer.observe(current)
 
+    // Remove the element from the observer upon unmounting
     return () => {
       if (current) observer.unobserve(current)
     }
@@ -19,5 +21,3 @@ export function useElementVisibility(ref: React.RefObject<HTMLElement>) {
 
   return isVisible
 }
-
-const abc = "https://www.phind.com/search?cache=2e4f7b2a-3061-44e0-8560-1ef80ee0af3c"

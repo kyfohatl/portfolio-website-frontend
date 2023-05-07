@@ -1,8 +1,7 @@
-import "./Home.css"
 import PageContainer from "../components/PageContainer"
 import FeatureDisplayCard from "../components/FeatureDisplayCard"
 import Hero from "../components/Hero"
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useMemo, useRef, useState } from "react"
 import Deleting, { DeletingStyleOverrides } from "../components/animation/Deleting"
 import Saving, { SavingStyleOverrides } from "../components/animation/Saving"
 import Button from "../components/Button"
@@ -49,6 +48,7 @@ import GitHubLogo from "../assets/images/homePageDemos/techstackLogos/github_log
 import GithubActionsLogo from "../assets/images/homePageDemos/techstackLogos/githubActions_logo.png"
 import FigmaLogo from "../assets/images/homePageDemos/techstackLogos/figma_logo.png"
 import QuestionMark from "../components/animation/QuestionMark"
+import LogoContainer from "../components/home/LogoContainer"
 
 const MOB_IMG_WIDTH = "90%"
 
@@ -77,6 +77,61 @@ export default function Home() {
       setSavingAnimState({ tickStyles: { animationName: "" }, circleStyles: { animationName: "" } })
     }, 1000)
   }, [])
+
+  const animations = useMemo(() => {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
+        <Button
+          text="Deleting"
+          type={{ type: "submit" }}
+          buttonState={{
+            state: "animated",
+            animation: <Deleting onAnimationEnd={onDeletingEnd} overrides={deletingAnimState} />,
+            text: "Deleting"
+          }}
+          width="120px"
+          height="46px"
+        />
+        <Button
+          text="Saving"
+          type={{ type: "submit" }}
+          buttonState={{
+            state: "animated",
+            animation: <Saving onAnimationEnd={onSavingEnd} overrides={savingAnimState} />,
+            text: "Saving"
+          }}
+          width="120px"
+          height="46px"
+        />
+        <Button
+          text="none"
+          type={{ type: "submit" }}
+          buttonState={{ state: "loading" }}
+          width="120px"
+          height="46px"
+        />
+        <Button
+          type={{ type: "submit" }}
+          width="38px"
+          height="38px"
+          padding="0px"
+          borderRadius="50px"
+          backgroundColor="transparent"
+          disabled
+          icon={<QuestionMark
+            width="38px"
+            height="38px"
+            overrides={{
+              circle: { animationIterationCount: "infinite" },
+              marker: { animationIterationCount: "infinite" },
+              dot: { animationIterationCount: "infinite" }
+            }}
+          />}
+        />
+        <Loading overrideStyles={{ width: "120px", height: "120px" }} />
+      </div>
+    )
+  }, [deletingAnimState, onDeletingEnd, onSavingEnd, savingAnimState])
 
   return (
     <PageContainer
@@ -119,13 +174,14 @@ export default function Home() {
               <CodeBlock
                 language="html"
                 showLineNumbers={true}
-                text='<meta property="og:title"/>\n<meta property="og:description"/>\n<meta property="og:image"/>\n<meta name="keywords"/>'
+                text={'<meta property="og:title"/>\n<meta property="og:description"/>\n<meta property="og:image"/>\n<meta name="keywords"/>'}
                 theme={dracula}
                 customStyle={{
                   borderRadius: "10px",
                   fontWeight: "600",
                   boxShadow: "0px 0px 4px 3px #bababa",
-                  width: "100%"
+                  width: "90%",
+                  margin: "0 auto 10px auto"
                 }}
               />
               <img src={SummaryMobileImg} alt="summary card" width={MOB_IMG_WIDTH} style={{ margin: "0 auto" }} />
@@ -194,59 +250,10 @@ export default function Home() {
         ]}
         visuals={{
           desktop: {
-            custom: <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
-              <Button
-                text="Deleting"
-                type={{ type: "submit" }}
-                buttonState={{
-                  state: "animated",
-                  animation: <Deleting onAnimationEnd={onDeletingEnd} overrides={deletingAnimState} />,
-                  text: "Deleting"
-                }}
-                width="120px"
-                height="46px"
-              />
-              <Button
-                text="Saving"
-                type={{ type: "submit" }}
-                buttonState={{
-                  state: "animated",
-                  animation: <Saving onAnimationEnd={onSavingEnd} overrides={savingAnimState} />,
-                  text: "Saving"
-                }}
-                width="120px"
-                height="46px"
-              />
-              <Button
-                text="none"
-                type={{ type: "submit" }}
-                buttonState={{ state: "loading" }}
-                width="120px"
-                height="46px"
-              />
-              {/* <Button
-                type={{ type: "submit" }}
-                width="38px"
-                height="38px"
-                padding="0px"
-                borderRadius="50px"
-                backgroundColor="transparent"
-                disabled
-                icon={<QuestionMark
-                  width="38px"
-                  height="38px"
-                  overrides={{
-                    circle: { animationIterationCount: "infinite" },
-                    marker: { animationIterationCount: "infinite" },
-                    dot: { animationIterationCount: "infinite" }
-                  }}
-                />}
-              /> */}
-              <Loading overrideStyles={{ width: "120px", height: "120px" }} />
-            </div>
+            custom: animations
           },
           mobile: {
-            custom: <div>Nothing for now!</div>
+            custom: animations
           }
         }}
       />
@@ -273,7 +280,22 @@ export default function Home() {
         ]}
         visuals={{
           desktop: { images: [{ imgLink: FrontendTestImg, width: "520px", height: "321px" }] },
-          mobile: { images: [{ imgLink: FrontendTestImg, width: MOB_IMG_WIDTH }] }
+          mobile: {
+            custom: <CodeBlock
+              language="javascript"
+              showLineNumbers={true}
+              // eslint-disable-next-line no-template-curly-in-string
+              text={'describe("When given 5 lines", () => {\n\tconst COUNT = 5\n\n\tit(`Displays ${COUNT} lines`, () => {\n\t\trender(<LineCounter count={COUNT} />)\n\t\tconst lines = screen.getAllByText(/d/)\n\n\t\texpect(lines).toHaveLength(COUNT)\n\t\tfor (let i = 0; i < lines.length; i++) {\n\t\t\texpect(lines[i]).toHaveTextContent(`${i + 1}`)\n\t\t}\n\t})\n})'}
+              theme={dracula}
+              customStyle={{
+                borderRadius: "10px",
+                fontWeight: "600",
+                boxShadow: "0px 0px 4px 3px #bababa",
+                width: "100%",
+                tabSize: "4"
+              }}
+            />
+          }
         }}
       />
       <FeatureDisplayCard
@@ -338,18 +360,10 @@ export default function Home() {
         ]}
         visuals={{
           desktop: {
-            custom: <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "40px",
-                maxWidth: "460px",
-                justifyContent: "center"
-              }}
-            >
+            custom: <LogoContainer>
               <img alt="React Logo" src={ReactLogo} width="95px" height="88px" />
               <img alt="Typescript Logo" src={TypeScriptLogo} width="80px" height="80px" />
-              <HtmlLogo width="101px" height="101x" />
+              <HtmlLogo style={{ width: "101px", height: "101px" }} />
               <img alt="CSS Logo" src={CssLogo} width="78px" height="110px" />
               <img alt="NodeJs Logo" src={NodeJsLogo} width="101px" height="62px" />
               <img alt="Express Logo" src={ExpressLogo} width="115px" height="35px" />
@@ -363,10 +377,27 @@ export default function Home() {
               <img alt="Github Logo" src={GitHubLogo} width="74px" height="74px" />
               <img alt="Github Actions Logo" src={GithubActionsLogo} width="77px" height="77px" />
               <img alt="Figma Logo" src={FigmaLogo} width="56px" height="84px" />
-            </div>
+            </LogoContainer>
           },
           mobile: {
-            custom: <div>Nothing here yet!</div>
+            custom: <LogoContainer>
+              <img alt="React Logo" src={ReactLogo} width="50px" />
+              <img alt="Typescript Logo" src={TypeScriptLogo} width="40px" />
+              <HtmlLogo style={{ width: "50px" }} />
+              <img alt="CSS Logo" src={CssLogo} width="40px" />
+              <img alt="NodeJs Logo" src={NodeJsLogo} width="60px" />
+              <img alt="Express Logo" src={ExpressLogo} width="90px" />
+              <img alt="JWT Logo" src={JwtLogo} width="70px" />
+              <img alt="Postgres Logo" src={PostgresLogo} width="50px" />
+              <img alt="Heroku Logo" src={HerokuLogo} width="70px" />
+              <img alt="Jest Logo" src={JestLogo} width="40px" />
+              <img alt="React Testing Library Logo" src={ReactTestingLibLogo} width="50px" />
+              <img alt="Cypress Logo" src={CypressLogo} width="90px" />
+              <img alt="Git Logo" src={GitLogo} width="50px" />
+              <img alt="Github Logo" src={GitHubLogo} width="44px" />
+              <img alt="Github Actions Logo" src={GithubActionsLogo} width="50px" />
+              <img alt="Figma Logo" src={FigmaLogo} width="40px" />
+            </LogoContainer>
           }
         }}
       />
