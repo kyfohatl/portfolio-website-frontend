@@ -1,0 +1,27 @@
+.additionalInfo {
+  margin-right: 64px;
+}
+
+.additionalInfoSeparator {
+  height: 15px;
+}
+
+.skillsList {
+  list-style-type: square;
+}
+
+.skillsTable {
+  columns: 3;
+  list-style-type: square;
+  margin-bottom: 48px;
+}
+
+.dotPointList {
+  margin-left: 22px;
+}
+
+@media (max-width: 1100px) {
+  .dotPointList {
+    columns: 2;
+  }
+}

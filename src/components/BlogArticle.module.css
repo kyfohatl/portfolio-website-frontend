@@ -1,0 +1,25 @@
+.articleContainer ul {
+  list-style-type: disc;
+}
+
+@media (max-width: 1100px) {
+  .articleContainer * {
+    font-size: 16px;
+  }
+
+  .articleContainer h1 {
+    font-size: 30px;
+  }
+
+  .articleContainer h2 {
+    font-size: 24px;
+  }
+
+  .articleContainer h3 {
+    font-size: 20px;
+  }
+
+  .articleContainer h4 {
+    font-size: 18px;
+  }
+}

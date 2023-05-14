@@ -21,14 +21,14 @@
   font-family: inherit;
   color: inherit;
   font-weight: 800;
-  font-size: 24px;
+  font-size: 36px;
 }
 
 .textContainer>p {
   font-family: inherit;
   color: inherit;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .buttonContainer {
@@ -70,5 +70,13 @@
     gap: 40px;
     height: min-content;
     padding: 68px 8%;
+  }
+
+  .textContainer>h1 {
+    font-size: 24px;
+  }
+
+  .textContainer>p {
+    font-size: 16px;
   }
 }

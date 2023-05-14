@@ -1,4 +1,4 @@
-import "./BlogArticle.css"
+import styles from "./BlogArticle.module.css"
 
 interface BlogArticleProps {
   children: React.ReactNode,
@@ -7,7 +7,7 @@ interface BlogArticleProps {
 
 export default function BlogArticle({ children, title }: BlogArticleProps) {
   return (
-    <article className="blog-article">
+    <article className={styles.articleContainer}>
       <h2>{title}</h2>
       {children}
     </article>
