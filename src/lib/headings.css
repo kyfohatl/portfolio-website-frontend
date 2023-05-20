@@ -1,9 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap');
 
 h1 {
-  color: red;
+  color: darkred;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-size: 4rem;
+  font-weight: 700;
 }
 
 h2 {
@@ -30,7 +31,10 @@ h4 {
   margin-bottom: 16px;
 }
 
-article > p, li > p, .skills-table > li, .examples-list > li {
+article>p,
+li>p,
+.skills-table>li,
+.examples-list>li {
   color: black;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-size: 1.3rem;

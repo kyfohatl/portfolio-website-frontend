@@ -4,6 +4,16 @@ import styles from "./Skills.module.css"
 import PageContainer from "../components/PageContainer"
 import BlogArticle from "../components/BlogArticle"
 
+const CONTENT_BLOCK_COMMON_STYLES: React.CSSProperties = { display: "flex", flexDirection: "column", gap: "50px" }
+const CONTENT_BLOCK_DEKSTOP_STYLES: React.CSSProperties = {
+  marginBottom: "60px",
+  ...CONTENT_BLOCK_COMMON_STYLES
+}
+const CONTENT_BLOCK_MOBILE_STYLES: React.CSSProperties = {
+  padding: "12px 30px 50px 30px",
+  ...CONTENT_BLOCK_COMMON_STYLES
+}
+
 export default function Skills() {
   return (
     <PageContainer
@@ -13,8 +23,8 @@ export default function Skills() {
         mobile: {}
       }}
       contentBlockStyle={{
-        desktop: {},
-        mobile: { padding: "12px 30px 12px 30px" }
+        desktop: CONTENT_BLOCK_DEKSTOP_STYLES,
+        mobile: CONTENT_BLOCK_MOBILE_STYLES
       }}
       contentTestId="skillsPage"
     >
@@ -39,7 +49,7 @@ export default function Skills() {
             </p>
           </li>
           <li>
-            <p>
+            <p style={{ marginBottom: "0" }}>
               Final year Software Modeling and Design project, where we designed a card game using object
               oriented principles and design patterns, scored 100% and was selected as a reference for future
               year students.
@@ -83,7 +93,7 @@ export default function Skills() {
           <li>Confluence</li>
         </ul>
         <h4>Software Concepts</h4>
-        <ul className={styles.dotPointList + " " + styles.skillsTable}>
+        <ul className={styles.dotPointList + " " + styles.skillsTable} style={{ marginBottom: "0" }}>
           <li>Object Oriented Programming</li>
           <li>Algorithms</li>
           <li>Continuous Integration</li>
@@ -98,7 +108,7 @@ export default function Skills() {
       </BlogArticle>
       <BlogArticle title="Work Experience">
         <h3>IT Tutor</h3>
-        <h4>
+        <h4 className={styles.additionalInfoContainer}>
           <span className={styles.additionalInfo}>Melbourne VIC</span>
           <span className={styles.additionalInfo}>Feb 2022 - Present</span>
         </h4>
@@ -109,7 +119,7 @@ export default function Skills() {
         </p>
         <div className={styles.additionalInfoSeparator}></div>
         <h3>Pharmacy Assistant</h3>
-        <h4>
+        <h4 className={styles.additionalInfoContainer}>
           <span className={styles.additionalInfo}>Star Pharmacy</span>
           <span className={styles.additionalInfo}>Melbourne VIC</span>
           <span className={styles.additionalInfo}>Aug 2015 - Present</span>
