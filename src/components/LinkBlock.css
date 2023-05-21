@@ -4,3 +4,9 @@
   width: 100%;
   margin-bottom: 24px;
 }
+
+@media (max-width: 1100px) {
+  .link-block {
+    margin-bottom: 4px;
+  }
+}

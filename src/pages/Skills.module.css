@@ -18,6 +18,7 @@
 
 .dotPointList {
   margin-left: 22px;
+  list-style-type: disc;
 }
 
 @media (max-width: 1100px) {
