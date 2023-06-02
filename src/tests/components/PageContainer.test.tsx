@@ -1,3 +1,4 @@
+import "../testHelpers/mocks/mockMatchMedia"
 import { render, screen } from "@testing-library/react"
 import PageContainer from "../../components/PageContainer"
 

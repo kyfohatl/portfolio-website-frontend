@@ -10,7 +10,7 @@ jest.mock("../../../components/FeatureDisplayCard", () => {
 const CARD_PROPS: FeatureDisplayCardProps = {
   title: "someTitle",
   notes: ["note 1", "note 2"],
-  visuals: { custom: <div>Some visual</div> }
+  visuals: { desktop: { custom: <div>Some visual</div> }, mobile: { custom: <div>Some visual</div> } }
 }
 const DURATION = "1s"
 

@@ -1,3 +1,4 @@
+import "../testHelpers/mocks/mockMatchMedia"
 import { fireEvent, render, screen, waitFor, waitForElementToBeRemoved, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { MemoryRouter, Route, Routes } from "react-router-dom"
