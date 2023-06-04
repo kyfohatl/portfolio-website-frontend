@@ -126,7 +126,7 @@ export default function ViewBlog() {
       {userCanEdit
         ?
         <>
-          <div className={styles.buttonContainerDesktop}>
+          <div className={styles.buttonContainerDesktop} data-testid="btnContainerDesktop">
             <Tooltip text="Edit the blog">
               <Button
                 text="Edit"
@@ -154,7 +154,7 @@ export default function ViewBlog() {
               />
             </Tooltip>
           </div>
-          <div className={styles.buttonContainerMobile}>
+          <div className={styles.buttonContainerMobile} data-testid="btnContainerMobile">
             <Tooltip text="Edit the blog">
               <Button
                 type={{ type: "button", callBack: onClickEdit }}
@@ -164,6 +164,7 @@ export default function ViewBlog() {
                 icon={<EditIcon width={26} height={26} />}
                 buttonState={editButtonState}
                 disabled={editButtonDisabled}
+                btnTestId="editBtnMobile"
               />
             </Tooltip>
             <Tooltip text="Permanently delete the blog">
@@ -175,6 +176,7 @@ export default function ViewBlog() {
                 icon={<DeleteIcon width={26} height={26} />}
                 buttonState={deleteButtonState}
                 disabled={deleteButtonDisabled}
+                btnTestId="deleteBtnMobile"
               />
             </Tooltip>
           </div>
