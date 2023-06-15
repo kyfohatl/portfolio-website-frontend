@@ -101,8 +101,8 @@ describe("When given a valid blog id", () => {
 
     it("Displays an edit blog button", async () => {
       setup()
-      await screen.findByTitle("output")
-      const editBtn = screen.getByRole("button", { name: /edit/i })
+      const btnContainer = await screen.findByTestId("btnContainerDesktop")
+      const editBtn = within(btnContainer).getByRole("button", { name: /edit/i })
       expect(editBtn).toBeInTheDocument()
     })
 
@@ -116,7 +116,8 @@ describe("When given a valid blog id", () => {
     describe("When clicking the \"Edit\" button", () => {
       it("Redirects the client to the edit blog page for that blog", async () => {
         setup()
-        const editBtn = await within(screen.getByTestId("btnContainerDesktop")).findByRole("button", { name: /edit/i })
+        const btnContainer = await screen.findByTestId("btnContainerDesktop")
+        const editBtn = within(btnContainer).getByRole("button", { name: /edit/i })
         userEvent.click(editBtn)
 
         const editBlogPage = await screen.findByText(/Edit blog page/)
