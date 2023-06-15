@@ -54,6 +54,10 @@ jobs:
       DOT_ENV_IS_RUNNING: true
 
     steps:
+      # Update linux package manager
+      - name: Update package manager
+        run: sudo apt update
+
       # Create directories for the backend and frontend
       - name: Create directories
         run: |
