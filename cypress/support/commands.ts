@@ -39,6 +39,7 @@
 import '@testing-library/cypress/add-commands'
 import { AuthService } from '../../src/lib/commonTypes'
 import Updatable from "../../src/lib/Updatable"
+import { ViewportName, VIEWPORT_DIMENSIONS } from './constants/screenSizes'
 import isDesktopEnv from './helpers/predicates/isDesktopEnv'
 
 declare global {
@@ -54,7 +55,8 @@ declare global {
       createBlog(html: string, css: string, updatable?: Updatable<string>): Chainable<void>,
       verifyBlog(blogId: string, html: string, css: string): Chainable<void>,
       createMultBlogs(blogs: TestBlogInfo[]): Chainable<void>,
-      skipEditBlogTutes(): Chainable<void>
+      skipEditBlogTutes(): Chainable<void>,
+      testViewports(testFn: () => void, viewports?: ViewportName[]): Chainable<void>
     }
   }
 }
@@ -223,5 +225,23 @@ Cypress.Commands.add("skipEditBlogTutes", () => {
         cy.get('[data-testid="loginHelpMobile"]').find("button").click()
       }
     }
+  })
+})
+
+// Runs the tests in the given test function over the given viewports
+Cypress.Commands.add("testViewports", (testFn: () => void, viewports?: ViewportName[]) => {
+  // If the viewports list is given, test only for those viewports. Otherwise test all viewports
+  const viewportNames = viewports || Object.keys(VIEWPORT_DIMENSIONS) as ViewportName[]
+
+  viewportNames.forEach(viewportName => {
+    const viewport = VIEWPORT_DIMENSIONS[viewportName]
+
+    describe(viewportName, () => {
+      beforeEach(() => {
+        cy.viewport(viewport.pixelWidth, viewport.pixelWidth)
+      })
+
+      testFn()
+    })
   })
 })

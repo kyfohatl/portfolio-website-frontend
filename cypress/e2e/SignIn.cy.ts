@@ -1,3 +1,5 @@
+import { MOBILE_PIXEL_WIDTH, PIXEL_HEIGHT } from "../support/constants/screenSizes"
+
 describe("Regular sign in", () => {
   const USERNAME = "testUser"
   const PASSWORD = "s0me!T3st#Pass"
@@ -22,20 +24,38 @@ describe("Regular sign in", () => {
   }
 
   describe("When a user enters a valid username and password", () => {
-    it("Signs the user in and redirects to the home page", () => {
-      enterUsernameAnPass(USERNAME, PASSWORD)
-      cy.waitForAuthCompletion()
+    function sigInAndRedirectToHome() {
+      it("Signs the user in and redirects to the home page", () => {
+        enterUsernameAnPass(USERNAME, PASSWORD)
+        cy.waitForAuthCompletion()
+      })
+    }
+
+    describe("Desktop", () => {
+      sigInAndRedirectToHome()
+    })
+
+    describe("Mobile", () => {
+      beforeEach(() => {
+        cy.viewport(MOBILE_PIXEL_WIDTH, PIXEL_HEIGHT)
+      })
+
+      sigInAndRedirectToHome()
     })
   })
 
   const INCORRECT_CREDENTIALS_TXT = "Username or password is incorrect"
 
   describe("When the user enters a valid username and an invalid password", () => {
-    it("Displays an error stating that either the username or password is incorrect", () => {
-      enterUsernameAnPass(USERNAME, "som3Inval1dPa33!!!")
-      cy.inputBoxShouldDisplayError("Email", INCORRECT_CREDENTIALS_TXT)
-      cy.inputBoxShouldDisplayError("Password", INCORRECT_CREDENTIALS_TXT)
-    })
+    function showCredentialIncorrect() {
+      it("Displays an error stating that either the username or password is incorrect", () => {
+        enterUsernameAnPass(USERNAME, "som3Inval1dPa33!!!")
+        cy.inputBoxShouldDisplayError("Email", INCORRECT_CREDENTIALS_TXT)
+        cy.inputBoxShouldDisplayError("Password", INCORRECT_CREDENTIALS_TXT)
+      })
+    }
+
+    cy.testViewports(showCredentialIncorrect)
   })
 
   describe("When the user enters an invalid username with some password", () => {
