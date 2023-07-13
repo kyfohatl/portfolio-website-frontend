@@ -15,3 +15,11 @@ export const VIEWPORT_DIMENSIONS: Record<ViewportName, ViewportDimensions> = {
   desktop: { pixelWidth: DESKTOP_PIXEL_WIDTH, pixelHeight: PIXEL_HEIGHT },
   mobile: { pixelWidth: MOBILE_PIXEL_WIDTH, pixelHeight: PIXEL_HEIGHT }
 }
+
+export function isDesktopScreen(width: number, height: number) {
+  return width === VIEWPORT_DIMENSIONS.desktop.pixelWidth && height === VIEWPORT_DIMENSIONS.desktop.pixelHeight
+}
+
+export function isMobileScreen(width: number, height: number) {
+  return width === VIEWPORT_DIMENSIONS.mobile.pixelWidth && height === VIEWPORT_DIMENSIONS.mobile.pixelHeight
+}

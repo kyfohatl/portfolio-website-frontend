@@ -69,6 +69,7 @@ export default function NavLinksMobile({ navbarHeight, refs }: NavLinksMobilePro
         backgroundColor="transparent"
         boxShadow="0 0 0 0"
         disabled={btnDisabled}
+        btnTestId="navbarMobileMenuBtn"
         {...(refs?.menuBtnRef ? { ref: refs.menuBtnRef } : {})}
       />
       {showDropdown &&

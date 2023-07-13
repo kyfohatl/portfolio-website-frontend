@@ -39,7 +39,7 @@
 import '@testing-library/cypress/add-commands'
 import { AuthService } from '../../src/lib/commonTypes'
 import Updatable from "../../src/lib/Updatable"
-import { ViewportName, VIEWPORT_DIMENSIONS } from './constants/screenSizes'
+import { isDesktopScreen, isMobileScreen } from './constants/screenSizes'
 import isDesktopEnv from './helpers/predicates/isDesktopEnv'
 
 declare global {
@@ -55,8 +55,7 @@ declare global {
       createBlog(html: string, css: string, updatable?: Updatable<string>): Chainable<void>,
       verifyBlog(blogId: string, html: string, css: string): Chainable<void>,
       createMultBlogs(blogs: TestBlogInfo[]): Chainable<void>,
-      skipEditBlogTutes(): Chainable<void>,
-      testViewports(testFn: () => void, viewports?: ViewportName[]): Chainable<void>
+      skipEditBlogTutes(): Chainable<void>
     }
   }
 }
@@ -130,8 +129,25 @@ Cypress.Commands.add("signOut", () => {
 
   // Go to the home page in case the client is on a page which does not have access to the Navbar
   cy.visit("/")
-  cy.get('[data-testid="navbarSignOut"]').click()
-  cy.wait("@singOut")
+
+  cy.window().then(win => {
+    if (isDesktopScreen(win.innerWidth, win.innerHeight)) {
+      // Desktop
+      cy.get('[data-testid="navbarSignOut"]').click()
+    } else if (isMobileScreen(win.innerWidth, win.innerHeight)) {
+      // Mobile
+      cy.get('[data-testid="navbarMobileMenuBtn"]').click()
+      // Wait for the mobile hamburger menu to finish its opening animation
+      cy.get('[data-testid="navbarMobileMenuBtn"]').should("not.be.disabled")
+      // Now click the sign out button
+      cy.get('[data-testid="mobileNavLink_Sign Out"]').click()
+    } else {
+      // Invalid viewport size
+      throw new Error(`Invalid viewport size: ${win.innerWidth}x${win.innerHeight}`)
+    }
+
+    cy.wait("@singOut")
+  })
 })
 
 // Insures that the given input box type is displaying an error with the correct error message
@@ -225,23 +241,5 @@ Cypress.Commands.add("skipEditBlogTutes", () => {
         cy.get('[data-testid="loginHelpMobile"]').find("button").click()
       }
     }
-  })
-})
-
-// Runs the tests in the given test function over the given viewports
-Cypress.Commands.add("testViewports", (testFn: () => void, viewports?: ViewportName[]) => {
-  // If the viewports list is given, test only for those viewports. Otherwise test all viewports
-  const viewportNames = viewports || Object.keys(VIEWPORT_DIMENSIONS) as ViewportName[]
-
-  viewportNames.forEach(viewportName => {
-    const viewport = VIEWPORT_DIMENSIONS[viewportName]
-
-    describe(viewportName, () => {
-      beforeEach(() => {
-        cy.viewport(viewport.pixelWidth, viewport.pixelWidth)
-      })
-
-      testFn()
-    })
   })
 })
