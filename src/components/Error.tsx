@@ -26,7 +26,7 @@ export default function Error({ code }: ErrorProps) {
 
   return (
     <div className={styles.container} data-testid="errorContainer">
-      <h2>Error  {code}</h2>
+      <h2 className={styles.code}>Error  {code}</h2>
       <h4 className={styles.message}>{message}</h4>
       <svg data-testid="errorImage" viewBox="0 0 478 291" fill="none">
         <rect x="2" y="2" width="474" height="287" fill="white" stroke="black" strokeWidth="4" />
