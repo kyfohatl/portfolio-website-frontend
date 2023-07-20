@@ -12,7 +12,7 @@ describe("The \"Explore\" button", () => {
         cy.get('[data-testid="exploreBtn"]').click()
         cy.window().then(function (win) {
           // Ensure that the hero is no longer visible
-          cy.get('[data-testid="heroOuterContainer"]').should("not.be.inViewport", win)
+          cy.get('[data-testid="heroOuterContainer"]').should("not.be.inViewport", win, 0.1)
         })
       })
     }

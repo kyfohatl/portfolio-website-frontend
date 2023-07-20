@@ -574,16 +574,17 @@ describe("Help display", () => {
       })
 
       it("Displays a scrollable container which contains the help cards", () => {
+
         function cardShouldBeInView(idx: number, win: Cypress.AUTWindow) {
           cy.get('[data-testid="mobileHelpDisplayOuterContainer"]')
             .find(`[data-testid="featureDisplay_${titles[idx]}"]`)
-            .should("be.inViewport", win)
+            .should("be.inViewport", win, 0.9)
         }
 
         function cardShouldNotBeInView(idx: number, win: Cypress.AUTWindow) {
           cy.get('[data-testid="mobileHelpDisplayOuterContainer"]')
             .find(`[data-testid="featureDisplay_${titles[idx]}"]`)
-            .should("not.be.inViewport", win)
+            .should("not.be.inViewport", win, 0.1)
         }
 
         cy.window().then((win) => {
