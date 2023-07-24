@@ -57,7 +57,15 @@ export default function Home() {
   const firstFeatureRef = useRef<HTMLDivElement>(null)
   const onExploreClick = useCallback(() => {
     if (!firstFeatureRef.current) return
-    firstFeatureRef.current.scrollIntoView({ behavior: "smooth" })
+
+    if (window.Cypress) {
+      // Unfortunately smooth scrolling behavior breaks Cypress e2e tests. So as much as I hate doing so, I have to
+      // put some testing code in production code since there is no other easier way to get this to work that I have
+      // found
+      firstFeatureRef.current.scrollIntoView()
+    } else {
+      firstFeatureRef.current.scrollIntoView({ behavior: "smooth" })
+    }
   }, [])
 
   // Restarts the bin animation 1 second after its completion
