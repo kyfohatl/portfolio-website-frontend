@@ -25,6 +25,8 @@ describe("When there are blogs to show", () => {
       cy.get(`[data-testid="blogCard_Blog ${NUM_INIT_BLOGS - 1} Title"]`)
         .find("h2")
         .should("have.text", `Blog ${NUM_INIT_BLOGS - 1} Title`)
+      // Wait a little for the page to lead before scrolling, as scrolling immediately seems to break the site sometimes
+      cy.wait(1000)
       // Scroll down to load more blogs
       cy.scrollTo(0, "98%").then(() => {
         // Loading indicator should appear to load more blogs
