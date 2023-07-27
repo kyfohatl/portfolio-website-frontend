@@ -163,6 +163,7 @@ export default function ViewBlogs() {
               width="38px"
               height="38px"
               buttonState={createButtonState}
+              btnTestId="createBlogBtnMobile"
             />
           </div>
         </>
