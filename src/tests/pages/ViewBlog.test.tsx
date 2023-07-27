@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react"
+import "../testHelpers/mocks/mockMatchMedia"
+import { fireEvent, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { MemoryRouter, Route, Routes, useParams } from "react-router-dom"
 import Api, { BlogProps } from "../../lib/api/Api"
@@ -16,7 +17,7 @@ const getItemMock = jest.spyOn(Storage.prototype, "getItem")
 // Setup the Api.deleteBlog mock
 const deleteBlogMock = jest.spyOn(Api, "deleteBlog")
 // Mock the navbar
-jest.mock("../../components/Navbar", () => {
+jest.mock("../../components/navbar/Navbar", () => {
   return () => <div>Mocked Navbar!</div>
 })
 
@@ -100,22 +101,23 @@ describe("When given a valid blog id", () => {
 
     it("Displays an edit blog button", async () => {
       setup()
-      await screen.findByTitle("output")
-      const editBtn = screen.getByRole("button", { name: /edit/i })
+      const btnContainer = await screen.findByTestId("btnContainerDesktop")
+      const editBtn = within(btnContainer).getByRole("button", { name: /edit/i })
       expect(editBtn).toBeInTheDocument()
     })
 
     it("Displays a delete blog button", async () => {
       setup()
       await screen.findByTitle("output")
-      const deleteBtn = screen.getByRole("button", { name: /delete/i })
+      const deleteBtn = within(screen.getByTestId("btnContainerDesktop")).getByRole("button", { name: /delete/i })
       expect(deleteBtn).toBeInTheDocument()
     })
 
     describe("When clicking the \"Edit\" button", () => {
       it("Redirects the client to the edit blog page for that blog", async () => {
         setup()
-        const editBtn = await screen.findByRole("button", { name: /edit/i })
+        const btnContainer = await screen.findByTestId("btnContainerDesktop")
+        const editBtn = within(btnContainer).getByRole("button", { name: /edit/i })
         userEvent.click(editBtn)
 
         const editBlogPage = await screen.findByText(/Edit blog page/)
@@ -126,7 +128,7 @@ describe("When given a valid blog id", () => {
     describe("When clicking the \"Delete\" button", () => {
       async function clickDeleteSetup() {
         setup()
-        const deleteBtn = await screen.findByRole("button", { name: /delete/i })
+        const deleteBtn = await screen.findByTestId("deleteBtn")
         userEvent.click(deleteBtn)
       }
 
@@ -143,7 +145,7 @@ describe("When given a valid blog id", () => {
 
         it("Sets the delete button to a loading state", async () => {
           await clickDeleteSetup()
-          const loadingBtn = screen.getByRole("button", { name: /loading/i })
+          const loadingBtn = within(screen.getByTestId("btnContainerDesktop")).getByRole("button", { name: /loading/i })
           expect(loadingBtn).toBeInTheDocument()
         })
 
@@ -158,7 +160,7 @@ describe("When given a valid blog id", () => {
 
         it("Replaces the \"loading\" animation with a \"deleted\" animation when the deletion is successful", async () => {
           await clickDeleteSetup()
-          const deletedBtn = await screen.findByText(/Deleted/)
+          const deletedBtn = await within(screen.getByTestId("btnContainerDesktop")).findByText(/Deleted/)
           const loadingBtn = screen.queryByRole("button", { name: /loading/i })
 
           expect(deletedBtn).toBeInTheDocument()
@@ -167,7 +169,7 @@ describe("When given a valid blog id", () => {
 
         it("Redirects client to the View Blogs page when the deletion animation is complete", async () => {
           await clickDeleteSetup()
-          const binLid = await screen.findByTestId("binLid")
+          const binLid = await within(screen.getByTestId("btnContainerDesktop")).findByTestId("binLid")
           fireEvent.animationEnd(binLid)
 
           const viewBlogsPage = await screen.findByText(VIEW_BLOGS_PAGE_TXT)

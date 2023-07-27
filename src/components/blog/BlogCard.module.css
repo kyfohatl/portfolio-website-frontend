@@ -28,6 +28,7 @@
   height: 200px;
   transition: transform 0.3s ease-in-out;
   box-sizing: border-box;
+  background-color: white;
 }
 
 .outerContainer:hover {
@@ -65,6 +66,7 @@
 .tagContainer {
   display: flex;
   gap: 14px;
+  flex-wrap: wrap;
 }
 
 .summary {
@@ -73,4 +75,23 @@
   font-size: 16px;
   line-height: 24px;
   margin: 0px 0px 0px 0px;
+}
+
+@media (max-width: 1100px) {
+  .summary {
+    display: none;
+  }
+
+  .title {
+    font-size: 16px;
+  }
+
+  .tag {
+    padding: 6px 14px 6px 14px;
+    font-size: 14px;
+  }
+
+  .tagContainer {
+    gap: 8px;
+  }
 }

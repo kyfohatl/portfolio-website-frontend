@@ -18,7 +18,18 @@ import BlogArticle from "../components/BlogArticle"
 
 export default function Examples() {
   return (
-    <PageContainer title="Examples of My Work" contentStyle={{ marginTop: "42px" }} contentTestId="examplesPage">
+    <PageContainer
+      title="Examples of My Work"
+      contentStyle={{
+        desktop: { marginTop: "42px" },
+        mobile: {}
+      }}
+      contentBlockStyle={{
+        desktop: { marginBottom: "60px" },
+        mobile: { padding: "12px 30px 50px" }
+      }}
+      contentTestId="examplesPage"
+    >
       <BlogArticle title="CataLog">
         <LinkBlock
           links={[
@@ -26,38 +37,38 @@ export default function Examples() {
             <CustomLink key="crmLink" href="https://it-project-crm.vercel.app/welcome" text="Deployment" />,
           ]}
         />
-        <p>
+        <p className="intro-p">
           CataLog is an online CRM (Customer Relationship Management software) created for the capstone
           comp sci subject. To create this product, I had to work in a team of 5, follow agile development
           methodology, and negotiate requirements with a client. Highlights include:
         </p>
         <ul className="examples-list">
           <li>
-            <p>Creating and customizing user profiles</p>
+            <div>Creating and customizing user profiles</div>
             <img src={cataLogCreateAccImg} alt="Creating an account" width="80%" height="80%" />
           </li>
           <li>
-            <p>Categorizing and filtering added contacts</p>
+            <div>Categorizing and filtering added contacts</div>
             <img src={cataLogHomeImg} alt="Home page" width="80%" height="80%" />
           </li>
           <li>
-            <p>Searching for and adding contacts on the CataLog network</p>
+            <div>Searching for and adding contacts on the CataLog network</div>
             <img src={cataLogSearchImg} alt="Search page" width="80%" height="80%" />
           </li>
           <li>
-            <p>Creating manual contact entries for contacts not on the CataLog network</p>
+            <div>Creating manual contact entries for contacts not on the CataLog network</div>
             <img src={cataLogManualContactImg} alt="Create manual contact page" width="80%" height="80%" />
           </li>
           <li>
-            <p>Merging newly-added CataLog profiles with existing manual profiles</p>
+            <div>Merging newly-added CataLog profiles with existing manual profiles</div>
             <img src={cataLogMergeImg} alt="Create manual contact page" width="80%" height="80%" />
           </li>
           <li>
-            <p>Creating and interacting with organizations</p>
+            <div>Creating and interacting with organizations</div>
             <img src={cataLogCreateOrgImg} alt="Create organization page" width="80%" height="80%" />
           </li>
           <li>
-            <p>Fully functional on both desktop and mobile devices</p>
+            <div>Fully functional on both desktop and mobile devices</div>
             <div className="examples-mobile-images">
               <img src={cataLogMobileHomeImg} alt="Mobile home page" width="25%" height="25%" />
               <img src={cataLogMobileContactImg} alt="Mobile contact page" width="25%" height="25%" />
@@ -65,7 +76,7 @@ export default function Examples() {
             </div>
           </li>
           <li>
-            <p>Deployed in a serverless environment on Vercel Cloud</p>
+            <div>Deployed in a serverless environment on Vercel Cloud</div>
             <img src={vercelLogoImg} alt="Vercel cloud" width="80%" height="80%" />
           </li>
         </ul>

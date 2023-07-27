@@ -8,6 +8,7 @@ import Api, { BlogProps } from "../lib/api/Api"
 import styles from "./ViewBlogs.module.css"
 
 import { ReactComponent as CreateIcon } from "../assets/images/createIcon.svg"
+import { ReactComponent as PenIcon } from "../assets/images/penIcon.svg"
 import { useNavigate } from "react-router-dom"
 import { hasData } from "../lib/api/helpers/auth/redirectAndClearData"
 import { NUM_ADDITIONAL_BLOGS, NUM_INIT_BLOGS } from "../resources/ViewBlogsConstants"
@@ -16,6 +17,18 @@ function getScrollPercentage() {
   const de = document.documentElement
   return de.scrollTop / (de.scrollHeight - de.clientHeight)
 }
+
+const CONTENT_BLOCK_STYLES_BASE: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-end"
+}
+const CONTENT_BLOCK_STYLES = {
+  desktop: { ...CONTENT_BLOCK_STYLES_BASE, gap: "26px" },
+  mobile: { ...CONTENT_BLOCK_STYLES_BASE, gap: "12px" }
+}
+
+const CONTENT_STYLES = { desktop: { marginTop: "42px", marginBottom: "42px" }, mobile: { margin: "12px 0 12px 0" } }
 
 export default function ViewBlogs() {
   const [cards, setCards] = useState<JSX.Element[]>([])
@@ -122,23 +135,38 @@ export default function ViewBlogs() {
     <PageContainer
       title="Latest Blogs"
       state={pageState}
-      contentStyle={{ marginTop: "42px", marginBottom: "42px" }}
-      contentBlockStyle={{ display: "flex", flexDirection: "column", gap: "26px", alignItems: "flex-end" }}
+      contentStyle={CONTENT_STYLES}
+      contentBlockStyle={CONTENT_BLOCK_STYLES}
       contentTestId="viewBlogsPage"
     >
       {hasData()
         ?
-        <Button
-          text="Create a new blog"
-          type={{ type: "button", callBack: onClickCreate }}
-          backgroundColor="#8B0000"
-          color="#FFFFFF"
-          icon={<CreateIcon width={21} height={21} />}
-          width="158px"
-          height="40px"
-          buttonState={createButtonState}
-          btnTestId="createBlogBtn"
-        />
+        <>
+          <div className={styles.desktopCreateBtn}>
+            <Button
+              text="Create a new blog"
+              type={{ type: "button", callBack: onClickCreate }}
+              backgroundColor="#8B0000"
+              color="#FFFFFF"
+              icon={<CreateIcon width={21} height={21} />}
+              width="158px"
+              height="40px"
+              buttonState={createButtonState}
+              btnTestId="createBlogBtn"
+            />
+          </div>
+          <div className={styles.mobileCreateBtn}>
+            <Button
+              type={{ type: "button", callBack: onClickCreate }}
+              backgroundColor="#8B0000"
+              icon={<PenIcon width={20} height={20} stroke="#FFFFFF" strokeWidth={3} />}
+              width="38px"
+              height="38px"
+              buttonState={createButtonState}
+              btnTestId="createBlogBtnMobile"
+            />
+          </div>
+        </>
         :
         null
       }

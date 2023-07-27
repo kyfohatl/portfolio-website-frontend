@@ -1,8 +1,32 @@
+.intro-p {
+  margin-bottom: 60px;
+}
+
 .examples-list {
   list-style-type: none;
+  list-style-position: inside;
+}
+
+.examples-list>li {
+  margin-bottom: 60px;
+}
+
+.examples-list>li>div {
+  font-weight: 600;
+  margin-bottom: 16px;
 }
 
 .examples-mobile-images {
   display: flex;
   column-gap: 24px;
+}
+
+@media (max-width: 1100px) {
+  .examples-list>li {
+    margin-bottom: 32px;
+  }
+
+  .intro-p {
+    margin-bottom: 32px;
+  }
 }

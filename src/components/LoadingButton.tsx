@@ -5,17 +5,19 @@ interface LoadingButtonProps {
   fontSize?: string,
   width?: string,
   height?: string,
+  maxWidth?: string,
   marginTop?: string,
   testId?: string
 }
 
-export default function LoadingButton({
+const LoadingButton = React.forwardRef<HTMLButtonElement, LoadingButtonProps>(({
   fontSize = "14px",
   width = "150px",
   height = "100px",
+  maxWidth,
   marginTop = "10px",
   testId
-}: LoadingButtonProps) {
+}, ref) => {
   // Scale the indicator size with the size of the button, but make sure it does not overflow
   // First find the smaller dimension
   let smallerDimension = height
@@ -37,12 +39,16 @@ export default function LoadingButton({
         fontSize: fontSize,
         width: width,
         height: height,
+        maxWidth: maxWidth,
         marginTop: marginTop,
         "--indicatorSize": indicatorSize
       } as React.CSSProperties}
       data-testid={`${testId}Loading`}
+      ref={ref}
     >
       Loading
     </button>
   )
-}
+})
+
+export default LoadingButton

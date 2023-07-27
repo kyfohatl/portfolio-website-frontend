@@ -1,6 +1,12 @@
-import "./Home.css"
 import PageContainer from "../components/PageContainer"
 import FeatureDisplayCard from "../components/FeatureDisplayCard"
+import Hero from "../components/Hero"
+import { useCallback, useMemo, useRef, useState } from "react"
+import Deleting, { DeletingStyleOverrides } from "../components/animation/Deleting"
+import Saving, { SavingStyleOverrides } from "../components/animation/Saving"
+import Button from "../components/Button"
+import Loading from "../components/Loading"
+import { CodeBlock, dracula } from "react-code-blocks"
 
 // Images
 import CreateBlogImg from "../assets/images/homePageDemos/create_blog.png"
@@ -10,16 +16,19 @@ import EditBlogImg from "../assets/images/homePageDemos/edit_blog.png"
 import ViewBlogsImg from "../assets/images/homePageDemos/view_blogs_removedBg.png"
 import SignUpImg from "../assets/images/homePageDemos/sign_up.png"
 import ThirdPartyLoginImg from "../assets/images/homePageDemos/google_facebook_removedBg.png"
-import Hero from "../components/Hero"
-import { useCallback, useRef, useState } from "react"
-import Deleting, { DeletingStyleOverrides } from "../components/animation/Deleting"
-import Saving, { SavingStyleOverrides } from "../components/animation/Saving"
-import Button from "../components/Button"
-import Loading from "../components/Loading"
 import FigmaDesignImg from "../assets/images/homePageDemos/figma_designs.png"
 import FrontendTestImg from "../assets/images/homePageDemos/frontendTesting.png"
 import GithubActionsImg from "../assets/images/homePageDemos/githubActions.png"
 import UpcomingCodeImg from "../assets/images/homePageDemos/upcoming_features.jpg"
+
+// Mobile images
+import CreateBlogMobileImg from "../assets/images/homePageDemos/mobile/createBlog.png"
+import SummaryMobileImg from "../assets/images/homePageDemos/mobile/summariseBlog.png"
+import EditBlogMobileImg from "../assets/images/homePageDemos/mobile/editBlog.png"
+import ViewBlogsMobileImg from "../assets/images/homePageDemos/mobile/viewBlogs.png"
+import SignUpMobileImg from "../assets/images/homePageDemos/mobile/signUp.png"
+import ThirdPartyLoginMobileImg from "../assets/images/homePageDemos/mobile/signIn.png"
+import FigmaDesignMobileImg from "../assets/images/homePageDemos/mobile/figma.png"
 
 // Logos
 import ReactLogo from "../assets/images/homePageDemos/techstackLogos/react_logo.png"
@@ -39,13 +48,24 @@ import GitHubLogo from "../assets/images/homePageDemos/techstackLogos/github_log
 import GithubActionsLogo from "../assets/images/homePageDemos/techstackLogos/githubActions_logo.png"
 import FigmaLogo from "../assets/images/homePageDemos/techstackLogos/figma_logo.png"
 import QuestionMark from "../components/animation/QuestionMark"
+import LogoContainer from "../components/home/LogoContainer"
+
+const MOB_IMG_WIDTH = "90%"
 
 export default function Home() {
   // For scrolling to the first feature display card upon clicking the "Explore" button
   const firstFeatureRef = useRef<HTMLDivElement>(null)
   const onExploreClick = useCallback(() => {
     if (!firstFeatureRef.current) return
-    firstFeatureRef.current.scrollIntoView({ behavior: "smooth" })
+
+    if (window.Cypress) {
+      // Unfortunately smooth scrolling behavior breaks Cypress e2e tests. So as much as I hate doing so, I have to
+      // put some testing code in production code since there is no other easier way to get this to work that I have
+      // found
+      firstFeatureRef.current.scrollIntoView()
+    } else {
+      firstFeatureRef.current.scrollIntoView({ behavior: "smooth" })
+    }
   }, [])
 
   // Restarts the bin animation 1 second after its completion
@@ -66,10 +86,65 @@ export default function Home() {
     }, 1000)
   }, [])
 
+  const animations = useMemo(() => {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
+        <Button
+          text="Deleting"
+          type={{ type: "submit" }}
+          buttonState={{
+            state: "animated",
+            animation: <Deleting onAnimationEnd={onDeletingEnd} overrides={deletingAnimState} />,
+            text: "Deleting"
+          }}
+          width="120px"
+          height="46px"
+        />
+        <Button
+          text="Saving"
+          type={{ type: "submit" }}
+          buttonState={{
+            state: "animated",
+            animation: <Saving onAnimationEnd={onSavingEnd} overrides={savingAnimState} />,
+            text: "Saving"
+          }}
+          width="120px"
+          height="46px"
+        />
+        <Button
+          text="none"
+          type={{ type: "submit" }}
+          buttonState={{ state: "loading" }}
+          width="120px"
+          height="46px"
+        />
+        <Button
+          type={{ type: "submit" }}
+          width="38px"
+          height="38px"
+          padding="0px"
+          borderRadius="50px"
+          backgroundColor="transparent"
+          disabled
+          icon={<QuestionMark
+            width="38px"
+            height="38px"
+            overrides={{
+              circle: { animationIterationCount: "infinite" },
+              marker: { animationIterationCount: "infinite" },
+              dot: { animationIterationCount: "infinite" }
+            }}
+          />}
+        />
+        <Loading overrideStyles={{ width: "120px", height: "120px" }} />
+      </div>
+    )
+  }, [deletingAnimState, onDeletingEnd, onSavingEnd, savingAnimState])
+
   return (
     <PageContainer
       title=""
-      contentBlockStyle={{ maxWidth: "100vw", display: "flex", flexDirection: "column" }}
+      contentBlockStyle={{ unified: { maxWidth: "100vw", display: "flex", flexDirection: "column" } }}
       contentTestId="homePage"
     >
       <Hero onExploreClick={onExploreClick} />
@@ -81,7 +156,10 @@ export default function Home() {
           "VSCode-style editor with line numbering, custom built from scratch without the use of any frameworks. Basic syntax highlighting is planned for a future version",
           "Sign in required to create and edit blogs"
         ]}
-        visuals={{ images: [{ imgLink: CreateBlogImg, width: "594px", height: "526px" }] }}
+        visuals={{
+          desktop: { images: [{ imgLink: CreateBlogImg, width: "594px", height: "526px" }] },
+          mobile: { images: [{ imgLink: CreateBlogMobileImg, width: MOB_IMG_WIDTH }] }
+        }}
         ref={firstFeatureRef}
       />
       <FeatureDisplayCard
@@ -93,10 +171,30 @@ export default function Home() {
           "Use the “keywords” meta tag to add tags to your blog, which will be displayed on the summary card"
         ]}
         visuals={{
-          images: [
-            { imgLink: SummaryImg, width: "593px", height: "492px" },
-            { imgLink: SummaryCardImg, width: "593px", height: "119px" }
-          ]
+          desktop: {
+            images: [
+              { imgLink: SummaryImg, width: "593px", height: "492px" },
+              { imgLink: SummaryCardImg, width: "593px", height: "119px" }
+            ]
+          },
+          mobile: {
+            custom: <>
+              <CodeBlock
+                language="html"
+                showLineNumbers={true}
+                text={'<meta property="og:title"/>\n<meta property="og:description"/>\n<meta property="og:image"/>\n<meta name="keywords"/>'}
+                theme={dracula}
+                customStyle={{
+                  borderRadius: "10px",
+                  fontWeight: "600",
+                  boxShadow: "0px 0px 4px 3px #bababa",
+                  width: "90%",
+                  margin: "0 auto 10px auto"
+                }}
+              />
+              <img src={SummaryMobileImg} alt="summary card" width={MOB_IMG_WIDTH} style={{ margin: "0 auto" }} />
+            </>
+          }
         }}
         theme="dark"
       />
@@ -106,7 +204,10 @@ export default function Home() {
           "Edit or delete any of the blogs that you created at any time by clicking on the “Edit” and “Delete” buttons",
           "Clicking “Edit” will open the blog's HTML and CSS in the website's blog editor tool"
         ]}
-        visuals={{ images: [{ imgLink: EditBlogImg, width: "593px", height: "691px" }] }}
+        visuals={{
+          desktop: { images: [{ imgLink: EditBlogImg, width: "593px", height: "691px" }] },
+          mobile: { images: [{ imgLink: EditBlogMobileImg, width: MOB_IMG_WIDTH }] }
+        }}
       />
       <FeatureDisplayCard
         title="Read Blogs"
@@ -117,7 +218,10 @@ export default function Home() {
           "Additional blogs are loaded automatically as you scroll towards the bottom of the page",
           "Upcoming features: Search and sort"
         ]}
-        visuals={{ images: [{ imgLink: ViewBlogsImg, width: "593px", height: "690px" }] }}
+        visuals={{
+          desktop: { images: [{ imgLink: ViewBlogsImg, width: "593px", height: "690px" }] },
+          mobile: { images: [{ imgLink: ViewBlogsMobileImg, width: MOB_IMG_WIDTH }] }
+        }}
         theme="dark"
       />
       <FeatureDisplayCard
@@ -128,7 +232,10 @@ export default function Home() {
           "Uses HTTP-only cookies to store tokens safely (instead of browser local storage), preventing an XSS attacker from stealing them",
           "Automatic extension of sessions using refresh tokens"
         ]}
-        visuals={{ images: [{ imgLink: SignUpImg, width: "480px", height: "491px" }] }}
+        visuals={{
+          desktop: { images: [{ imgLink: SignUpImg, width: "480px", height: "491px" }] },
+          mobile: { images: [{ imgLink: SignUpMobileImg, width: MOB_IMG_WIDTH }] }
+        }}
       />
       <FeatureDisplayCard
         title="Google and Facebook Login"
@@ -137,7 +244,10 @@ export default function Home() {
           "After the first third party sign in, an account is created for the user on the backend automatically. Subsequent third party logins will invoke the user account",
           "Only requests an id_token, and not an OAuth2.0 access code. This ensures that only the bare minimum required information is given to this website's system (mainly email and user id)"
         ]}
-        visuals={{ images: [{ imgLink: ThirdPartyLoginImg, width: "480px", height: "504px" }] }}
+        visuals={{
+          desktop: { images: [{ imgLink: ThirdPartyLoginImg, width: "480px", height: "504px" }] },
+          mobile: { images: [{ imgLink: ThirdPartyLoginMobileImg, width: MOB_IMG_WIDTH }] }
+        }}
         theme="dark"
       />
       <FeatureDisplayCard
@@ -147,57 +257,12 @@ export default function Home() {
           "Even more animations are in development"
         ]}
         visuals={{
-          custom:
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
-              <Button
-                text="Deleting"
-                type={{ type: "submit" }}
-                buttonState={{
-                  state: "animated",
-                  animation: <Deleting onAnimationEnd={onDeletingEnd} overrides={deletingAnimState} />,
-                  text: "Deleting"
-                }}
-                width="120px"
-                height="46px"
-              />
-              <Button
-                text="Saving"
-                type={{ type: "submit" }}
-                buttonState={{
-                  state: "animated",
-                  animation: <Saving onAnimationEnd={onSavingEnd} overrides={savingAnimState} />,
-                  text: "Saving"
-                }}
-                width="120px"
-                height="46px"
-              />
-              <Button
-                text="none"
-                type={{ type: "submit" }}
-                buttonState={{ state: "loading" }}
-                width="120px"
-                height="46px"
-              />
-              <Button
-                type={{ type: "submit" }}
-                width="38px"
-                height="38px"
-                padding="0px"
-                borderRadius="50px"
-                backgroundColor="transparent"
-                disabled
-                icon={<QuestionMark
-                  width="38px"
-                  height="38px"
-                  overrides={{
-                    circle: { animationIterationCount: "infinite" },
-                    marker: { animationIterationCount: "infinite" },
-                    dot: { animationIterationCount: "infinite" }
-                  }}
-                />}
-              />
-              <Loading overrideStyles={{ width: "120px", height: "120px" }} />
-            </div>
+          desktop: {
+            custom: animations
+          },
+          mobile: {
+            custom: animations
+          }
         }}
       />
       <FeatureDisplayCard
@@ -206,7 +271,10 @@ export default function Home() {
           <div>All pages were first designed in <a href="https://www.figma.com/">Figma</a> and then built from the design</div>,
           "Building pages from designs enforced good consistency of theme and colors throughout the website"
         ]}
-        visuals={{ images: [{ imgLink: FigmaDesignImg, width: "593px", height: "439px" }] }}
+        visuals={{
+          desktop: { images: [{ imgLink: FigmaDesignImg, width: "593px", height: "439px" }] },
+          mobile: { images: [{ imgLink: FigmaDesignMobileImg, width: MOB_IMG_WIDTH }] }
+        }}
         theme="dark"
       />
       <FeatureDisplayCard
@@ -218,7 +286,25 @@ export default function Home() {
           "Unit tests take full advantage of Jest's powerful mocking and spying systems to properly isolate subject components",
           <div>Frontend tests use the <a href="https://mswjs.io/">Mock Service Worker</a> library to mock API requests. This allows interception of requests at the network level, and hence makes tests independent of the request library used, in turn making tests more resilient to changes</div>
         ]}
-        visuals={{ images: [{ imgLink: FrontendTestImg, width: "520px", height: "321px" }] }}
+        visuals={{
+          desktop: { images: [{ imgLink: FrontendTestImg, width: "520px", height: "321px" }] },
+          mobile: {
+            custom: <CodeBlock
+              language="javascript"
+              showLineNumbers={true}
+              // eslint-disable-next-line no-template-curly-in-string
+              text={'describe("When given 5 lines", () => {\n\tconst COUNT = 5\n\n\tit(`Displays ${COUNT} lines`, () => {\n\t\trender(<LineCounter count={COUNT} />)\n\t\tconst lines = screen.getAllByText(/d/)\n\n\t\texpect(lines).toHaveLength(COUNT)\n\t\tfor (let i = 0; i < lines.length; i++) {\n\t\t\texpect(lines[i]).toHaveTextContent(`${i + 1}`)\n\t\t}\n\t})\n})'}
+              theme={dracula}
+              customStyle={{
+                borderRadius: "10px",
+                fontWeight: "600",
+                boxShadow: "0px 0px 4px 3px #bababa",
+                width: "100%",
+                tabSize: "4"
+              }}
+            />
+          }
+        }}
       />
       <FeatureDisplayCard
         title="End-to-End Testing"
@@ -227,10 +313,14 @@ export default function Home() {
           <div>Tests make strict adherence to good end-to-end testing practices as <a href="https://docs.cypress.io/guides/references/best-practices">recommended by Cypress</a>, avoiding anti-patterns and following common design principles, to ensure resilience</div>
         ]}
         visuals={{
-          custom:
-            <video loop autoPlay muted width="597px" height="335px">
+          desktop: {
+            custom: <video loop autoPlay muted width="597px" height="335px">
               <source src={process.env.PUBLIC_URL + "/assets/cypressViewBlog.mp4"} type="video/mp4" />
             </video>
+          },
+          mobile: {
+            custom: <div>Nothing for now!</div>
+          }
         }}
         theme="dark"
       />
@@ -241,7 +331,10 @@ export default function Home() {
           "All unit, integration and end-to-end tests are run automatically upon any commit to the code, or any merging of branches, to minimize the chance of bugs being introduced",
           <div>An example of one of the CI flows used for this app can be viewed <a href="https://github.com/kyfohatl/portfolio-website-frontend/blob/main/.github/workflows/test.yml">here</a></div>
         ]}
-        visuals={{ images: [{ imgLink: GithubActionsImg, width: "600px", height: "391px" }] }}
+        visuals={{
+          desktop: { images: [{ imgLink: GithubActionsImg, width: "600px", height: "391px" }] },
+          mobile: { images: [{ imgLink: GithubActionsImg, width: MOB_IMG_WIDTH }] }
+        }}
       />
       <FeatureDisplayCard
         title="Upcoming Features"
@@ -253,7 +346,10 @@ export default function Home() {
           "Additional features for blogs, such as liking and sharing",
           "And more!"
         ]}
-        visuals={{ images: [{ imgLink: UpcomingCodeImg, width: "426px", height: "569px" }] }}
+        visuals={{
+          desktop: { images: [{ imgLink: UpcomingCodeImg, width: "426px", height: "569px" }] },
+          mobile: { images: [{ imgLink: UpcomingCodeImg, width: MOB_IMG_WIDTH }] }
+        }}
         theme="dark"
       />
       <FeatureDisplayCard
@@ -271,19 +367,11 @@ export default function Home() {
           "Figma for designs"
         ]}
         visuals={{
-          custom:
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "40px",
-                maxWidth: "460px",
-                justifyContent: "center"
-              }}
-            >
+          desktop: {
+            custom: <LogoContainer>
               <img alt="React Logo" src={ReactLogo} width="95px" height="88px" />
               <img alt="Typescript Logo" src={TypeScriptLogo} width="80px" height="80px" />
-              <HtmlLogo width="101px" height="101x" />
+              <HtmlLogo style={{ width: "101px", height: "101px" }} />
               <img alt="CSS Logo" src={CssLogo} width="78px" height="110px" />
               <img alt="NodeJs Logo" src={NodeJsLogo} width="101px" height="62px" />
               <img alt="Express Logo" src={ExpressLogo} width="115px" height="35px" />
@@ -297,7 +385,28 @@ export default function Home() {
               <img alt="Github Logo" src={GitHubLogo} width="74px" height="74px" />
               <img alt="Github Actions Logo" src={GithubActionsLogo} width="77px" height="77px" />
               <img alt="Figma Logo" src={FigmaLogo} width="56px" height="84px" />
-            </div>
+            </LogoContainer>
+          },
+          mobile: {
+            custom: <LogoContainer>
+              <img alt="React Logo" src={ReactLogo} width="50px" />
+              <img alt="Typescript Logo" src={TypeScriptLogo} width="40px" />
+              <HtmlLogo style={{ width: "50px" }} />
+              <img alt="CSS Logo" src={CssLogo} width="40px" />
+              <img alt="NodeJs Logo" src={NodeJsLogo} width="60px" />
+              <img alt="Express Logo" src={ExpressLogo} width="90px" />
+              <img alt="JWT Logo" src={JwtLogo} width="70px" />
+              <img alt="Postgres Logo" src={PostgresLogo} width="50px" />
+              <img alt="Heroku Logo" src={HerokuLogo} width="70px" />
+              <img alt="Jest Logo" src={JestLogo} width="40px" />
+              <img alt="React Testing Library Logo" src={ReactTestingLibLogo} width="50px" />
+              <img alt="Cypress Logo" src={CypressLogo} width="90px" />
+              <img alt="Git Logo" src={GitLogo} width="50px" />
+              <img alt="Github Logo" src={GitHubLogo} width="44px" />
+              <img alt="Github Actions Logo" src={GithubActionsLogo} width="50px" />
+              <img alt="Figma Logo" src={FigmaLogo} width="40px" />
+            </LogoContainer>
+          }
         }}
       />
     </PageContainer>

@@ -15,6 +15,8 @@ import ViewBlog from './pages/ViewBlog';
 import FacebookRedirect from './pages/auth_redirects/FacebookRedirect';
 import GoogleRedirect from './pages/auth_redirects/GoogleRedirect';
 import routes from './resources/routes/routes';
+import Test from './pages/Test';
+import NotFound from './pages/NotFound';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -31,6 +33,10 @@ ReactDOM.render(
         <Route path={routes.blog} element={<ViewBlog />} />
         <Route path={routes.facebookSignIn} element={<FacebookRedirect />} />
         <Route path={routes.googleSignIn} element={<GoogleRedirect />} />
+        <Route path={"/test"} element={<Test />} />
+
+        {/* Catch-all route for all other undefined routes */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,

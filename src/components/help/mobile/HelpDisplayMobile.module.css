@@ -1,0 +1,47 @@
+.outerContainer {
+  display: none;
+}
+
+.displayContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  gap: 26px;
+  width: 100vw;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 36px;
+}
+
+.cardContainer {
+  display: flex;
+  gap: 0px;
+  padding: 16px 30px 16px 30px;
+  overflow: scroll;
+}
+
+.cardContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.cardWrapper {
+  transform: scale(var(--curScale, 1));
+}
+
+@media (max-width: 1100px) {
+  .outerContainer {
+    display: block;
+  }
+
+  .displayContainer {
+    gap: 6px;
+  }
+}

@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Editor, { TextInfo } from "../components/blog/Editor";
+import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Editor from "../components/blog/Editor";
 import Button, { ButtonState } from "../components/Button";
 import PageContainer, { PageContainerState } from "../components/PageContainer";
 
@@ -18,6 +18,9 @@ import TutorialSequence from "../components/tutorial/TutorialSequence";
 import { hasData } from "../lib/api/helpers/auth/redirectAndClearData";
 import { TutorialPopupInfo } from "../components/tutorial/TutorialPopup";
 import Tooltip from "../components/tooltip/Tooltip";
+import { TextInfo } from "../components/blog/EditorBody";
+import MobileEditor from "../components/blog/mobile/MobileEditor";
+import HelpDisplayMobile from "../components/help/mobile/HelpDisplayMobile";
 
 export const EDIT_BLOG_TITLE = "Edit Your Blog"
 export const CREATE_BLOG_TITLE = "Create A Blog"
@@ -39,6 +42,32 @@ function makeOnTextChange(
   }
 }
 
+const HELP_DISPLAY_TUTE_BASE_PROPS = {
+  title: "Help",
+  notes: "Click the help icon to find out more about writing blogs",
+  image: HelpImage,
+  imgAlt: "Edit blog help",
+  imgWidth: "142px",
+  imgHeight: "100px"
+}
+
+const LOGIN_TUTE_BASE_PROPS = {
+  title: "Login",
+  notes: "Login or create a account to save your work",
+  image: SignInImg,
+  imgAlt: "Sign in to save",
+  imgWidth: "103px",
+  imgHeight: "110px"
+}
+
+const HTML_TUTE_BASE_PROPS = {
+  title: "Save",
+  notes: "Write some HTML before saving!",
+  image: HtmlImage,
+  imgWidth: "145px",
+  imgHeight: "57px",
+  imgAlt: "Write some HTML before saving!"
+}
 
 export default function EditBlog() {
   const [html, setHtml] = useState<TextInfo>({ text: "", change: { changeType: "Other" } })
@@ -53,47 +82,67 @@ export default function EditBlog() {
   // Tutorial
   const [showBasicTute, setShowBasicTute] = useState(true)
   const [showHtmlTute, setShowHtmlTute] = useState(false)
-  const [popupProps, setPopupProps] = useState<TutorialPopupInfo[]>([])
+  const [basicTuteProps, setBasicTuteProps] = useState<{
+    desktop: TutorialPopupInfo[],
+    mobile: TutorialPopupInfo[]
+  }
+  >({ desktop: [], mobile: [] })
 
+  // Tutorial targets
   const helpBtnRef = useRef<HTMLDivElement>(null)
   const loginBtnRef = useRef<HTMLLIElement>(null)
-  const htmlTitleRef = useRef<HTMLDivElement>(null)
+  const menuBtnRef = useRef<HTMLButtonElement>(null)
+  const desktopHtmlTitleRef = useRef<HTMLDivElement>(null)
+  const mobileHtmlTitleRef = useRef<HTMLDivElement>(null)
 
   const blogIdParam = useParams().blogId
 
   // If the user is not logged in, show additional tutorials
   useEffect(() => {
-    const helpDisplayTute: TutorialPopupInfo = {
-      target: helpBtnRef.current,
-      xOffset: -200,
-      yOffset: 100,
-      title: "Help",
-      notes: "Click the help icon to find out more about writing blogs",
-      image: HelpImage,
-      imgAlt: "Edit blog help",
-      imgWidth: "142px",
-      imgHeight: "100px",
-      cardTestId: "basicHelp"
+    const helpDisplayTute = {
+      desktop: [{
+        ...HELP_DISPLAY_TUTE_BASE_PROPS,
+        cardTestId: "basicHelpDesktop",
+        target: helpBtnRef,
+        xOffset: -200,
+        yOffset: 100
+      }],
+      mobile: [{
+        ...HELP_DISPLAY_TUTE_BASE_PROPS,
+        cardTestId: "basicHelpMobile",
+        target: helpBtnRef,
+        xOffset: 150,
+        yOffset: 100
+      }]
     }
 
-    if (hasData()) return setPopupProps([helpDisplayTute])
+    if (hasData()) {
+      return setBasicTuteProps(helpDisplayTute)
+    }
 
     // User is not signed in, show additional tutorials
-    setPopupProps([
-      helpDisplayTute,
-      {
-        target: loginBtnRef.current,
-        xOffset: -100,
-        yOffset: 200,
-        title: "Login",
-        notes: "Login or create a account to save your work",
-        image: SignInImg,
-        imgAlt: "Sign in to save",
-        imgWidth: "103px",
-        imgHeight: "110px",
-        cardTestId: "loginHelp"
-      }
-    ])
+    setBasicTuteProps({
+      desktop: [
+        helpDisplayTute.desktop[0],
+        {
+          ...LOGIN_TUTE_BASE_PROPS,
+          cardTestId: "loginHelpDesktop",
+          target: loginBtnRef,
+          xOffset: -100,
+          yOffset: 200,
+        }
+      ],
+      mobile: [
+        helpDisplayTute.mobile[0],
+        {
+          ...LOGIN_TUTE_BASE_PROPS,
+          cardTestId: "loginHelpMobile",
+          target: menuBtnRef,
+          xOffset: 40,
+          yOffset: 100,
+        }
+      ]
+    })
   }, [])
 
   // Load blog content from database if editing an existing blog
@@ -214,11 +263,18 @@ export default function EditBlog() {
   return (
     <PageContainer
       {...(blogIdParam ? { title: EDIT_BLOG_TITLE } : { title: CREATE_BLOG_TITLE })}
-      contentStyle={{ marginTop: "56px" }}
-      contentBlockStyle={{ display: "flex", flexDirection: "column", maxWidth: "80vw", maxHeight: "95vh", gap: "20px" }}
+      contentBlockStyle={{
+        unified: {
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          "--maxWidthDesktop": "80vw",
+          "--gapDesktop": "20px"
+        } as CSSProperties
+      }}
       state={pageState}
       contentTestId="editBlogPage"
-      navbarLoginBtnRef={loginBtnRef}
+      navbarRefs={{ loginBtn: loginBtnRef, menuBtn: menuBtnRef }}
     >
       <div className={styles.savePane}>
         <div ref={helpBtnRef}>
@@ -264,17 +320,24 @@ export default function EditBlog() {
             </Tooltip>
         }
       </div>
-      <div className={styles.topPane}>
+      <div className={styles.topPaneDesktop}>
         <Editor
           textInfo={html}
           setText={onHtmlChange}
-          title={HTML_TITLE}
-          ref={htmlTitleRef}
+          title={"html"}
+          ref={desktopHtmlTitleRef}
         />
         <Editor
           textInfo={css}
           setText={onCssChange}
-          title={CSS_TITLE}
+          title={"css"}
+        />
+      </div>
+      <div className={styles.topPaneMobile}>
+        <MobileEditor
+          html={{ title: "html", textInfo: html, setText: onHtmlChange }}
+          css={{ title: "css", textInfo: css, setText: onCssChange }}
+          ref={mobileHtmlTitleRef}
         />
       </div>
       <div className={styles.botPane}>
@@ -289,33 +352,57 @@ export default function EditBlog() {
 
       {/* Logic for showing the help dialogue */}
       {showHelpDisplay
-        ? <HelpDisplay cardProps={cardProps} onClose={() => setShowHelpDisplay(false)} />
+        ? <>
+          <HelpDisplay cardProps={cardProps} onClose={() => setShowHelpDisplay(false)} />
+          <HelpDisplayMobile cardProps={cardProps} onClose={() => setShowHelpDisplay(false)} />
+        </>
         : null
       }
 
+      {/* Desktop tutorials */}
       <TutorialSequence
-        popupProps={popupProps}
+        popupProps={basicTuteProps.desktop}
         shouldDisplay={showBasicTute}
         setShouldDisplay={setShowBasicTute}
         id="basic"
+        deviceType="desktop"
       />
       <TutorialSequence
         popupProps={[{
-          target: htmlTitleRef.current,
+          ...HTML_TUTE_BASE_PROPS,
+          cardTestId: "htmlHelpDesktop",
+          target: desktopHtmlTitleRef,
           xOffset: 200,
-          yOffset: 150,
-          title: "Save",
-          notes: "Write some HTML before saving!",
-          image: HtmlImage,
-          imgWidth: "145px",
-          imgHeight: "57px",
-          imgAlt: "Write some HTML before saving!",
-          cardTestId: "htmlHelp"
+          yOffset: 150
         }]}
         shouldDisplay={showHtmlTute}
         setShouldDisplay={setShowHtmlTute}
         id="HTML"
         displayOnce={false}
+        deviceType="desktop"
+      />
+
+      {/* Mobile tutorials */}
+      <TutorialSequence
+        popupProps={basicTuteProps.mobile}
+        shouldDisplay={showBasicTute}
+        setShouldDisplay={setShowBasicTute}
+        id="basic"
+        deviceType="mobile"
+      />
+      <TutorialSequence
+        popupProps={[{
+          ...HTML_TUTE_BASE_PROPS,
+          cardTestId: "htmlHelpMobile",
+          target: mobileHtmlTitleRef,
+          xOffset: 280,
+          yOffset: 100
+        }]}
+        shouldDisplay={showHtmlTute}
+        setShouldDisplay={setShowHtmlTute}
+        id="HTML"
+        displayOnce={false}
+        deviceType="mobile"
       />
     </PageContainer>
   )

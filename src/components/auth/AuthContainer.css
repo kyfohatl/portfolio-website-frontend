@@ -1,7 +1,8 @@
 .auth-container {
   background-color: #E5E5E5;
   border-radius: 45px;
-  width: 430px;
+  width: 82%;
+  max-width: 430px;
   height: 467px;
   /* Below is needed for the auth-container-title margins to work properly. If overflow: auto is not added 
   or auth-container does not have any padding, then the margins of auth-container-title will not work */
@@ -21,4 +22,10 @@
   flex-direction: column;
   align-items: center;
   gap: 10px;
+}
+
+@media (max-width: 1100px) {
+  .auth-container-title {
+    margin-left: 24px;
+  }
 }

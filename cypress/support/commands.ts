@@ -39,6 +39,8 @@
 import '@testing-library/cypress/add-commands'
 import { AuthService } from '../../src/lib/commonTypes'
 import Updatable from "../../src/lib/Updatable"
+import { isDesktopScreen, isMobileScreen } from './constants/screenSizes'
+import isDesktopEnv from './helpers/predicates/isDesktopEnv'
 
 declare global {
   namespace Cypress {
@@ -53,8 +55,7 @@ declare global {
       createBlog(html: string, css: string, updatable?: Updatable<string>): Chainable<void>,
       verifyBlog(blogId: string, html: string, css: string): Chainable<void>,
       createMultBlogs(blogs: TestBlogInfo[]): Chainable<void>,
-      removeEditBlogTutorialPopupsSignedOut(): Chainable<void>,
-      removeEditBlogTutorialPopupsSignedIn(): Chainable<void>
+      skipEditBlogTutes(): Chainable<void>
     }
   }
 }
@@ -128,8 +129,25 @@ Cypress.Commands.add("signOut", () => {
 
   // Go to the home page in case the client is on a page which does not have access to the Navbar
   cy.visit("/")
-  cy.get('[data-testid="navbarSignOut"]').click()
-  cy.wait("@singOut")
+
+  cy.window().then(win => {
+    if (isDesktopScreen(win.innerWidth, win.innerHeight)) {
+      // Desktop
+      cy.get('[data-testid="navbarSignOut"]').click()
+    } else if (isMobileScreen(win.innerWidth, win.innerHeight)) {
+      // Mobile
+      cy.get('[data-testid="navbarMobileMenuBtn"]').click()
+      // Wait for the mobile hamburger menu to finish its opening animation
+      cy.get('[data-testid="navbarMobileMenuBtn"]').should("not.be.disabled")
+      // Now click the sign out button
+      cy.get('[data-testid="mobileNavLink_Sign Out"]').click()
+    } else {
+      // Invalid viewport size
+      throw new Error(`Invalid viewport size: ${win.innerWidth}x${win.innerHeight}`)
+    }
+
+    cy.wait("@singOut")
+  })
 })
 
 // Insures that the given input box type is displaying an error with the correct error message
@@ -155,10 +173,24 @@ Cypress.Commands.add("createBlog", (html: string, css: string, updatable?: Updat
   }).as("createBlog")
 
   cy.visit("/editblog")
-  cy.removeEditBlogTutorialPopupsSignedIn()
-  cy.get('[data-testid="HTMLEditor"]').find("textarea").type(html, { parseSpecialCharSequences: false })
-  cy.get('[data-testid="CSSEditor"]').find("textarea").type(css, { parseSpecialCharSequences: false })
-  cy.get('[data-testid="saveBtn"]').click()
+  cy.skipEditBlogTutes()
+
+  cy.window().then((win) => {
+    if (isDesktopEnv(win)) {
+      // We are in a desktop environment
+      cy.get('[data-testid="HTMLEditor"]').find("textarea").type(html, { parseSpecialCharSequences: false })
+      cy.get('[data-testid="CSSEditor"]').find("textarea").type(css, { parseSpecialCharSequences: false })
+      cy.get('[data-testid="saveBtn"]').click()
+      return
+    }
+
+    // We are in a mobile environment
+    cy.get('[data-testid="mobileEditorContainer"]').find('[data-testid="editorTitle_html"]').click()
+    cy.get('[data-testid="mobileEditor"]').find("textarea").type(html, { parseSpecialCharSequences: false })
+    cy.get('[data-testid="mobileEditorContainer"]').find('[data-testid="editorTitle_css"]').click()
+    cy.get('[data-testid="mobileEditor"]').find("textarea").type(css, { parseSpecialCharSequences: false })
+    cy.get('[data-testid="saveBtn"]').click()
+  })
 
   cy.wait("@createBlog")
 })
@@ -179,13 +211,35 @@ Cypress.Commands.add("createMultBlogs", (blogs: TestBlogInfo[]) => {
   cy.request("POST", `${Cypress.env("backendAddr")}/test/blog/createall`, { blogs })
 })
 
-// Remove all tutorial popups from the edit blog page, for use when signed out
-Cypress.Commands.add("removeEditBlogTutorialPopupsSignedOut", () => {
-  cy.get('[data-testid="basicHelp"]').find("button").click()
-  cy.get('[data-testid="loginHelp"]').find("button").click()
-})
+// Skips the basic tutorial (not the html tutorial or other tutes) on the edit blog page
+Cypress.Commands.add("skipEditBlogTutes", () => {
+  // We will use localStorage as a source of truth for whether popups showing or if we are logged in
+  // This is because throughout the execution of this command localStorage should be stable, as opposed
+  // to the DOM which is subject to asynchronous change
+  cy.window().then((win) => {
+    if (!localStorage.getItem("tutorial_basic_shown")) {
+      // Basic tute has not been shown, thus we must close the popups
+      const userId = localStorage.getItem("userId")
 
-// Remove all tutorial popups from the edit blog page, for use when signed in
-Cypress.Commands.add("removeEditBlogTutorialPopupsSignedIn", () => {
-  cy.get('[data-testid="basicHelp"]').find("button").click()
+      if (isDesktopEnv(win)) {
+        // We are in a desktop environment
+        cy.get('[data-testid="basicHelpDesktop"]').find("button").click()
+
+        if (!userId) {
+          // We are not signed in. Also close the login tutorial
+          cy.get('[data-testid="loginHelpDesktop"]').find("button").click()
+        }
+
+        return
+      }
+
+      // We are in a mobile environment
+      cy.get('[data-testid="basicHelpMobile"]').find("button").click()
+
+      if (!userId) {
+        // We are not signed in. Also close the login tutorial
+        cy.get('[data-testid="loginHelpMobile"]').find("button").click()
+      }
+    }
+  })
 })

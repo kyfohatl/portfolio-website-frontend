@@ -10,3 +10,22 @@
   width: 100%;
   flex-grow: 1;
 }
+
+.mobileCreateBtn {
+  display: none;
+  margin-right: 28px;
+}
+
+@media (max-width: 1100px) {
+  .blogsContainer {
+    gap: 12px;
+  }
+
+  .desktopCreateBtn {
+    display: none;
+  }
+
+  .mobileCreateBtn {
+    display: block;
+  }
+}

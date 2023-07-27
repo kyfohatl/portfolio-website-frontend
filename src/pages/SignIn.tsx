@@ -13,6 +13,9 @@ import routes from "../resources/routes/routes"
 export const EMAIL_ERR_MSSG = "A valid email is required!"
 export const PASS_ERR_MSSG = "A valid password is required!"
 
+const BTN_WIDTH = "70%"
+const BTN_MAX_WIDTH = "285px"
+
 export default function SignIn() {
   // User inputs
   const [email, setEmail] = useState("")
@@ -116,8 +119,8 @@ export default function SignIn() {
   return (
     <PageContainer
       title="Sign In"
-      contentStyle={{ display: "flex", flexGrow: 1, justifyContent: "center", alignItems: "center" }}
-      contentBlockStyle={{ display: "flex", justifyContent: "center" }}
+      contentStyle={{ unified: { display: "flex", flexGrow: 1, justifyContent: "center", alignItems: "center" } }}
+      contentBlockStyle={{ unified: { display: "flex", justifyContent: "center" } }}
       state={pageState}
       contentTestId="signInPage"
     >
@@ -137,8 +140,9 @@ export default function SignIn() {
         />
         <Button
           type={{ type: "submit" }}
-          width="285px"
+          width={BTN_WIDTH}
           height="36px"
+          maxWidth={BTN_MAX_WIDTH}
           text="Sign in"
           buttonState={signInState}
           disabled={signInDisabled}
@@ -146,8 +150,9 @@ export default function SignIn() {
         />
         <Button
           type={{ type: "button", callBack: onSignInGoogle }}
-          width="285px"
+          width={BTN_WIDTH}
           height="36px"
+          maxWidth={BTN_MAX_WIDTH}
           text="Sign in with Google"
           backgroundColor="#FFFFFF"
           color="#000000"
@@ -157,8 +162,9 @@ export default function SignIn() {
         />
         <Button
           type={{ type: "button", callBack: onSignInFacebook }}
-          width="285px"
+          width={BTN_WIDTH}
           height="36px"
+          maxWidth={BTN_MAX_WIDTH}
           text="Sign in with Facebook"
           backgroundColor="#4267B2"
           icon={<FacebookLogo width={28} height={28} />}

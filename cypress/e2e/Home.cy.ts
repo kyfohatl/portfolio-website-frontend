@@ -1,3 +1,4 @@
+import { MOBILE_PIXEL_WIDTH, PIXEL_HEIGHT } from "../support/constants/screenSizes"
 import testTooltip from "../support/helpers/testTooltip"
 
 beforeEach(() => {
@@ -6,12 +7,26 @@ beforeEach(() => {
 
 describe("The \"Explore\" button", () => {
   describe("When clicked", () => {
-    it("Scrolls the user down past the hero to the content of the page", () => {
-      cy.get('[data-testid="exploreBtn"]').click()
-      cy.window().then(function (win) {
-        // Ensure that the hero is no longer visible
-        cy.get('[data-testid="heroOuterContainer"]').should("not.be.inViewport", win)
+    function clickExploreAndCheckScroll() {
+      it("Scrolls the user down past the hero to the content of the page", () => {
+        cy.get('[data-testid="exploreBtn"]').click()
+        cy.window().then(function (win) {
+          // Ensure that the hero is no longer visible
+          cy.get('[data-testid="heroOuterContainer"]').should("not.be.inViewport", win, 0.1)
+        })
       })
+    }
+
+    describe("Desktop", () => {
+      clickExploreAndCheckScroll()
+    })
+
+    describe("Mobile", () => {
+      beforeEach(() => {
+        cy.viewport(MOBILE_PIXEL_WIDTH, PIXEL_HEIGHT)
+      })
+
+      clickExploreAndCheckScroll()
     })
   })
 

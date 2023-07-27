@@ -1,14 +1,31 @@
 import "../lib/headings.css"
-import "./Skills.css"
+import styles from "./Skills.module.css"
 
 import PageContainer from "../components/PageContainer"
 import BlogArticle from "../components/BlogArticle"
+
+const CONTENT_BLOCK_COMMON_STYLES: React.CSSProperties = { display: "flex", flexDirection: "column", gap: "50px" }
+const CONTENT_BLOCK_DEKSTOP_STYLES: React.CSSProperties = {
+  marginBottom: "60px",
+  ...CONTENT_BLOCK_COMMON_STYLES
+}
+const CONTENT_BLOCK_MOBILE_STYLES: React.CSSProperties = {
+  padding: "12px 30px 50px 30px",
+  ...CONTENT_BLOCK_COMMON_STYLES
+}
 
 export default function Skills() {
   return (
     <PageContainer
       title="My Skills and Qualifications"
-      contentStyle={{ marginTop: "42px" }}
+      contentStyle={{
+        desktop: { marginTop: "42px" },
+        mobile: {}
+      }}
+      contentBlockStyle={{
+        desktop: CONTENT_BLOCK_DEKSTOP_STYLES,
+        mobile: CONTENT_BLOCK_MOBILE_STYLES
+      }}
       contentTestId="skillsPage"
     >
       <BlogArticle title="Education">
@@ -24,7 +41,7 @@ export default function Skills() {
         </p>
       </BlogArticle>
       <BlogArticle title="Notable Achievements">
-        <ul className="skills-list dot-point-list">
+        <ul className={styles.skillsList + " " + styles.dotPointList}>
           <li>
             <p>
               Selected as one of the top 3 teams of the Computer Science IT Project capstone subject, and had the
@@ -32,7 +49,7 @@ export default function Skills() {
             </p>
           </li>
           <li>
-            <p>
+            <p style={{ marginBottom: "0" }}>
               Final year Software Modeling and Design project, where we designed a card game using object
               oriented principles and design patterns, scored 100% and was selected as a reference for future
               year students.
@@ -42,7 +59,7 @@ export default function Skills() {
       </BlogArticle>
       <BlogArticle title="Skills">
         <h4>Languages</h4>
-        <ul className="skills-table dot-point-list">
+        <ul className={styles.dotPointList + " " + styles.skillsTable}>
           <li>C</li>
           <li>C++</li>
           <li>C#</li>
@@ -55,7 +72,7 @@ export default function Skills() {
           <li>HLSL</li>
         </ul>
         <h4>Frameworks, Libraries and other</h4>
-        <ul className="skills-table dot-point-list">
+        <ul className={styles.dotPointList + " " + styles.skillsTable}>
           <li>ReactJs</li>
           <li>NextJs</li>
           <li>Material UI</li>
@@ -69,14 +86,14 @@ export default function Skills() {
           <li>Cypress</li>
         </ul>
         <h4>Project</h4>
-        <ul className="skills-table dot-point-list">
+        <ul className={styles.dotPointList + " " + styles.skillsTable}>
           <li>Agile Development</li>
           <li>Jira</li>
           <li>Trello</li>
           <li>Confluence</li>
         </ul>
         <h4>Software Concepts</h4>
-        <ul className="skills-table dot-point-list">
+        <ul className={styles.dotPointList + " " + styles.skillsTable} style={{ marginBottom: "0" }}>
           <li>Object Oriented Programming</li>
           <li>Algorithms</li>
           <li>Continuous Integration</li>
@@ -91,21 +108,21 @@ export default function Skills() {
       </BlogArticle>
       <BlogArticle title="Work Experience">
         <h3>IT Tutor</h3>
-        <h4>
-          <span className="workxp-span">Melbourne VIC</span>
-          <span className="workxp-span">Feb 2022 - Present</span>
+        <h4 className={styles.additionalInfoContainer}>
+          <span className={styles.additionalInfo}>Melbourne VIC</span>
+          <span className={styles.additionalInfo}>Feb 2022 - Present</span>
         </h4>
         <p>
           Currently teaching basic discrete mathematics and C++ programming. I enjoy this role a lot, as properly
           teaching a concept that is confusing to a student feels extremely satisfying, and I get to learn a lot in
           the process, going back over old material which I covered years ago and have partially forgotten.
         </p>
-        <div className="workexp-separator"></div>
+        <div className={styles.additionalInfoSeparator}></div>
         <h3>Pharmacy Assistant</h3>
-        <h4>
-          <span className="workxp-span">Star Pharmacy</span>
-          <span className="workxp-span">Melbourne VIC</span>
-          <span className="workxp-span">Aug 2015 - Present</span>
+        <h4 className={styles.additionalInfoContainer}>
+          <span className={styles.additionalInfo}>Star Pharmacy</span>
+          <span className={styles.additionalInfo}>Melbourne VIC</span>
+          <span className={styles.additionalInfo}>Aug 2015 - Present</span>
         </h4>
         <p>
           I started working at Star Pharmacy before I began my university studies and continued to work there

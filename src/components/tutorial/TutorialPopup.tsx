@@ -4,8 +4,12 @@ import throttle from "../../lib/helpers/throttle"
 import TutorialArrow from "./TutorialArrow"
 import TutorialCard from "./TutorialCard"
 
+import styles from "./TutorialPopup.module.css"
+
+export type DeviceType = "mobile" | "desktop" | "all"
+
 export interface TutorialPopupInfo {
-  target: HTMLElement | null,
+  target: React.RefObject<HTMLElement>,
   xOffset: number,
   yOffset: number,
   title: string,
@@ -19,7 +23,8 @@ export interface TutorialPopupInfo {
 
 interface TutorialPopupProps {
   info: TutorialPopupInfo,
-  onClose: () => void
+  onClose: () => void,
+  deviceType?: DeviceType
 }
 
 // Calculates the rotation angle to correctly rotate the svg arrow (which is by default pointing downwards)
@@ -41,7 +46,8 @@ function getArrowAngle(xOffset: number, yOffset: number) {
 
 export default function TutorialPopup({
   info,
-  onClose
+  onClose,
+  deviceType = "all"
 }: TutorialPopupProps) {
   const [targetPos, setTargetPos] = useState<{ x: number, y: number }>({ x: 0, y: 0 })
   const [cardStats, setCardStats] = useState<{ right: number, top: number }>({ right: 0, top: 0 })
@@ -61,9 +67,9 @@ export default function TutorialPopup({
 
   // Updates the position of the target
   const updateTargetPos = useMemo(() => throttle(() => {
-    if (!info.target) return
+    if (!info.target.current) return
 
-    const rect = info.target.getBoundingClientRect()
+    const rect = info.target.current.getBoundingClientRect()
     // The target position is the bottom left corner of the target div
     setTargetPos({ x: rect.left, y: rect.top + rect.height })
   }, 20), [info.target])
@@ -109,28 +115,27 @@ export default function TutorialPopup({
 
   // Place a "target" visual on the target
   useEffect(() => {
-    if (!info.target) return
+    if (!info.target.current) return
 
-    info.target.style.padding = "3px"
-    info.target.style.borderStyle = "solid"
-    info.target.style.borderWidth = "4px"
-    info.target.style.borderColor = "red"
-    info.target.style.borderRadius = "10px"
+    info.target.current.classList.add(styles.target)
 
     // Remove the visual upon unmounting
     return () => {
-      if (info.target) {
-        info.target.style.padding = "inherit"
-        info.target.style.borderStyle = "inherit"
-        info.target.style.borderWidth = "inherit"
-        info.target.style.borderColor = "inherit"
-        info.target.style.borderRadius = "inherit"
+      if (info.target.current) {
+        info.target.current.classList.remove(styles.target)
       }
     }
   }, [info.target])
 
   return (
-    <>
+    <div
+      {...(deviceType === "desktop"
+        ? { className: styles.desktop }
+        : deviceType === "mobile"
+          ? { className: styles.mobile }
+          : {}
+      )}
+    >
       <TutorialCard
         title={info.title}
         notes={info.notes}
@@ -142,14 +147,17 @@ export default function TutorialPopup({
         onClose={onClose}
         testId={info.cardTestId}
       />
-      <TutorialArrow
-        left={arrowStats.left + "px"}
-        top={arrowStats.top + "px"}
-        rotation={arrowStats.rotation}
-        width={arrowStats.width + "px"}
-        height={arrowStats.height + "px"}
-        movementLength={20}
-      />
-    </>
+      {deviceType !== "mobile"
+        ? <TutorialArrow
+          left={arrowStats.left + "px"}
+          top={arrowStats.top + "px"}
+          rotation={arrowStats.rotation}
+          width={arrowStats.width + "px"}
+          height={arrowStats.height + "px"}
+          movementLength={20}
+        />
+        : null
+      }
+    </div>
   )
 }

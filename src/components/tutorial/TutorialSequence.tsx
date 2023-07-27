@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import TutorialPopup, { TutorialPopupInfo } from "./TutorialPopup"
+import TutorialPopup, { DeviceType, TutorialPopupInfo } from "./TutorialPopup"
 
 interface TutorialSequenceProps {
   popupProps: TutorialPopupInfo[],
@@ -7,6 +7,7 @@ interface TutorialSequenceProps {
   setShouldDisplay: (newVal: boolean) => void,
   id: string,
   displayOnce?: boolean
+  deviceType?: DeviceType
 }
 
 export default function TutorialSequence({
@@ -14,7 +15,8 @@ export default function TutorialSequence({
   shouldDisplay,
   setShouldDisplay,
   id,
-  displayOnce = true
+  displayOnce = true,
+  deviceType = "all"
 }: TutorialSequenceProps) {
   const [curIdx, setCurIdx] = useState(0)
   const [displayedAtLeastOnce, setDisplayedAtLeastOnce] = useState(false)
@@ -51,6 +53,6 @@ export default function TutorialSequence({
   if (!shouldDisplay || popupProps.length <= 0) return null
 
   return (
-    <TutorialPopup info={popupProps[curIdx]} onClose={onClose} />
+    <TutorialPopup info={popupProps[curIdx]} onClose={onClose} deviceType={deviceType} />
   )
 }

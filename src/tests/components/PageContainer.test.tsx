@@ -1,8 +1,9 @@
+import "../testHelpers/mocks/mockMatchMedia"
 import { render, screen } from "@testing-library/react"
 import PageContainer from "../../components/PageContainer"
 
 // Mock the navbar
-jest.mock("../../components/Navbar", () => {
+jest.mock("../../components/navbar/Navbar", () => {
   return () => <div data-testid="navbarMock">Navbar!</div>
 })
 

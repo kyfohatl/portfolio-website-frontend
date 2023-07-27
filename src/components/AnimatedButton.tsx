@@ -1,3 +1,4 @@
+import React from "react"
 import { CSSProperties, ReactElement } from "react"
 import styles from "./AnimatedButton.module.css"
 import AnimationProps from "./animation/AnimationProps"
@@ -8,21 +9,24 @@ export interface AnimatedButtonProps {
   fontSize?: string,
   width?: string,
   height?: string,
+  maxWidth?: string,
   marginTop?: string
 }
 
-export default function AnimatedButton({
+const AnimatedButton = React.forwardRef<HTMLButtonElement, AnimatedButtonProps>(({
   animation,
   text,
   fontSize = "14px",
   width = "100px",
   height = "100px",
+  maxWidth,
   marginTop = "0px"
-}: AnimatedButtonProps) {
+}, ref) => {
   const buttonStyles: CSSProperties = {
     fontSize: fontSize,
     width: width,
     height: height,
+    maxWidth: maxWidth,
     marginTop: marginTop
   }
 
@@ -32,4 +36,6 @@ export default function AnimatedButton({
       <div className={styles.text}>{text}</div>
     </button>
   )
-}
+})
+
+export default AnimatedButton

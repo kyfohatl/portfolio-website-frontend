@@ -63,3 +63,20 @@
     transform: translateY(0px);
   }
 }
+
+@media (max-width: 1100px) {
+  .outerContainer {
+    flex-direction: column;
+    gap: 40px;
+    height: min-content;
+    padding: 68px 8%;
+  }
+
+  .textContainer>h1 {
+    font-size: 24px;
+  }
+
+  .textContainer>p {
+    font-size: 16px;
+  }
+}

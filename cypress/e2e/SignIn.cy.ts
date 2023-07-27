@@ -1,3 +1,5 @@
+import { testViewports } from "../support/helpers/common/utils"
+
 describe("Regular sign in", () => {
   const USERNAME = "testUser"
   const PASSWORD = "s0me!T3st#Pass"
@@ -22,49 +24,73 @@ describe("Regular sign in", () => {
   }
 
   describe("When a user enters a valid username and password", () => {
-    it("Signs the user in and redirects to the home page", () => {
-      enterUsernameAnPass(USERNAME, PASSWORD)
-      cy.waitForAuthCompletion()
-    })
+    function sigInAndRedirectToHome() {
+      it("Signs the user in and redirects to the home page", () => {
+        enterUsernameAnPass(USERNAME, PASSWORD)
+        cy.waitForAuthCompletion()
+      })
+    }
+
+    testViewports(sigInAndRedirectToHome)
   })
 
   const INCORRECT_CREDENTIALS_TXT = "Username or password is incorrect"
 
   describe("When the user enters a valid username and an invalid password", () => {
-    it("Displays an error stating that either the username or password is incorrect", () => {
-      enterUsernameAnPass(USERNAME, "som3Inval1dPa33!!!")
-      cy.inputBoxShouldDisplayError("Email", INCORRECT_CREDENTIALS_TXT)
-      cy.inputBoxShouldDisplayError("Password", INCORRECT_CREDENTIALS_TXT)
-    })
+    function showCredentialIncorrect() {
+      it("Displays an error stating that either the username or password is incorrect", () => {
+        enterUsernameAnPass(USERNAME, "som3Inval1dPa33!!!")
+        cy.inputBoxShouldDisplayError("Email", INCORRECT_CREDENTIALS_TXT)
+        cy.inputBoxShouldDisplayError("Password", INCORRECT_CREDENTIALS_TXT)
+      })
+    }
+
+    testViewports(showCredentialIncorrect)
   })
 
   describe("When the user enters an invalid username with some password", () => {
-    it("Displays an error stating that either the username or password is incorrect", () => {
-      enterUsernameAnPass("someInvalidUsername", PASSWORD)
-      cy.inputBoxShouldDisplayError("Email", INCORRECT_CREDENTIALS_TXT)
-      cy.inputBoxShouldDisplayError("Password", INCORRECT_CREDENTIALS_TXT)
-    })
+    function showCredentialIncorrect() {
+      it("Displays an error stating that either the username or password is incorrect", () => {
+        enterUsernameAnPass("someInvalidUsername", PASSWORD)
+        cy.inputBoxShouldDisplayError("Email", INCORRECT_CREDENTIALS_TXT)
+        cy.inputBoxShouldDisplayError("Password", INCORRECT_CREDENTIALS_TXT)
+      })
+    }
+
+    testViewports(showCredentialIncorrect)
   })
 
   describe("When the user does not enter anything", () => {
-    it("Displays an error stating that a username is required", () => {
-      enterUsernameAnPass("", "")
-      cy.inputBoxShouldDisplayError("Email", "A valid email is required!")
-    })
+    function showUsernameRequired() {
+      it("Displays an error stating that a username is required", () => {
+        enterUsernameAnPass("", "")
+        cy.inputBoxShouldDisplayError("Email", "A valid email is required!")
+      })
+    }
+
+    testViewports(showUsernameRequired)
   })
 
   describe("When the user enters a username without entering a password", () => {
-    it("Displays an error stating that a valid password is required", () => {
-      enterUsernameAnPass(USERNAME, "")
-      cy.inputBoxShouldDisplayError("Password", "A valid password is required!")
-    })
+    function showPasswordRequired() {
+      it("Displays an error stating that a valid password is required", () => {
+        enterUsernameAnPass(USERNAME, "")
+        cy.inputBoxShouldDisplayError("Password", "A valid password is required!")
+      })
+    }
+
+    testViewports(showPasswordRequired)
   })
 
   describe("When the user does not enter a username but enters a password", () => {
-    it("Displays an error stating that a username is required", () => {
-      enterUsernameAnPass("", PASSWORD)
-      cy.inputBoxShouldDisplayError("Email", "A valid email is required!")
-    })
+    function showUsernameRequired() {
+      it("Displays an error stating that a username is required", () => {
+        enterUsernameAnPass("", PASSWORD)
+        cy.inputBoxShouldDisplayError("Email", "A valid email is required!")
+      })
+    }
+
+    testViewports(showUsernameRequired)
   })
 })
 

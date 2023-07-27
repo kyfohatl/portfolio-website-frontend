@@ -16,7 +16,7 @@ const VISUALS = {
 
 const cardProps: FeatureDisplayCardProps[] = []
 for (let i = 0; i < 6; i++) {
-  cardProps.push({ title: "Card" + i, notes: NOTES, visuals: VISUALS })
+  cardProps.push({ title: "Card" + i, notes: NOTES, visuals: { desktop: VISUALS, mobile: VISUALS } })
 }
 
 const onCloseMock = jest.fn()

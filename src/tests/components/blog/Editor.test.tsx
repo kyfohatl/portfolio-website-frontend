@@ -1,8 +1,10 @@
 import { fireEvent, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import Editor, { TextInfo } from "../../../components/blog/Editor"
+import Editor from "../../../components/blog/Editor"
+import { TextInfo } from "../../../components/blog/EditorBody"
+import { EditorType } from "../../../components/blog/EditorTitle"
 
-const TITLE = "someTitle"
+const TITLE: EditorType = "html"
 const TEXT = "someText"
 const setTextMock = jest.fn((textInfo: TextInfo) => { })
 
@@ -17,7 +19,7 @@ function setup() {
 describe("When given a title and some text", () => {
   it("Displays given title at the top of the component", () => {
     setup()
-    const title = screen.getByText(TITLE)
+    const title = screen.getByText(new RegExp(TITLE, "i"))
     expect(title).toBeInTheDocument()
   })
 

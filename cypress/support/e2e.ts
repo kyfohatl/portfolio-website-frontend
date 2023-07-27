@@ -24,8 +24,8 @@ declare global {
     interface Chainer<Subject> {
       (chainer: "be.fullyInViewport", win: Cypress.AUTWindow): Chainable<Subject>,
       (chainer: "not.be.fullyInViewport", win: Cypress.AUTWindow): Chainable<Subject>,
-      (chainer: "be.inViewport", win: Cypress.AUTWindow): Chainable<Subject>,
-      (chainer: "not.be.inViewport", win: Cypress.AUTWindow): Chainable<Subject>
+      (chainer: "be.inViewport", win: Cypress.AUTWindow, threshold: number): Chainable<Subject>,
+      (chainer: "not.be.inViewport", win: Cypress.AUTWindow, threshold: number): Chainable<Subject>
     }
   }
 }
@@ -46,18 +46,34 @@ function isFullyInViewPort(this: Chai.AssertionStatic, win: Cypress.AUTWindow) {
   )
 }
 
-// Asserts if the element is at least partially visible in the viewport
-function isInViewPort(this: Chai.AssertionStatic, win: Cypress.AUTWindow) {
+// Asserts if the element is at least partially visible in the viewport based on the given threshold
+function isInViewPort(this: Chai.AssertionStatic, win: Cypress.AUTWindow, threshold: number) {
   const element: JQuery = this._obj
   const rect = element[0].getBoundingClientRect()
 
-  const partialHeightInView = rect.bottom > 0 && rect.top < win.innerHeight
-  const partialWidthInView = rect.right > 0 && rect.left < win.innerWidth
+  // Calculate the area of the intersection between the element's bounding box and the screen
+  const rightEdge = Math.min(rect.right, win.innerWidth)
+  const leftEdge = Math.max(rect.left, 0)
+  const horizontalIntersection = Math.max(0, rightEdge - leftEdge)
 
+  const bottomEdge = Math.min(rect.bottom, win.innerHeight)
+  const topEdge = Math.max(rect.top, 0)
+  const verticalIntersection = Math.max(0, bottomEdge - topEdge)
+
+  const intersectionArea = horizontalIntersection * verticalIntersection
+
+  // Calculate the area of the element's bounding rectangle
+  const rectArea = (rect.right - rect.left) * (rect.bottom - rect.top)
+
+  // Now calculate the proportion of intersection area as a percentage of the total bounding rectangle of the element
+  // The result shows what percentage of the element is visible on the screen
+  const visiblePercentage = intersectionArea / rectArea
+
+  // Assert that the percentage of the element present on the screen exceeds threshold
   this.assert(
-    partialHeightInView && partialWidthInView,
-    'expected #{this} to be at least partially inside the viewport, but it was not',
-    'expected #{this} to not be visible inside the viewport at all',
+    visiblePercentage >= threshold,
+    `expected #{this} to be at least ${threshold * 100}% inside the viewport, but it was only ${visiblePercentage * 100}% inside`,
+    `expected #{this} to be less than ${threshold * 100}% inside the viewport, but it was ${visiblePercentage * 100}% inside`,
     win
   )
 }

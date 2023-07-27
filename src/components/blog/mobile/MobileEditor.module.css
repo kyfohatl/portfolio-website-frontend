@@ -1,0 +1,23 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  width: 100%;
+}
+
+.titleContainer {
+  display: flex;
+  gap: 4px;
+}
+
+.bodyContainer {
+  display: flex;
+  flex-grow: 1;
+  height: 300px;
+}
+
+@media (min-width: 1100) {
+  .container {
+    display: none;
+  }
+}

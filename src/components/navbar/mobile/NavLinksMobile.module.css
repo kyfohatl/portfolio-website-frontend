@@ -1,0 +1,46 @@
+.container {
+  --anim-duration: 0.2s;
+
+  display: flex;
+  justify-content: flex-end;
+  flex-grow: 1;
+}
+
+.dropDown {
+  display: flex;
+  flex-direction: column;
+  background-color: darkred;
+  position: fixed;
+  top: var(--navbarHeight);
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  animation: slideDown var(--anim-duration) ease-in-out;
+  transform-origin: top center;
+}
+
+@keyframes slideDown {
+  0% {
+    transform: scaleY(0);
+  }
+
+  100% {
+    transform: scaleY(100%);
+  }
+}
+
+.close {
+  animation: slideUp var(--anim-duration) ease-in-out forwards;
+}
+
+@keyframes slideUp {
+  100% {
+    transform: scaleY(0);
+  }
+}
+
+@media (min-width: 1100px) {
+  .container {
+    display: none;
+  }
+}

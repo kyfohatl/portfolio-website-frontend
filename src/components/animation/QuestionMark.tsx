@@ -1,4 +1,5 @@
 import { CSSProperties, useEffect, useRef, useState } from "react"
+import { useElementVisibility } from "../../hooks/useElementVisibility"
 import AnimationProps from "./AnimationProps"
 import styles from "./QuestionMark.module.css"
 
@@ -17,11 +18,24 @@ export default function QuestionMark({ height, width, overrides, onAnimationEnd 
   const markerRef = useRef<SVGPathElement>(null)
   const dotRef = useRef<SVGCircleElement>(null)
 
+  // Note that we use the svgRef to keep track of whether or not the circle and path are visible, not the SVG Circle
+  // Path elements themselves. This is due to a current bug in chromium where IntersectionObserver (used by the
+  // useElementVisibility hook) does not work with any SVG element other than the top level SVG itself
+  const svgRef = useRef<SVGSVGElement>(null)
+
   // Figure out the lengths of the question mark parts for use by the animations
+  // First we must ensure that the element is visible on the screen, otherwise we cannot perform length calculations
+  const svgIsVisible = useElementVisibility(svgRef)
+
+  // Now perform length calculations if the elements are visible
   useEffect(() => {
-    if (markerRef.current) setMarkerLength(markerRef.current.getTotalLength())
-    if (dotRef.current) setDotLength(dotRef.current.getTotalLength())
-  }, [])
+    if (markerRef.current && markerRef.current.getTotalLength && svgIsVisible) {
+      setMarkerLength(markerRef.current.getTotalLength())
+    }
+    if (dotRef.current && dotRef.current.getTotalLength && svgIsVisible) {
+      setDotLength(dotRef.current.getTotalLength())
+    }
+  }, [svgIsVisible])
 
   return (
     <svg
@@ -31,6 +45,7 @@ export default function QuestionMark({ height, width, overrides, onAnimationEnd 
       height={height}
       viewBox="0 0 100 100"
       fill="none"
+      ref={svgRef}
     >
       <g>
         <circle

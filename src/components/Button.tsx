@@ -32,6 +32,7 @@ export interface ButtonProps {
   color?: string,
   width?: string,
   height?: string,
+  maxWidth?: string,
   marginTop?: string,
   padding?: string,
   icon?: React.ReactNode,
@@ -42,7 +43,7 @@ export interface ButtonProps {
   btnTestId?: string
 }
 
-export default function Button({
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   text,
   type,
   backgroundColor = "#8B0000",
@@ -50,6 +51,7 @@ export default function Button({
   color = "#FFFFFF",
   width = "100px",
   height = "100px",
+  maxWidth,
   marginTop = "0px",
   padding,
   icon,
@@ -58,11 +60,12 @@ export default function Button({
   borderRadius,
   boxShadow,
   btnTestId
-}: ButtonProps) {
+}, ref) => {
   let buttonStyles: React.CSSProperties = {
     fontSize: fontSize,
     width: width,
     height: height,
+    maxWidth: maxWidth,
     marginTop: marginTop,
     ...(padding && { padding: padding }),
     ...(borderRadius && { borderRadius: borderRadius }),
@@ -83,6 +86,7 @@ export default function Button({
     style={buttonStyles}
     disabled={disabled}
     {...(type.callBack ? { onClick: type.callBack } : {})}
+    ref={ref}
   >
     {icon}
     {text}
@@ -93,8 +97,10 @@ export default function Button({
       fontSize={fontSize}
       width={width}
       height={height}
+      maxWidth={maxWidth}
       marginTop={marginTop}
       testId={btnTestId}
+      ref={ref}
     />
   } else if (buttonState.state === "animated") {
     button = <AnimatedButton
@@ -103,11 +109,15 @@ export default function Button({
       fontSize={fontSize}
       width={width}
       height={height}
+      maxWidth={maxWidth}
       marginTop={marginTop}
+      ref={ref}
     />
   }
 
   return (
     button
   )
-}
+})
+
+export default Button
