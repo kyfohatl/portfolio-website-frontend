@@ -51,9 +51,9 @@
 .textContainer {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  width: 100%;
+  gap: 10px;
   height: 100%;
+  overflow: hidden;
 }
 
 .title {
@@ -62,7 +62,6 @@
   font-size: 20px;
   font-weight: 800;
   margin: 0px 0px 0px 0px;
-  padding: 2px 0;
 }
 
 .tagContainer {
@@ -77,6 +76,7 @@
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .summary {
@@ -85,7 +85,8 @@
   font-size: 16px;
   line-height: 24px;
   margin: 0px 0px 0px 0px;
-  max-height: 60%;
+  max-height: 40%;
+  min-height: 30%;
   overflow: auto;
 }
 
@@ -97,6 +98,7 @@
   .title {
     font-size: 16px;
     max-height: 30%;
+    padding: 2px 0;
   }
 
   .tag {
@@ -109,9 +111,42 @@
     max-height: 60%;
   }
 
-  .title, .tagContainer {
+  .title,
+  .tagContainer {
     overflow: auto;
     white-space: normal;
     flex-wrap: wrap;
+  }
+}
+
+@media (min-width: 1100px) {
+
+  .tagContainer,
+  .title {
+    padding-bottom: 6px;
+  }
+
+  .tagContainer::-webkit-scrollbar,
+  .title::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .tagContainer::-webkit-scrollbar-thumb,
+  .title::-webkit-scrollbar-thumb {
+    background-color: #c0c0c0;
+    border-radius: 2px;
+  }
+
+  .summary::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .summary::-webkit-scrollbar-thumb {
+    background-color: #c0c0c0;
+    border-radius: 4px;
+  }
+
+  .summary {
+    padding-right: 2px;
   }
 }
